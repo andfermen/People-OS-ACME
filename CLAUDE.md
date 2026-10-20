@@ -1,4 +1,4 @@
-# People OS · Bit2Me (prueba técnica)
+# People OS · Acme (prueba técnica)
 
 > Contexto del proyecto para Claude Code. Léelo entero antes de cualquier tarea.
 
@@ -6,7 +6,7 @@
 
 Prueba técnica para un proceso de selección. El reto: **diseñar e implementar un sistema que permita a una sola persona gestionar el 360º de RRHH de una compañía apoyándose en IA y automatización.**
 
-- Empresa de referencia: **Bit2Me** (fintech cripto española, regulada). Estructura y áreas inspiradas en información pública. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** Nunca usar datos reales.
+- Empresa de referencia: **Acme**, fintech cripto española regulada **ficticia**. Nombre, estructura y áreas son inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** Nunca usar datos reales.
 - Presentación: **viernes, en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
 - Lo que más pesa: **procesos funcionando de extremo a extremo.** No solo documentación.
 
@@ -57,7 +57,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── escalado.md               # Cómo se añade un proceso nuevo
 │   └── guion-demo.md
 ├── definiciones/
-│   ├── empresa.md                # Áreas, tamaño, contexto (ficticio, inspirado en Bit2Me)
+│   ├── empresa.md                # Áreas, tamaño, contexto (ficticio)
 │   ├── taxonomia-skills.yaml     # Skills hard/soft y descripción de niveles 1-4
 │   ├── funciones.yaml            # Funciones por área, criticidad, skills requeridas, cobertura objetivo
 │   ├── reglas-semaforo.md        # Cálculo de cobertura, semáforo y key people
