@@ -1,0 +1,6 @@
+empleado_id,nombre,area,rol,oculta,funciones,skills
+E007,Elena Prieto Marín,Custodia,Responsable de custodia,no,CUS-02,conciliacion-onchain
+E011,Carmen Vega Herrera,Compliance AML/KYC,Directora de compliance (MLRO),no,CMP-03,normativa-pbc
+E022,Lucía Benítez Mora,Producto,Analista de datos,si,CMP-04,sql-analitica
+E033,Fernando Aguilar Cortés,Seguridad,CISO,no,SEG-02,seguridad-aplicaciones
+E042,Inés Robles Gómez,Finanzas,Responsable de contabilidad,no,FIN-01,contabilidad-cripto

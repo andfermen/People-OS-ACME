@@ -1,0 +1,40 @@
+funcion_id,nombre,area,criticidad,cobertura_objetivo,skill_id,nivel_minimo
+TRD-01,Ejecución y operativa de mercados,Exchange y trading,critica,2,trading-mercados,3
+TRD-01,Ejecución y operativa de mercados,Exchange y trading,critica,2,gestion-riesgo-mercado,2
+TRD-02,Gestión de liquidez y market making,Exchange y trading,importante,2,market-making,3
+TRD-02,Gestión de liquidez y market making,Exchange y trading,importante,2,sql-analitica,2
+TRD-03,Riesgo de mercado y límites,Exchange y trading,critica,2,gestion-riesgo-mercado,3
+CUS-01,Gestión de claves y ceremonias de firma,Custodia,critica,2,gestion-claves,3
+CUS-01,Gestión de claves y ceremonias de firma,Custodia,critica,2,operativa-wallets,2
+CUS-02,Prueba de reservas y conciliación on-chain,Custodia,critica,2,conciliacion-onchain,3
+CUS-02,Prueba de reservas y conciliación on-chain,Custodia,critica,2,analisis-blockchain,2
+CUS-03,Operativa diaria de wallets,Custodia,importante,2,operativa-wallets,2
+CMP-01,Alta y verificación de clientes (KYC/KYB),Compliance AML/KYC,critica,3,kyc-onboarding,2
+CMP-01,Alta y verificación de clientes (KYC/KYB),Compliance AML/KYC,critica,3,normativa-pbc,2
+CMP-02,Monitorización de transacciones,Compliance AML/KYC,critica,2,monitorizacion-transacciones,3
+CMP-02,Monitorización de transacciones,Compliance AML/KYC,critica,2,analisis-blockchain,2
+CMP-03,Comunicación de operaciones sospechosas,Compliance AML/KYC,critica,2,normativa-pbc,3
+CMP-04,Reporting regulatorio AML,Compliance AML/KYC,importante,2,sql-analitica,3
+CMP-04,Reporting regulatorio AML,Compliance AML/KYC,importante,2,normativa-pbc,2
+LEG-01,Licencia MiCA y relación con el supervisor,Legal y regulatorio,critica,2,regulacion-mica,3
+LEG-01,Licencia MiCA y relación con el supervisor,Legal y regulatorio,critica,2,gestion-stakeholders,3
+LEG-02,Contratos y protección de datos,Legal y regulatorio,importante,2,contratos-mercantil,3
+LEG-02,Contratos y protección de datos,Legal y regulatorio,importante,2,proteccion-datos,2
+SEG-01,Detección y respuesta a incidentes,Seguridad,critica,3,respuesta-incidentes,3
+SEG-01,Detección y respuesta a incidentes,Seguridad,critica,3,ciberseguridad-defensiva,2
+SEG-02,Seguridad de aplicaciones,Seguridad,importante,2,seguridad-aplicaciones,3
+ING-01,Desarrollo de plataforma,Ingeniería,importante,3,desarrollo-backend,3
+ING-01,Desarrollo de plataforma,Ingeniería,importante,3,desarrollo-frontend,2
+ING-02,Infraestructura y disponibilidad,Ingeniería,critica,2,infraestructura-cloud,3
+ING-03,Integración de redes blockchain y nodos,Ingeniería,critica,2,nodos-blockchain,3
+ING-03,Integración de redes blockchain y nodos,Ingeniería,critica,2,desarrollo-backend,2
+PRD-01,Gestión de producto,Producto,importante,2,gestion-producto,3
+PRD-01,Gestión de producto,Producto,importante,2,diseno-ux,2
+CX-01,Atención al cliente,Atención al cliente (CX),soporte,3,atencion-cliente,2
+CX-02,Soporte técnico de segundo nivel,Atención al cliente (CX),importante,2,atencion-cliente-tecnica,3
+MKT-01,Marketing y comunicación comercial regulada,Marketing,soporte,2,marketing-digital,3
+MKT-01,Marketing y comunicación comercial regulada,Marketing,soporte,2,comunicacion-regulada,2
+FIN-01,Contabilidad y fiscalidad de criptoactivos,Finanzas,importante,2,contabilidad-cripto,3
+FIN-02,Tesorería y salvaguarda de fondos de clientes,Finanzas,critica,2,tesoreria,3
+FIN-02,Tesorería y salvaguarda de fondos de clientes,Finanzas,critica,2,conciliacion-onchain,2
+PEO-01,Gestión de personas,People,soporte,2,gestion-personas,3

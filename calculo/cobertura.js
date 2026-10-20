@@ -104,7 +104,13 @@ function calcular(datos) {
 
   return {
     funciones: resultado,
-    key_people: [...keyPeople].map(([id, funcs]) => ({ id, nombre: activos.get(id).nombre, area: activos.get(id).area, rol: activos.get(id).rol, nivel_puesto: activos.get(id).nivel_puesto, funciones: funcs })),
+    key_people: [...keyPeople].map(([id, funcs]) => {
+      const e = activos.get(id);
+      const areaDe = fid => resultado.find(f => f.id === fid).area;
+      // Oculta: puesto junior/intermedio, o sostiene una función de otra área (reglas-semaforo.md §3)
+      const oculta = ['junior', 'intermedio'].includes(e.nivel_puesto) || funcs.some(f => areaDe(f.funcion) !== e.area);
+      return { id, nombre: e.nombre, area: e.area, rol: e.rol, nivel_puesto: e.nivel_puesto, oculta, funciones: funcs };
+    }),
     senales_rotacion: senales,
   };
 }

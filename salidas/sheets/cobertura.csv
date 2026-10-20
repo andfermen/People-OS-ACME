@@ -1,0 +1,25 @@
+funcion_id,area,nombre,criticidad,semaforo,icono,prioridad,cobertura,objetivo,skill_mas_debil,cubren,backup_en_desarrollo,candidatos_con_interes
+TRD-01,Exchange y trading,Ejecución y operativa de mercados,critica,verde,🟢,-,3,2,trading-mercados,Laura Ortega Ruiz; Andrés Molina Vidal; Paula Serrano Díaz,,
+TRD-02,Exchange y trading,Gestión de liquidez y market making,importante,verde,🟢,-,2,2,market-making,Laura Ortega Ruiz; Andrés Molina Vidal,,
+TRD-03,Exchange y trading,Riesgo de mercado y límites,critica,verde,🟢,-,2,2,gestion-riesgo-mercado,Laura Ortega Ruiz; Hugo Romero Cano,,
+CUS-01,Custodia,Gestión de claves y ceremonias de firma,critica,verde,🟢,-,2,2,gestion-claves,Elena Prieto Marín; Marcos Fuentes Rey,,
+CUS-02,Custodia,Prueba de reservas y conciliación on-chain,critica,rojo,🔴,P1,1,2,conciliacion-onchain,Elena Prieto Marín,,Javier Lozano Peña
+CUS-03,Custodia,Operativa diaria de wallets,importante,verde,🟢,-,4,2,operativa-wallets,Elena Prieto Marín; Marcos Fuentes Rey; Javier Lozano Peña; Irene Campos Soto,,
+CMP-01,Compliance AML/KYC,Alta y verificación de clientes (KYC/KYB),critica,verde,🟢,-,4,3,kyc-onboarding,Carmen Vega Herrera; Rubén Cabrera Ortiz; Sara Méndez Rubio; Álvaro Pascual Nieto,,
+CMP-02,Compliance AML/KYC,Monitorización de transacciones,critica,verde,🟢,-,3,2,monitorizacion-transacciones,Carmen Vega Herrera; Diego Ramos Iglesias; Marta Gallego Cruz,,
+CMP-03,Compliance AML/KYC,Comunicación de operaciones sospechosas,critica,ambar,🟡,P2,1,2,normativa-pbc,Carmen Vega Herrera,Diego Ramos Iglesias,
+CMP-04,Compliance AML/KYC,Reporting regulatorio AML,importante,rojo,🔴,P2,1,2,sql-analitica,Lucía Benítez Mora,,Marta Gallego Cruz
+LEG-01,Legal y regulatorio,Licencia MiCA y relación con el supervisor,critica,verde,🟢,-,3,2,regulacion-mica,Carmen Vega Herrera; Beatriz Lorenzo Santos; Tomás Herrero Blanco,,
+LEG-02,Legal y regulatorio,Contratos y protección de datos,importante,verde,🟢,-,3,2,contratos-mercantil,Beatriz Lorenzo Santos; Tomás Herrero Blanco; Alba Medina Calvo,,
+SEG-01,Seguridad,Detección y respuesta a incidentes,critica,ambar,🟡,P2,2,3,respuesta-incidentes,Fernando Aguilar Cortés; Eva Ruiz Montero,,Óscar Garrido Luna; Gonzalo Peña Sáez
+SEG-02,Seguridad,Seguridad de aplicaciones,importante,rojo,🔴,P2,1,2,seguridad-aplicaciones,Fernando Aguilar Cortés,,Gonzalo Peña Sáez
+ING-01,Ingeniería,Desarrollo de plataforma,importante,verde,🟢,-,4,3,desarrollo-backend,Jorge Delgado Muñoz; Raquel Iglesias Torres; Iván Sanz Domínguez; Pablo Núñez Rojas,,
+ING-02,Ingeniería,Infraestructura y disponibilidad,critica,verde,🟢,-,3,2,infraestructura-cloud,Jorge Delgado Muñoz; Óscar Garrido Luna; Natalia Soler Ibáñez,,
+ING-03,Ingeniería,Integración de redes blockchain y nodos,critica,verde,🟢,-,2,2,nodos-blockchain,Iván Sanz Domínguez; Rocío Marín Pardo,,
+PRD-01,Producto,Gestión de producto,importante,verde,🟢,-,2,2,gestion-producto,Daniel Vidal Ferrer; Cristina Moreno Arias,,
+CX-01,Atención al cliente (CX),Atención al cliente,soporte,verde,🟢,-,5,3,atencion-cliente,Patricia Molina Herrera; Luis Cano Esteban; Ana Torres Vicente; Carlos Díaz Pastor; Lidia Ferrer Ramos,,
+CX-02,Atención al cliente (CX),Soporte técnico de segundo nivel,importante,verde,🟢,-,2,2,atencion-cliente-tecnica,Patricia Molina Herrera; Luis Cano Esteban,,
+MKT-01,Marketing,Marketing y comunicación comercial regulada,soporte,verde,🟢,-,2,2,marketing-digital,Clara Iborra Navas; Héctor Vargas Lara,,
+FIN-01,Finanzas,Contabilidad y fiscalidad de criptoactivos,importante,ambar,🟡,P3,1,2,contabilidad-cripto,Inés Robles Gómez,Víctor Salas Prieto,
+FIN-02,Finanzas,Tesorería y salvaguarda de fondos de clientes,critica,verde,🟢,-,2,2,tesoreria,Ricardo Blanco Sanz; Inés Robles Gómez,,
+PEO-01,People,Gestión de personas,soporte,rojo,🔴,P3,1,2,gestion-personas,Noelia Santos Bravo,,

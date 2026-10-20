@@ -1,0 +1,47 @@
+id,nombre,email,genero,area,rol,nivel_puesto,manager_id,antiguedad_meses,ultima_evaluacion,skills_interes,banda_id,salario_ficticio,meses_desde_ultima_revision,meses_con_manager_actual,estado
+E001,Sergio Navarro Gil,sergio.navarro@acme.example,H,Dirección,CEO,head,,72,4,,DIR-1,150000,12,72,activo
+E002,Laura Ortega Ruiz,laura.ortega@acme.example,M,Exchange y trading,Head of trading,head,E001,54,4,,TEC-5,98000,10,54,activo
+E003,Andrés Molina Vidal,andres.molina@acme.example,H,Exchange y trading,Trader senior,senior,E002,40,4,,TEC-3,61000,8,40,activo
+E004,Paula Serrano Díaz,paula.serrano@acme.example,M,Exchange y trading,Trader,intermedio,E002,20,3,market-making,TEC-2,45000,6,20,activo
+E005,Hugo Romero Cano,hugo.romero@acme.example,H,Exchange y trading,Analista de riesgo de mercado,senior,E002,30,4,,TEC-3,58000,9,30,activo
+E006,Nerea Castillo León,nerea.castillo@acme.example,M,Exchange y trading,Analista de trading,junior,E002,9,3,gestion-riesgo-mercado,TEC-1,33000,9,9,activo
+E007,Elena Prieto Marín,elena.prieto@acme.example,M,Custodia,Responsable de custodia,lead,E001,50,5,,TEC-4,64500,22,50,activo
+E008,Marcos Fuentes Rey,marcos.fuentes@acme.example,H,Custodia,Ingeniero de custodia senior,senior,E007,34,4,,TEC-3,57000,14,34,activo
+E009,Javier Lozano Peña,javier.lozano@acme.example,H,Custodia,Operador de custodia,intermedio,E007,22,4,gestion-claves;conciliacion-onchain,TEC-2,46000,7,22,activo
+E010,Irene Campos Soto,irene.campos@acme.example,M,Custodia,Operadora de custodia,junior,E007,8,3,analisis-blockchain,TEC-1,32000,8,8,activo
+E011,Carmen Vega Herrera,carmen.vega@acme.example,M,Compliance AML/KYC,Directora de compliance (MLRO),head,E001,60,4,,GEN-5,84000,11,60,activo
+E012,Diego Ramos Iglesias,diego.ramos@acme.example,H,Compliance AML/KYC,Analista AML senior,senior,E011,36,4,normativa-pbc,GEN-3,49000,6,36,activo
+E013,Marta Gallego Cruz,marta.gallego@acme.example,M,Compliance AML/KYC,Analista AML,intermedio,E011,18,3,sql-analitica,GEN-2,36500,6,18,activo
+E014,Rubén Cabrera Ortiz,ruben.cabrera@acme.example,H,Compliance AML/KYC,Analista KYC senior,senior,E011,28,4,,GEN-3,47000,10,28,activo
+E015,Sara Méndez Rubio,sara.mendez@acme.example,M,Compliance AML/KYC,Analista KYC,intermedio,E011,14,3,,GEN-2,35000,14,14,activo
+E016,Álvaro Pascual Nieto,alvaro.pascual@acme.example,H,Compliance AML/KYC,Analista KYC,junior,E011,6,3,kyc-onboarding,GEN-1,27500,6,6,activo
+E017,Beatriz Lorenzo Santos,beatriz.lorenzo@acme.example,M,Legal y regulatorio,Directora legal y regulatoria,head,E001,44,4,,GEN-5,88000,9,44,activo
+E018,Tomás Herrero Blanco,tomas.herrero@acme.example,H,Legal y regulatorio,Abogado regulatorio senior,senior,E017,30,4,,GEN-4,63000,12,30,activo
+E019,Alba Medina Calvo,alba.medina@acme.example,M,Legal y regulatorio,Abogada,intermedio,E017,16,4,regulacion-mica,GEN-3,45000,4,16,activo
+E020,Daniel Vidal Ferrer,daniel.vidal@acme.example,H,Producto,Head of product,head,E001,38,4,,TEC-5,95000,10,38,activo
+E021,Cristina Moreno Arias,cristina.moreno@acme.example,M,Producto,Product manager,senior,E020,26,4,,TEC-3,59000,8,26,activo
+E022,Lucía Benítez Mora,lucia.benitez@acme.example,M,Producto,Analista de datos,intermedio,E020,30,5,,TEC-2,47000,5,4,activo
+E023,Mario Santana Gil,mario.santana@acme.example,H,Producto,Diseñador UX/UI,intermedio,E020,20,3,,TEC-2,44000,8,20,activo
+E024,Jorge Delgado Muñoz,jorge.delgado@acme.example,H,Ingeniería,CTO,head,E001,66,4,,TEC-5,110000,10,66,activo
+E025,Raquel Iglesias Torres,raquel.iglesias@acme.example,M,Ingeniería,Engineering manager,lead,E024,40,4,,TEC-4,76000,9,40,activo
+E026,Iván Sanz Domínguez,ivan.sanz@acme.example,H,Ingeniería,Ingeniero blockchain senior,senior,E025,34,5,,TEC-3,63000,11,34,activo
+E027,Rocío Marín Pardo,rocio.marin@acme.example,M,Ingeniería,Ingeniera blockchain,intermedio,E025,24,4,,TEC-2,48000,7,24,activo
+E028,Pablo Núñez Rojas,pablo.nunez@acme.example,H,Ingeniería,Ingeniero backend senior,senior,E025,42,4,,TEC-3,62000,8,42,activo
+E029,Silvia Crespo Vargas,silvia.crespo@acme.example,M,Ingeniería,Ingeniera frontend senior,senior,E025,31,4,,TEC-3,60000,9,31,activo
+E030,Adrián Rey Fuentes,adrian.rey@acme.example,H,Ingeniería,Ingeniero backend,intermedio,E025,15,3,desarrollo-backend,TEC-2,45000,15,15,activo
+E031,Óscar Garrido Luna,oscar.garrido@acme.example,H,Ingeniería,Ingeniero SRE senior,senior,E024,46,4,respuesta-incidentes,TEC-3,64000,10,46,activo
+E032,Natalia Soler Ibáñez,natalia.soler@acme.example,M,Ingeniería,Ingeniera DevOps,intermedio,E031,18,4,,TEC-2,47000,6,18,activo
+E033,Fernando Aguilar Cortés,fernando.aguilar@acme.example,H,Seguridad,CISO,head,E001,48,4,,TEC-5,100000,11,48,activo
+E034,Eva Ruiz Montero,eva.ruiz@acme.example,M,Seguridad,Analista SOC senior,senior,E033,28,4,,TEC-3,58000,7,28,activo
+E035,Gonzalo Peña Sáez,gonzalo.pena@acme.example,H,Seguridad,Analista de seguridad,intermedio,E033,12,3,seguridad-aplicaciones;respuesta-incidentes,TEC-2,44000,12,12,activo
+E036,Patricia Molina Herrera,patricia.molina@acme.example,M,Atención al cliente (CX),Responsable de CX,lead,E001,36,4,,GEN-4,60000,10,36,activo
+E037,Luis Cano Esteban,luis.cano@acme.example,H,Atención al cliente (CX),Agente de soporte nivel 2,senior,E036,30,4,,GEN-2,37000,9,30,activo
+E038,Ana Torres Vicente,ana.torres@acme.example,M,Atención al cliente (CX),Agente de soporte,intermedio,E036,18,3,atencion-cliente-tecnica,GEN-1,29000,8,18,activo
+E039,Carlos Díaz Pastor,carlos.diaz@acme.example,H,Atención al cliente (CX),Agente de soporte,junior,E036,7,3,,GEN-1,26000,7,7,activo
+E040,Lidia Ferrer Ramos,lidia.ferrer@acme.example,M,Atención al cliente (CX),Agente de soporte,junior,E036,5,4,,GEN-1,26500,5,5,activo
+E041,Ricardo Blanco Sanz,ricardo.blanco@acme.example,H,Finanzas,CFO,head,E001,58,4,,GEN-5,90000,11,58,activo
+E042,Inés Robles Gómez,ines.robles@acme.example,M,Finanzas,Responsable de contabilidad,senior,E041,40,4,,GEN-3,50000,13,40,activo
+E043,Víctor Salas Prieto,victor.salas@acme.example,H,Finanzas,Analista financiero,intermedio,E041,14,3,contabilidad-cripto,GEN-2,35500,14,14,activo
+E044,Clara Iborra Navas,clara.iborra@acme.example,M,Marketing,Responsable de marketing,lead,E001,32,3,,GEN-4,61000,16,32,activo
+E045,Héctor Vargas Lara,hector.vargas@acme.example,H,Marketing,Especialista en marketing digital,intermedio,E044,12,4,comunicacion-regulada,GEN-2,36000,12,12,activo
+E046,Noelia Santos Bravo,noelia.santos@acme.example,M,People,People partner,senior,E001,20,4,compensacion,GEN-3,46000,8,20,activo

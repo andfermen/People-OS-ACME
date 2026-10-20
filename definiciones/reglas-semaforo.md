@@ -32,7 +32,7 @@ Calcularlo por skill evita una trampa: en una función con dos skills a cobertur
 
 **Key person** = persona que es la **única cobertura** de una skill requerida en una función **crítica o importante**.
 
-- No se declara: sale del cálculo. Si la persona no es manager ni "senior" y el cálculo la marca, es una **key person oculta**.
+- No se declara: sale del cálculo. Es una **key person oculta** si su puesto es junior o intermedio, **o** si sostiene una función de **otra área**. Son los dos casos en los que nadie la marcaría a mano.
 - Una key person sigue siéndolo aunque la función esté en ámbar por tener un backup en desarrollo. Deja de serlo cuando el backup alcanza el nivel requerido y se valida.
 - En funciones de soporte no se marcan key people: la función sale en rojo, pero sin la alerta de persona.
 

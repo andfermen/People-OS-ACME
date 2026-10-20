@@ -4,7 +4,8 @@
   "description": "Motor de cálculo de cobertura (referencia y verificación de la demo)",
   "scripts": {
     "cobertura": "node calculo/cobertura.js",
-    "verificar": "node calculo/verificar-casos.js"
+    "verificar": "node calculo/verificar-casos.js",
+    "sheets": "node calculo/exportar-sheets.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

@@ -17,7 +17,7 @@ caso('Función en ámbar con backup en desarrollo: CMP-03 (Diego, plan PB-001)',
   fn(hoy, 'CMP-03').semaforo === 'ambar' && fn(hoy, 'CMP-03').skills[0].backups_en_desarrollo.includes('E012'));
 
 caso('Key person oculta: Lucía (analista de datos de Producto) sostiene el reporting AML de Compliance',
-  !!kp(hoy, 'E022') && kp(hoy, 'E022').area !== 'Compliance AML/KYC' && kp(hoy, 'E022').nivel_puesto === 'intermedio');
+  !!kp(hoy, 'E022') && kp(hoy, 'E022').oculta && kp(hoy, 'E022').area !== 'Compliance AML/KYC');
 
 const e = sen(hoy, 'E007');
 caso('Caso de retención: key person en rojo con compa-ratio < 0,9 y > 18 meses sin revisión (Elena)',

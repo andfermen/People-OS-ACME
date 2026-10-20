@@ -1,0 +1,12 @@
+banda_id,familia,nivel,minimo,medio,maximo
+TEC-1,Técnica,junior,28000,34000,40000
+TEC-2,Técnica,intermedio,38000,46000,54000
+TEC-3,Técnica,senior,50000,60000,70000
+TEC-4,Técnica,lead,62000,75000,88000
+TEC-5,Técnica,head,80000,97000,115000
+GEN-1,General,junior,24000,28000,33000
+GEN-2,General,intermedio,30000,36000,42000
+GEN-3,General,senior,40000,48000,56000
+GEN-4,General,lead,52000,62000,72000
+GEN-5,General,head,70000,85000,100000
+DIR-1,Dirección,CEO,120000,150000,180000

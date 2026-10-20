@@ -66,7 +66,9 @@ Principios de diseño (argumentos para el CEO):
 │   └── areas.yaml                # Área → división (agregación de encuestas)
 ├── calculo/
 │   ├── cobertura.js              # Motor de referencia: semáforo, key people, candidatos, señales, escenarios
-│   └── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
+│   ├── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
+│   └── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
+├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
 │   ├── proponer-acciones.md      # Rojo/ámbar → formar, mover, contratar
