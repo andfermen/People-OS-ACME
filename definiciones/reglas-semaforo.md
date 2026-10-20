@@ -58,4 +58,4 @@ Para cada skill en rojo o ámbar, son candidatos las personas activas con `nivel
 
 ## 6. Comparación con la foto anterior
 
-En cada recálculo se guarda una foto en `historico-semaforo` (fecha, función, semáforo, cobertura). Una función **empeora** si su semáforo baja (verde → ámbar → rojo) o si baja su cobertura con el mismo color. Solo las funciones que empeoran generan una alerta.
+En cada recálculo se guarda una foto en `historico-semaforo` (fecha, función, semáforo, cobertura). Una función **empeora** si su semáforo baja (verde → ámbar → rojo) o si, estando en ámbar o rojo, baja su cobertura (rojo con 1 → rojo con 0). Si sigue en verde aunque pierda cobertura, no cuenta como empeora. Solo las funciones que empeoran generan una alerta.

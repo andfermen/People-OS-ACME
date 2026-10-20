@@ -1,0 +1,46 @@
+// Comprueba que los datos ficticios producen los casos obligatorios de la demo (CLAUDE.md §6).
+// Ejecutar antes de cada ensayo: npm run verificar
+const { cargar, calcular, simularBaja, simularBackup, comparar } = require('./cobertura');
+
+const base = cargar();
+const hoy = calcular(base);
+const fn = (r, id) => r.funciones.find(f => f.id === id);
+const kp = (r, id) => r.key_people.find(k => k.id === id);
+const sen = (r, id) => r.senales_rotacion.find(s => s.id === id);
+let fallos = 0;
+function caso(nombre, ok) { console.log(`${ok ? '✅' : '❌'} ${nombre}`); if (!ok) fallos++; }
+
+caso('Función crítica en rojo con key person evidente: CUS-02, Elena (responsable de custodia)',
+  fn(hoy, 'CUS-02').semaforo === 'rojo' && fn(hoy, 'CUS-02').criticidad === 'critica' && !!kp(hoy, 'E007'));
+
+caso('Función en ámbar con backup en desarrollo: CMP-03 (Diego, plan PB-001)',
+  fn(hoy, 'CMP-03').semaforo === 'ambar' && fn(hoy, 'CMP-03').skills[0].backups_en_desarrollo.includes('E012'));
+
+caso('Key person oculta: Lucía (analista de datos de Producto) sostiene el reporting AML de Compliance',
+  !!kp(hoy, 'E022') && kp(hoy, 'E022').area !== 'Compliance AML/KYC' && kp(hoy, 'E022').nivel_puesto === 'intermedio');
+
+const e = sen(hoy, 'E007');
+caso('Caso de retención: key person en rojo con compa-ratio < 0,9 y > 18 meses sin revisión (Elena)',
+  e.compa_ratio < 0.9 && e.senales.some(s => s.startsWith('S2')) && e.probabilidad === 'alta');
+
+const cand = fn(hoy, 'CUS-02').skills[0].candidatos;
+caso('Candidata a upskilling a un nivel con interés: Javier para conciliación on-chain',
+  cand[0].id === 'E009' && cand[0].con_interes);
+
+const baja = calcular(simularBaja(base, 'E007'));
+const cambios = comparar(hoy, baja);
+caso('Escenario baja de Elena: CUS-01 pasa de verde a rojo y aparece Marcos como key person',
+  fn(baja, 'CUS-01').semaforo === 'rojo' && !!kp(baja, 'E008') && cambios.some(c => c.id === 'CUS-01' && c.cambio === 'empeora'));
+
+caso('Escenario baja: en CUS-01 el primer candidato es Javier (con interés)',
+  fn(baja, 'CUS-01').skills[0].candidatos[0].id === 'E009');
+
+const ciclo = calcular(simularBackup(simularBaja(base, 'E007'), 'E009', 'gestion-claves', 'CUS-01'));
+caso('Cierre del ciclo: aprobar el backup de Javier pasa CUS-01 de rojo a ámbar',
+  fn(ciclo, 'CUS-01').semaforo === 'ambar');
+
+caso('Sin falsas alertas: tras la baja, ninguna función que sigue en verde aparece como "empeora"',
+  cambios.every(c => c.a !== 'verde'));
+
+console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nTodos los casos de la demo se cumplen');
+process.exit(fallos ? 1 : 0);
