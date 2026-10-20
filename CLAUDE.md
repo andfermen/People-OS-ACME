@@ -167,8 +167,8 @@ Decidir **miércoles a mediodía** con una prueba de 1 hora:
 
 ## 10. Plan
 
-- [ ] **Mar** · Repo + este archivo. Cuenta Google nueva para la demo.
-- [ ] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
+- [ ] **Mar** · ~~Repo + este archivo~~ ✓. Cuenta Google nueva para la demo (pendiente Andrea).
+- [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
 - [ ] **Mié mediodía** · Test n8n vs Make → `decisiones.md`.
 - [ ] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador. Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
