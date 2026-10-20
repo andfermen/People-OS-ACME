@@ -7,7 +7,9 @@
 - Una **API key de Claude** (console.anthropic.com → API Keys).
 - El Sheet ya montado (`salidas/sheets/LEEME.md`), con una hoja vacía más llamada `captura-pendiente` cuya fila 1 sea:
   `empleado_id,skill_id,nivel_declarado,nivel_validado,validado_por,fecha,evidencia,confianza,pregunta_para_manager,intereses`
-- El repo tiene que ser **público** en GitHub: el flujo lee la taxonomía y el prompt desde ahí.
+- El flujo lee la taxonomía y el prompt desde GitHub. **Ahora el repo es privado**, así que elige una opción:
+  - **A (recomendada, todos los datos son ficticios):** GitHub → *Settings → General → Change visibility → Public*.
+  - **B:** dejarlo privado. Crea un token en GitHub (*Settings → Developer settings → Fine-grained tokens*, solo lectura de *Contents* de este repo) y, en los dos nodos *Leer …*, añade una credencial **Header Auth** con Name `Authorization` y Value `Bearer <token>`.
 
 ## Pasos
 1. En n8n: **Workflows → ⋯ → Import from file** → `flujos/n8n/test-captura-skills.json`.
