@@ -1,6 +1,6 @@
 # Guion de la demo (borrador, 20-25 min)
 
-> Antes de empezar: `npm run verificar` → los 9 casos en ✅. Ten abiertos el Sheet (hoja `cobertura`), el orquestador, el buzón de dirección y este guion.
+> Antes de empezar: `npm run verificar` → todos los casos en ✅. Ten abiertos el Sheet (hoja `cobertura`), el orquestador, el buzón de dirección y este guion.
 > **Plan B:** si algo falla en directo, enseña las capturas y el vídeo grabado el jueves, o ejecuta `npm run cobertura -- --baja E007` en la terminal.
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
@@ -39,6 +39,7 @@
 1. En `alertas`: la fila "Plan de backup: Javier Lozano en gestión de claves" → `decision = aprobada`.
 2. Se crea una fila en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡.**
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
+4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email de cierre a dirección. *"Completar un curso no es tener la skill: la valida una persona."*
 
 ## 7 · Usos
 

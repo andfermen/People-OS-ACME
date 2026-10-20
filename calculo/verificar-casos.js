@@ -39,6 +39,12 @@ const ciclo = calcular(simularBackup(simularBaja(base, 'E007'), 'E009', 'gestion
 caso('Cierre del ciclo: aprobar el backup de Javier pasa CUS-01 de rojo a ámbar',
   fn(ciclo, 'CUS-01').semaforo === 'ambar');
 
+// Opcional: Javier completa FOR-01 y su manager valida nivel 3 en gestión de claves
+const conSkill = { ...simularBaja(base, 'E007'), skills: base.skills.map(s => (s.empleado_id === 'E009' && s.skill_id === 'gestion-claves' ? { ...s, nivel_validado: '3', validado_por: 'E008' } : s)) };
+const verde = calcular(conSkill);
+caso('Opcional nueva skill: Javier validado en nivel 3 pasa CUS-01 de ámbar a verde',
+  fn(verde, 'CUS-01').semaforo === 'verde' && comparar(ciclo, verde).some(c => c.id === 'CUS-01' && c.cambio === 'mejora'));
+
 caso('Sin falsas alertas: tras la baja, ninguna función que sigue en verde aparece como "empeora"',
   cambios.every(c => c.a !== 'verde'));
 

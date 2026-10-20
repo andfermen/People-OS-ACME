@@ -107,6 +107,15 @@ Segundo disparador: el mismo flujo, programado mensualmente, genera el **informe
 
 Hojas necesarias en el Sheet: `empleados`, `skills-empleados`, `funciones`, `cobertura` (calculada), `historico-semaforo`, `alertas` (con columna `decision`: pendiente/aprobada/descartada), `catalogo-formacion`.
 
+### Opcional (si sobra tiempo) · Nueva skill adquirida
+Cierra la historia de la demo: rojo → ámbar → **verde**. Misma lógica del flujo principal, otro disparador.
+1. El backup en desarrollo completa la formación (cambio en hoja `formacion` o texto libre del empleado).
+2. El sistema **propone** el nuevo nivel (si es texto libre: `prompts/normalizar-skills.md`). Nunca sube el nivel automáticamente: completar un curso no equivale a tener la skill.
+3. El manager valida en `skills-empleados` (`nivel_validado`, `validado_por`).
+4. Vuelve al paso 2 del flujo principal → la función pasa a verde → email de cierre a dirección.
+
+Dato de demo necesario: la persona elegida como backup de custodia con nivel requerido −1, interés declarado y una formación del catálogo asociada. **En los datos:** Javier Lozano (E009), `gestion-claves` nivel 2 (requerido 3), interés declarado, formación `FOR-01` (mentoring, 12 semanas).
+
 ### Captura (explicada, no construida)
 Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre qué hace → Claude normaliza contra `taxonomia-skills.yaml` (skill, nivel propuesto, evidencia) → el manager valida. El prompt `prompts/normalizar-skills.md` queda en el repo con 2-3 ejemplos de entrada/salida. Ejemplo en directo solo si sobra tiempo el jueves.
 
@@ -182,7 +191,7 @@ Decidir **miércoles a mediodía** con una prueba de 1 hora:
 3. Arquitectura y principios (4 min).
 4. El mapa: semáforo, key people ocultas, de dónde salen los datos (captura explicada) (4 min).
 5. Demo "se va la responsable de custodia": recálculo → rojo → email con propuesta (4 min).
-6. Cierre del ciclo: aprobar plan de backup → custodia pasa a ámbar (2 min).
+6. Cierre del ciclo: aprobar plan de backup → custodia pasa a ámbar (2 min). Opcional: "tres meses después", el backup completa la formación, el manager valida → verde.
 7. Usos: rotación, encuestas, revisión salarial (4 min).
 8. Escalado al resto del departamento, límites y decisiones (3 min).
 
