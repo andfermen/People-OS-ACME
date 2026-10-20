@@ -62,7 +62,11 @@ Principios de diseño (argumentos para el CEO):
 │   ├── funciones.yaml            # Funciones por área, criticidad, skills requeridas, cobertura objetivo
 │   ├── reglas-semaforo.md        # Cálculo de cobertura, semáforo y key people
 │   ├── reglas-senales-rotacion.md
-│   └── catalogo-formacion.yaml
+│   ├── catalogo-formacion.yaml
+│   └── areas.yaml                # Área → división (agregación de encuestas)
+├── calculo/
+│   ├── cobertura.js              # Motor de referencia: semáforo, key people, candidatos, señales, escenarios
+│   └── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
 │   ├── proponer-acciones.md      # Rojo/ámbar → formar, mover, contratar
@@ -71,6 +75,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── empleados.csv
 │   ├── skills-empleados.csv
 │   ├── bandas-salariales.csv
+│   ├── planes-backup.csv         # Backups en desarrollo (lo escribe la aprobación del paso 8)
 │   └── encuesta-clima-agregada.csv
 └── flujos/
     ├── make/
@@ -127,7 +132,8 @@ Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre 
 - **Prioridad** = semáforo × criticidad. Rojo en función crítica = prioridad 1.
 
 ### Datos necesarios
-- `empleados.csv`: `id, nombre, email, area, rol, nivel_puesto, manager_id, antiguedad_meses, ultima_evaluacion (1-5), skills_interes, banda_id, salario_ficticio, meses_desde_ultima_revision, estado (activo/baja)`
+- `empleados.csv`: `id, nombre, email, area, rol, nivel_puesto, manager_id, antiguedad_meses, ultima_evaluacion (1-5), skills_interes, banda_id, salario_ficticio, meses_desde_ultima_revision, estado (activo/baja)` + `genero`, `meses_con_manager_actual` (D-06)
+- `planes-backup.csv`: `plan_id, empleado_id, skill_id, nivel_objetivo, funcion_id, formacion_id, fecha_inicio, fecha_objetivo, estado, origen` (D-07)
 - `skills-empleados.csv`: `empleado_id, skill_id, nivel_declarado, nivel_validado, validado_por, fecha`
 - `bandas-salariales.csv`: `banda_id, minimo, medio, maximo` (compa-ratio = salario / medio)
 - `encuesta-clima-agregada.csv`: resultados ya agregados por segmento, con `n` (nunca respuestas individuales)
