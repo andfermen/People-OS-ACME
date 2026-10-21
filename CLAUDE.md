@@ -34,8 +34,8 @@ Reglas de trabajo:
 |---|---|---|
 | Definiciones | Taxonomía de skills, funciones y criticidad, reglas del semáforo, prompts | Este repo (`/definiciones`, `/prompts`) |
 | Datos | Empleados, skills por persona, encuesta (agregada), bandas salariales | Google Sheets (fuente: CSV en `/datos`) |
-| Cálculo | Cobertura, semáforo, key people: **determinista** | Fórmulas en Sheets o nodo de código del orquestador (decidir mié) |
-| Ejecución | Flujos de captura, recálculo y avisos | Make **o** n8n (ver §9) |
+| Cálculo | Cobertura, semáforo, key people: **determinista** | Nodo de código de n8n con la lógica de `calculo/cobertura.js` (D-04) |
+| Ejecución | Flujos de captura, recálculo y avisos | n8n (ver §9) |
 | Inteligencia | Normalizar skills desde texto libre, proponer acciones, redactar informes | API de Claude |
 | Visualización | Mapa de calor y vistas de uso | Sheet con formato condicional → dashboard si hay tiempo |
 
@@ -188,9 +188,9 @@ Documentados en `docs/usos-mapa-cobertura.md`: riesgo de rotación no deseada en
 
 Solo si el proceso central está cerrado el jueves a mediodía. Versión mínima: alta → plan por rol + email día 0. Conexión con el mapa: la persona nueva entra en el Flujo A desde el día 1. El asistente Q&A sobre Oráculo (Telegram) queda como extensión.
 
-## 9. Decisión pendiente: Make o n8n
+## 9. Orquestador: n8n (decidido, D-04)
 
-Decidir **miércoles a mediodía** con una prueba de 1 hora:
+La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a la primera. Contexto de la decisión:
 - **n8n** (cloud, prueba gratuita): encaja con el enunciado; los workflows son JSON que Claude Code genera y versiona en el repo; tiene nodo de código para el cálculo del semáforo. Riesgo: herramienta nueva en directo.
 - **Make** (plan de pago): Andrea lo domina; menos riesgo. El cálculo iría en fórmulas de Sheets.
 - **Test:** Claude Code genera un workflow n8n mínimo (formulario → Claude normaliza skills → Sheet). Si funciona en ~1 h → n8n. Si no → Make.
@@ -200,7 +200,7 @@ Decidir **miércoles a mediodía** con una prueba de 1 hora:
 - [x] **Mar** · Repo + este archivo. Cuenta Google para la demo.
 - [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
 - [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la referencia a Bit2Me (D-13, D-14).
-- [ ] **Mié mediodía** · Test n8n vs Make → `decisiones.md`.
+- [x] **Mié mediodía** · Test n8n vs Make → **n8n** (D-04).
 - [ ] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador. Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
 - [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. `plan-ai-first-people.md`. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.

@@ -22,11 +22,12 @@ Formato: qué se decide, alternativas consideradas y por qué.
 - **Alternativas:** formulario y flujo de captura completos.
 - **Por qué:** responde a "¿de dónde salen los datos?" sin restar tiempo al flujo central. Si sobra tiempo el jueves, se enseña un ejemplo en directo.
 
-## D-04 · Make o n8n: pendiente
+## D-04 · Orquestador: n8n
 
-- **Qué:** el orquestador se elige el miércoles a mediodía, tras una prueba de 1 hora (formulario → Claude normaliza → Sheet).
+- **Qué:** el orquestador es **n8n** (cloud). Se decidió con una prueba real el miércoles: el workflow `flujos/n8n/test-captura-skills.json` (formulario → Claude normaliza contra la taxonomía del repo → filas en `captura-pendiente`) funcionó a la primera con el ejemplo de E009. El cálculo irá en un nodo de código con la lógica de `calculo/cobertura.js`.
 - **Alternativas:** n8n (encaja con el enunciado, los workflows son JSON versionable y tiene nodo de código; es una herramienta nueva) o Make (Andrea lo domina, menos riesgo; el cálculo iría en fórmulas de Sheets).
-- **Por qué:** se decide con una prueba real y no con una opinión. Si n8n funciona en ~1 h, n8n. Si no, Make.
+- **Por qué:** se decidió con una prueba y no con una opinión. n8n encaja con el enunciado, los workflows se versionan en el repo y el cálculo es el mismo código que ya está verificado (`npm run verificar`), no una segunda implementación en fórmulas. Riesgo asumido: herramienta nueva en directo; plan B, la demo local (D-12).
+- **Dato de la prueba:** Claude propuso niveles más prudentes que el ejemplo del prompt (operativa de wallets 2, gestión de claves 1) y en ambos casos dejó una pregunta para el manager. Refuerza el diseño: la IA propone, el manager valida.
 
 ## D-05 · Empresa ficticia "Acme"
 
@@ -62,7 +63,7 @@ Formato: qué se decide, alternativas consideradas y por qué.
 
 - **Qué:** `calculo/cobertura.js` implementa las reglas tal y como están escritas. `npm run verificar` comprueba que los datos producen los casos de la demo.
 - **Alternativas:** construir el cálculo directamente en Sheets o en el orquestador, sin referencia.
-- **Por qué:** permite comprobar los datos y las reglas antes de construir el flujo y detectar errores antes del ensayo. Con n8n, el mismo código va en el nodo de código. Con Make, sirve para comprobar que las fórmulas de Sheets dan el mismo resultado. La decisión de D-04 sigue abierta.
+- **Por qué:** permite comprobar los datos y las reglas antes de construir el flujo y detectar errores antes del ensayo. Con n8n, el mismo código va en el nodo de código. Con Make, sirve para comprobar que las fórmulas de Sheets dan el mismo resultado. Con D-04 cerrada (n8n), el mismo código va al nodo de código.
 
 ## D-11 · "Formación completada" sin hoja nueva
 

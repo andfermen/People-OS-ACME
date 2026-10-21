@@ -10,8 +10,8 @@
 |---|---|---|---|
 | Definiciones | Taxonomía, funciones y criticidad, reglas, catálogo, prompts | Repo: `definiciones/`, `prompts/` | People |
 | Datos | Empleados, skills, bandas, planes de backup, encuesta agregada | Google Sheets (origen: `datos/`) | People y managers |
-| Cálculo | Cobertura, semáforo, key people, candidatos, señales | `calculo/cobertura.js` (referencia) → nodo de código o fórmulas de Sheets (D-04) | Nadie a mano: es **determinista** |
-| Ejecución | Disparadores, recálculo, alertas, emails | n8n o Make (D-04) | — |
+| Cálculo | Cobertura, semáforo, key people, candidatos, señales | `calculo/cobertura.js` (referencia) → nodo de código de n8n (D-04) | Nadie a mano: es **determinista** |
+| Ejecución | Disparadores, recálculo, alertas, emails | n8n (D-04) | — |
 | Inteligencia | Normalizar skills, proponer acciones, informe | API de Claude | — |
 | Visualización | Mapa de calor, key people, vistas de uso | Hoja `cobertura` con formato condicional | — |
 
