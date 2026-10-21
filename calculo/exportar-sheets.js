@@ -61,4 +61,4 @@ escribir('senales-rotacion-PEOPLE', ['empleado_id', 'nombre', 'compa_ratio', 'pr
 escribir('historico-semaforo', ['fecha', 'funcion_id', 'semaforo', 'cobertura', 'prioridad'],
   r.funciones.map(f => [fecha, f.id, f.semaforo, f.cobertura, f.prioridad]));
 
-escribir('alertas', ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision'], []);
+escribir('alertas', ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision', 'grupo'], []);

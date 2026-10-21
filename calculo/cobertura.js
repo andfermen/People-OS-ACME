@@ -100,7 +100,8 @@ function calcular(datos) {
       .filter(id => nivelDe(id, s.skill) === s.nivel_minimo - 1 && !s.backups_en_desarrollo.includes(id))
       .map(id => ({ id, nombre: activos.get(id).nombre, area: activos.get(id).area, con_interes: interes(id).includes(s.skill), es_key_person: keyPeople.has(id) }))
       .sort((a, b) => b.con_interes - a.con_interes || a.es_key_person - b.es_key_person);
-    s.formacion = catalogo.filter(c => c.skill === s.skill && c.a === s.nivel_minimo).map(c => c.id);
+    // Un mentoring interno necesita a alguien que ya cubra la skill: con cobertura 0 no se propone
+    s.formacion = catalogo.filter(c => c.skill === s.skill && c.a === s.nivel_minimo && !(c.tipo === 'mentoring-interno' && s.cobertura === 0)).map(c => c.id);
   }
 
   // 4. Señales de rotación (solo key people y personas que cubren funciones en rojo/ámbar)
@@ -173,6 +174,51 @@ function simularBackup(datos, empleado, skill, funcion) {
   return { ...datos, planes: [...datos.planes, plan] };
 }
 
+// ---------- Vacante y movilidad interna (reglas-semaforo.md §9) ----------
+// Perfil del puesto que deja una persona: las skills que cubría en alguna función, con el nivel mínimo más alto
+// que le pedían, y liderazgo si tenía equipo. Candidatos internos: quien cumple al menos la mitad del perfil.
+const NIVEL_LIDERAZGO_VACANTE = 2;
+function vacante(datos, id, despues = calcular(simularBaja(datos, id))) {
+  const sale = datos.empleados.find(e => e.id === id);
+  const nivel = new Map(datos.skills.filter(s => s.nivel_validado).map(s => [`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado]));
+  const niv = (e, skill) => nivel.get(`${e}|${skill}`) || 0;
+  const req = new Map();
+  for (const f of datos.funciones.funciones) for (const s of f.skills_requeridas)
+    if (niv(id, s.skill) >= s.nivel && (!req.has(s.skill) || s.nivel > req.get(s.skill).nivel)) req.set(s.skill, { skill: s.skill, nivel: s.nivel, funcion: f.id });
+  const equipo = datos.empleados.filter(e => e.manager_id === id && e.estado === 'activo').map(e => e.id);
+  if (equipo.length) req.set('liderazgo', { skill: 'liderazgo', nivel: NIVEL_LIDERAZGO_VACANTE, funcion: '' });
+  const perfil = [...req.values()];
+
+  const cobertura = skill => datos.empleados.filter(e => e.estado === 'activo' && e.id !== id && niv(e.id, skill) >= (req.get(skill)?.nivel || 1)).length;
+  const keyPeople = new Map(despues.key_people.map(k => [k.id, k.funciones.map(f => f.funcion)]));
+  const candidatos = datos.empleados.filter(e => e.estado === 'activo' && e.id !== id).map(e => {
+    const brechas = perfil.filter(p => niv(e.id, p.skill) < p.nivel).map(p => ({
+      skill: p.skill, tiene: niv(e.id, p.skill), necesita: p.nivel, funcion: p.funcion,
+      formacion: datos.catalogo.filter(c => c.skill === p.skill && c.de === niv(e.id, p.skill) && c.a === p.nivel
+        && !(c.tipo === 'mentoring-interno' && cobertura(p.skill) === 0)).map(c => c.id),
+    }));
+    return { id: e.id, nombre: e.nombre, rol: e.rol, area: e.area, cumple: perfil.length - brechas.length, de: perfil.length, brechas, key_person_en: keyPeople.get(e.id) || [] };
+  }).filter(c => c.cumple >= Math.ceil(c.de / 2))
+    .sort((a, b) => b.cumple - a.cumple || a.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0) - b.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0))
+    .slice(0, 3);
+  return { id, nombre: sale.nombre, rol: sale.rol, area: sale.area, equipo: equipo.length, perfil, candidatos };
+}
+
+// Aprobar la opción interna: el candidato asume el puesto (rol, nivel, manager), el equipo pasa a depender de él
+// y se abre un plan por cada brecha de un nivel que tenga formación en el catálogo. Devuelve filas nuevas, no escribe nada.
+function aplicarMovilidad(empleados, vac, candidatoId, fecha, origen) {
+  const sale = empleados.find(e => e.id === vac.id);
+  const nuevos = empleados.map(e =>
+    e.id === candidatoId ? { ...e, rol: sale.rol, nivel_puesto: sale.nivel_puesto, manager_id: sale.manager_id, meses_con_manager_actual: '0' }
+      : e.manager_id === vac.id && e.estado === 'activo' ? { ...e, manager_id: candidatoId, meses_con_manager_actual: '0' } : e);
+  const c = vac.candidatos.find(x => x.id === candidatoId);
+  const planes = c.brechas.filter(b => b.necesita - b.tiene === 1 && b.formacion.length).map(b => ({
+    empleado_id: candidatoId, skill_id: b.skill, nivel_objetivo: b.necesita, funcion_id: b.funcion, formacion_id: b.formacion[0],
+    fecha_inicio: fecha, fecha_objetivo: '', estado: 'activo', origen,
+  }));
+  return { empleados: nuevos, planes };
+}
+
 // Compara con una foto anterior: funciones que empeoran o mejoran
 function comparar(antes, despues) {
   const previo = new Map(antes.funciones.map(f => [f.id, f]));
@@ -186,7 +232,7 @@ function comparar(antes, despues) {
   });
 }
 
-module.exports = { cargar, calcular, simularBaja, simularBackup, comparar, prioridad, madurezIa };
+module.exports = { cargar, calcular, simularBaja, simularBackup, comparar, prioridad, madurezIa, vacante, aplicarMovilidad };
 
 // ---------- CLI ----------
 if (require.main === module) {

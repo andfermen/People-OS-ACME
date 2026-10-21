@@ -1,1 +1,1 @@
-alerta_id,fecha,evento,funcion_id,prioridad,cambio,tipo_accion,accion,empleado_id,skill_id,formacion_id,por_que,riesgo_si_no,decision,decidido_por,fecha_decision
+alerta_id,fecha,evento,funcion_id,prioridad,cambio,tipo_accion,accion,empleado_id,skill_id,formacion_id,por_que,riesgo_si_no,decision,decidido_por,fecha_decision,grupo

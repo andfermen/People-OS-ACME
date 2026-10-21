@@ -1,7 +1,7 @@
 # Guion de la demo (borrador, 20-25 min)
 
 > Antes de empezar: `npm run verificar` → todos los casos en ✅. Ten abiertos el Sheet (hoja `cobertura`), el orquestador, el buzón de dirección y este guion.
-> **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-001` → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
+> **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-002` (opción B) → `npm run demo -- aprobar ALR-003` (backup de Javier) → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
 |---|---|---|---|---|
@@ -32,13 +32,16 @@
    - **CUS-01** *Gestión de claves*: 🟢 → 🔴 (cobertura 2 → 1). Marcos Fuentes pasa a ser **key person**.
    - **CUS-02** *Prueba de reservas*: 🔴 → 🔴 (cobertura 1 → 0).
    - CUS-03 baja de 8 a 7 pero sigue en verde: **no genera alerta**.
-3. Email a dirección con la propuesta: backup de Javier Lozano (★ con interés), conversación de permanencia con Marcos y vacante para la prueba de reservas.
-4. Remarcar: el email a dirección **no incluye** señales individuales. Esas están solo en la hoja de People.
+3. Email a dirección. Primero, **la decisión de cubrir el puesto**, con dos opciones:
+   - **A · Buscar fuera:** perfil calculado (gestión de claves 3, conciliación on-chain 3, liderazgo…), 2-3 meses.
+   - **B · Mover a Marcos Fuentes:** cumple 3 de 5. Le falta conciliación on-chain (curso FOR-04; el mentoring ya no es posible porque lo daba Elena) y liderazgo. **Coste organizativo:** ya es la única persona que firma claves; asumir el puesto concentra todo el riesgo en él. *"El sistema no elige: pone el coste de cada opción encima de la mesa."*
+   - Además: backup de Javier Lozano (★ con interés) y conversación de permanencia con Marcos.
+4. Remarcar: el email a dirección **no incluye** señales individuales ni salarios. En la nota de People: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda del puesto sería 0,76.
 
 ## 6 · Cierre del ciclo
 
-1. En `alertas`: la fila "Plan de backup: Javier Lozano en gestión de claves" → `decision = aprobada`.
-2. Se crea una fila en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡.**
+1. En `alertas`: la **opción B** (mover a Marcos) → `decision = aprobada`. La opción A pasa sola a `descartada`. Marcos pasa a responsable de custodia, el equipo depende de él y se abre su plan de conciliación on-chain. El mapa no cambia de color: *"Promover a alguien no crea skills nuevas."*
+2. La fila "Plan de backup: Javier Lozano en gestión de claves" → `decision = aprobada` → se crea una fila en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡.**
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
 4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email de cierre a dirección. *"Completar un curso no es tener la skill: la valida una persona."*
 

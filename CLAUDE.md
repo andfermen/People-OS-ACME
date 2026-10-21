@@ -103,10 +103,10 @@ Referencia de inspiración: la herramienta Opportunity de BBVA (vista del emplea
 | 1 | Cambio en la plantilla: baja, cambio de rol o plan de backup aprobado | Disparo |
 | 2 | Recalcula cobertura, semáforo y key people | Regla |
 | 3 | Compara con la foto anterior (`historico-semaforo`) y detecta funciones que empeoran o mejoran | Regla |
-| 4 | Por cada función que empeora: candidatos a backup (nivel requerido −1, con interés), formación del catálogo, señales de rotación de las key people restantes | Regla |
+| 4 | Por cada función que empeora: candidatos a backup (nivel requerido −1, con interés), formación del catálogo, señales de rotación de las key people restantes. Si es una baja: perfil del puesto y candidatos internos con brechas y coste organizativo (D-15) | Regla |
 | 5 | Propuesta priorizada: qué hacer, con quién, por qué y riesgo de no hacerlo (`prompts/proponer-acciones.md`) | IA |
 | 6 | Email a dirección + fila en hoja `alertas` + mapa actualizado | Orquestador |
-| 7 | People aprueba una acción (ej. plan de backup) en la hoja `alertas` | Humano |
+| 7 | People aprueba una acción en la hoja `alertas` (ej. opción A buscar fuera o B mover a Marcos; plan de backup de Javier) | Humano |
 | 8 | La aprobación marca `backup_en_desarrollo` → vuelve al paso 1 → la función pasa de rojo a ámbar | Ciclo |
 
 Segundo disparador: el mismo flujo, programado mensualmente, genera el **informe de riesgo para dirección** (`prompts/informe-direccion.md`).

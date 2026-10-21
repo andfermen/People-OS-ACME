@@ -4,7 +4,7 @@
 //   npm run demo -- reset                              -> estado inicial + primera foto del histórico
 //   npm run demo -- mapa                               -> mapa actual
 //   npm run demo -- baja E007                          -> pasos 1-6: recálculo, comparación, propuesta, alertas, email
-//   npm run demo -- aprobar ALR-001                    -> pasos 7-8: aprobación → plan de backup → recálculo
+//   npm run demo -- aprobar ALR-002                    -> pasos 7-8: aprobación (opción de vacante, backup…) → recálculo
 //   npm run demo -- validar E009 gestion-claves 3 E008 -> opcional: el manager valida el nuevo nivel → recálculo
 //
 // Con la variable ANTHROPIC_API_KEY, la propuesta la redacta Claude (prompts/proponer-acciones.md).
@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { cargar, calcular, comparar } = require('./cobertura');
+const { cargar, calcular, comparar, vacante, aplicarMovilidad } = require('./cobertura');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -36,7 +36,8 @@ function escribir(n, cols, filas) { fs.writeFileSync(f(n), [cols.join(','), ...f
 function anadir(n, filas) { const t = leer(n); escribir(n, t.cols, [...t.filas, ...filas]); }
 
 // ---------- Estado ----------
-const COLS_ALERTAS = ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision'];
+const COLS_ALERTAS = ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision', 'grupo'];
+// grupo: opciones excluyentes de una misma decisión (p. ej. VAC-E007: buscar fuera o mover a alguien). Aprobar una descarta las demás.
 const COLS_HIST = ['fecha', 'evento', 'funcion_id', 'semaforo', 'cobertura', 'prioridad'];
 const estado = () => cargar(RAIZ, EST);
 
@@ -86,7 +87,7 @@ function recalcular(evento) {
 }
 
 // ---------- Propuesta (pasos 4-5) ----------
-function contexto(r, cambios, evento) {
+function contexto(r, cambios, evento, vac = null) {
   const ids = cambios.filter(c => c.cambio === 'empeora').map(c => c.id);
   const afectadas = r.funciones.filter(x => ids.includes(x.id));
   const implicadas = new Set(afectadas.flatMap(x => x.skills.filter(s => s.semaforo !== 'verde').flatMap(s => s.personas)));
@@ -94,15 +95,41 @@ function contexto(r, cambios, evento) {
   const datos = estado();
   // Si alguna función se rediseña con IA, la recualificación sale de las formaciones de IA del catálogo
   if (afectadas.some(x => x.respuesta === 'redisenar')) datos.catalogo.filter(c => c.skill.startsWith('ia-')).forEach(c => formaciones.add(c.id));
+  if (vac) {
+    vac.candidatos.forEach(c => { implicadas.add(c.id); c.brechas.forEach(b => b.formacion.forEach(x => formaciones.add(x))); });
+    // Solo People: compa-ratio del candidato frente a la banda del puesto que asumiría
+    const banda = datos.bandas.find(b => b.banda_id === datos.empleados.find(e => e.id === vac.id).banda_id);
+    vac.candidatos.forEach(c => { c.compa_en_puesto = +(datos.empleados.find(e => e.id === c.id).salario_ficticio / banda.medio).toFixed(2); c.banda_puesto = banda.banda_id; });
+  }
   return {
-    evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people,
+    evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people, vacante: vac,
     senales: r.senales_rotacion.filter(s => implicadas.has(s.id)),
     catalogo: datos.catalogo.filter(c => formaciones.has(c.id)),
   };
 }
 
+// Decisión de cubrir el puesto: dos opciones excluyentes con el mismo grupo (A fuera, B el mejor candidato interno)
+function opcionesVacante(ctx) {
+  const v = ctx.vacante;
+  if (!v) return [];
+  const grupo = `VAC-${v.id}`;
+  const prioridad = ctx.funciones_afectadas.map(x => x.prioridad).sort()[0] || 'P1';
+  const ops = [{ prioridad, funcion_id: '', tipo: 'contratar', grupo, accion: `Opción A · Buscar fuera: ${v.rol} (${v.perfil.map(p => `${p.skill} ${p.nivel}`).join(', ')})`, empleado_id: '', skill_id: '', formacion_id: '',
+    por_que: v.candidatos.length ? 'Nadie dentro cumple el perfil completo.' : 'Ningún candidato interno cumple la mitad del perfil.',
+    riesgo_si_no: `Proceso de 2-3 meses; mientras tanto, ${v.equipo} personas sin responsable.` }];
+  const c = v.candidatos[0];
+  if (c) {
+    const conForm = c.brechas.find(b => b.formacion.length);
+    ops.push({ prioridad, funcion_id: c.brechas.find(b => b.funcion)?.funcion || '', tipo: 'movilidad', grupo, accion: `Opción B · Mover a ${c.nombre} (${c.rol}) a ${v.rol}`, empleado_id: c.id, skill_id: conForm?.skill || '', formacion_id: conForm?.formacion[0] || '',
+      por_que: `Cumple ${c.cumple} de ${c.de} skills del puesto. Le falta: ${c.brechas.map(b => `${b.skill} ${b.tiene} → ${b.necesita}${b.formacion.length ? ` (${b.formacion[0]})` : ' (sin formación en el catálogo)'}`).join('; ')}.`,
+      riesgo_si_no: c.key_person_en.length ? `Coste organizativo: ya es la única cobertura de ${c.key_person_en.join(', ')}; asumir el puesto concentra el riesgo en una persona.` : 'Coste organizativo: su puesto actual queda por cubrir.' });
+  }
+  return ops;
+}
+
 function propuestaPorReglas(ctx) {
-  const acciones = [];
+  const acciones = opcionesVacante(ctx);
+  const enVacante = skill => ctx.vacante?.perfil.some(p => p.skill === skill);
   for (const fn of ctx.funciones_afectadas) for (const s of fn.skills.filter(x => x.semaforo !== 'verde')) {
     const cand = (s.candidatos || []).find(c => !c.es_key_person);
     const form = ctx.catalogo.find(c => c.skill === s.skill);
@@ -113,20 +140,28 @@ function propuestaPorReglas(ctx) {
       if (s.cobertura === 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'redistribuir', accion: `Cubrir ${fn.nombre} con apoyo temporal mientras dura el rediseño`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: 'Nadie cubre la skill hoy.', riesgo_si_no: 'La próxima entrega queda sin responsable.' });
     }
     else if (cand && s.cobertura > 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'backup', accion: `Plan de backup: ${cand.nombre} en ${s.skill} (${s.nivel_minimo - 1} → ${s.nivel_minimo})`, empleado_id: cand.id, skill_id: s.skill, formacion_id: form?.id || '', por_que: `Cobertura ${s.cobertura}. ${cand.nombre} está a un nivel${cand.con_interes ? ' y tiene interés declarado' : ''}.`, riesgo_si_no: `La función ${fn.nombre} depende de ${s.cobertura} persona.` });
+    else if (enVacante(s.skill)) { /* la cubre la decisión de la vacante (opciones A/B) */ }
     else acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'contratar', accion: `Abrir vacante con ${s.skill} nivel ${s.nivel_minimo}`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: `Cobertura ${s.cobertura} y ningún candidato interno llega a tiempo.`, riesgo_si_no: `${fn.nombre} queda sin nadie que pueda sostenerla.` });
     if (s.cobertura === 1) {
       const kp = s.personas[0];
       acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'retencion', accion: `Conversación de permanencia con ${ctx.key_people.find(k => k.id === kp)?.nombre || kp}`, empleado_id: kp, skill_id: s.skill, formacion_id: '', por_que: 'Es la única cobertura de la skill.', riesgo_si_no: 'Una segunda salida deja la función sin cobertura.' });
     }
   }
-  return { acciones, resumen_direccion: `${ctx.evento}: ${ctx.cambios.filter(c => c.cambio === 'empeora').length} función(es) empeoran. Se proponen ${acciones.length} acciones para su aprobación por People.`, detalle_people: '', observaciones: 'Propuesta generada por reglas (sin IA).' };
+  const n = ctx.cambios.filter(c => c.cambio === 'empeora').length;
+  const v = ctx.vacante, c = v?.candidatos[0];
+  const resumen = v
+    ? `${ctx.evento}: ${n} función(es) empeoran. Primera decisión: cómo cubrir el puesto de ${v.rol}, buscando fuera (A)${c ? ` o moviendo a ${c.nombre} (B)` : ''}. Además se proponen ${acciones.length - (c ? 2 : 1)} acciones para reducir el riesgo mientras tanto. Todo queda pendiente de aprobación por People.`
+    : `${ctx.evento}: ${n} función(es) empeoran. Se proponen ${acciones.length} acciones para su aprobación por People.`;
+  const sen = c && ctx.senales.find(s => s.id === c.id);
+  const detalle = c ? `${c.nombre}: probabilidad ${sen?.probabilidad || 'baja'} (${sen?.senales.join('; ') || 'sin señales'}). Si asume el puesto con su salario actual, su compa-ratio en la banda ${c.banda_puesto} sería ${c.compa_en_puesto}: la opción B exige revisar condiciones.` : '';
+  return { acciones, resumen_direccion: resumen, detalle_people: detalle, observaciones: 'Propuesta generada por reglas (sin IA).' };
 }
 
 async function propuestaClaude(ctx) {
   const md = fs.readFileSync(path.join(RAIZ, 'prompts', 'proponer-acciones.md'), 'utf8');
   const system = md.split('## System')[1].split('## User')[0].trim();
   const j = v => JSON.stringify(v, null, 1);
-  const user = `Evento: ${ctx.evento}\n\nCambios en el mapa:\n${j(ctx.cambios)}\n\nFunciones afectadas (detalle del cálculo):\n${j(ctx.funciones_afectadas)}\n\nKey people tras el cambio:\n${j(ctx.key_people)}\n\nSeñales de rotación (solo personas implicadas, confidencial People):\n${j(ctx.senales)}\n\nFormaciones disponibles:\n${j(ctx.catalogo)}`;
+  const user = `Evento: ${ctx.evento}\n\nCambios en el mapa:\n${j(ctx.cambios)}\n\nFunciones afectadas (detalle del cálculo):\n${j(ctx.funciones_afectadas)}\n\nKey people tras el cambio:\n${j(ctx.key_people)}\n\nSeñales de rotación (solo personas implicadas, confidencial People):\n${j(ctx.senales)}\n\nVacante (puesto que deja la persona, si aplica):\n${j(ctx.vacante)}\n\nFormaciones disponibles:\n${j(ctx.catalogo)}`;
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
@@ -152,12 +187,15 @@ function avisar(evento, cambios, prop) {
     alerta_id: `ALR-${String(prev + i + 1).padStart(3, '0')}`, fecha: hoy(), evento,
     funcion_id: a.funcion_id, prioridad: a.prioridad, cambio: cambios.find(c => c.id === a.funcion_id)?.cambio || '',
     tipo_accion: a.tipo, accion: a.accion, empleado_id: a.empleado_id || '', skill_id: a.skill_id || '', formacion_id: a.formacion_id || '',
-    por_que: a.por_que, riesgo_si_no: a.riesgo_si_no, decision: 'pendiente', decidido_por: '', fecha_decision: '',
+    por_que: a.por_que, riesgo_si_no: a.riesgo_si_no, decision: 'pendiente', decidido_por: '', fecha_decision: '', grupo: a.grupo || '',
   }));
   anadir('alertas.csv', filas);
+  const opciones = filas.filter(a => a.grupo);
   const email = [`Para: ${PARA}`, `Asunto: [Acme People OS] ${evento} · ${cambios.filter(c => c.cambio === 'empeora').length} función(es) empeoran`, '',
-    prop.resumen_direccion, '', 'Acciones propuestas (pendientes de aprobación por People):',
-    ...filas.map(a => `- ${a.alerta_id} [${a.prioridad}] ${a.accion}`), '', 'Mapa actualizado: hoja "cobertura".'].join('\n');
+    prop.resumen_direccion, '',
+    ...(opciones.length ? ['DECISIÓN · Cubrir el puesto (elegir una opción):', ...opciones.flatMap(a => [`- ${a.alerta_id} ${a.accion}`, `    ${a.por_que}`, `    ${a.riesgo_si_no}`]), ''] : []),
+    opciones.length ? 'Otras acciones (pendientes de aprobación por People):' : 'Acciones propuestas (pendientes de aprobación por People):',
+    ...filas.filter(a => !a.grupo).map(a => `- ${a.alerta_id} [${a.prioridad}] ${a.accion}`), '', 'Mapa actualizado: hoja "cobertura".'].join('\n');
   const archivo = `email-${Date.now()}.txt`;
   fs.writeFileSync(f(archivo), email + '\n');
   if (prop.detalle_people) fs.writeFileSync(f(archivo.replace('email', 'people-CONFIDENCIAL')), prop.detalle_people + '\n');
@@ -170,14 +208,15 @@ async function baja(id) {
   const t = leer('empleados.csv');
   const e = t.filas.find(x => x.id === id);
   if (!e) throw new Error(`No existe ${id}`);
+  const vac = vacante(estado(), id); // el perfil del puesto se calcula con la persona aún dentro
   e.estado = 'baja';
   escribir('empleados.csv', t.cols, t.filas);
   const evento = `Baja de ${e.nombre} (${e.rol})`;
   console.log(`[1] ${evento}`);
   const { r, cambios } = recalcular(evento);
   if (!cambios.some(c => c.cambio === 'empeora')) return console.log('\nNinguna función empeora: no se genera alerta.');
-  console.log('\n[4] Candidatos, formación y señales de las personas implicadas calculados.');
-  avisar(evento, cambios, await proponer(contexto(r, cambios, evento)));
+  console.log(`\n[4] Candidatos, formación y señales calculados. Vacante: ${vac.rol} · candidatos internos: ${vac.candidatos.map(c => `${c.nombre} (${c.cumple}/${c.de})`).join(', ') || 'ninguno'}.`);
+  avisar(evento, cambios, await proponer(contexto(r, cambios, evento, vac)));
   console.log('\nSiguiente: npm run demo -- aprobar <alerta_id>');
 }
 
@@ -186,9 +225,13 @@ function aprobar(id) {
   const a = t.filas.find(x => x.alerta_id === id);
   if (!a) throw new Error(`No existe ${id}`);
   a.decision = 'aprobada'; a.decidido_por = 'People'; a.fecha_decision = hoy();
+  const descartadas = a.grupo ? t.filas.filter(x => x.grupo === a.grupo && x !== a && x.decision === 'pendiente') : [];
+  descartadas.forEach(x => Object.assign(x, { decision: 'descartada', decidido_por: 'People', fecha_decision: hoy() }));
   escribir('alertas.csv', t.cols, t.filas);
   console.log(`[7] People aprueba ${id}: ${a.accion}`);
-  if (a.tipo_accion !== 'backup') return console.log('La acción no es un plan de backup: queda registrada, sin recálculo.');
+  descartadas.forEach(x => console.log(`    ${x.alerta_id} descartada (misma decisión): ${x.accion}`));
+  if (a.tipo_accion === 'movilidad') return mover(a);
+  if (a.tipo_accion !== 'backup') return console.log('La acción no cambia la plantilla ni los planes: queda registrada, sin recálculo.');
   const p = leer('planes-backup.csv');
   const plan = { plan_id: `PB-${String(p.filas.length + 1).padStart(3, '0')}`, empleado_id: a.empleado_id, skill_id: a.skill_id, nivel_objetivo: '', funcion_id: a.funcion_id, formacion_id: a.formacion_id, fecha_inicio: hoy(), fecha_objetivo: '', estado: 'activo', origen: id };
   const fn = estado().funciones.funciones.find(x => x.id === a.funcion_id);
@@ -196,6 +239,22 @@ function aprobar(id) {
   escribir('planes-backup.csv', p.cols, [...p.filas, plan]);
   console.log(`[8] Plan ${plan.plan_id} activo en planes-backup → vuelve al paso 1`);
   recalcular(`Plan de backup aprobado (${id})`);
+}
+
+// Opción interna aprobada: cambio de rol + equipo + planes para cerrar las brechas → vuelve al paso 1
+function mover(a) {
+  const vac = vacante(estado(), a.grupo.replace('VAC-', ''));
+  const e = leer('empleados.csv');
+  const { empleados, planes } = aplicarMovilidad(e.filas, vac, a.empleado_id, hoy(), a.alerta_id);
+  escribir('empleados.csv', e.cols, empleados);
+  const p = leer('planes-backup.csv');
+  const nuevos = planes.map((x, i) => ({ plan_id: `PB-${String(p.filas.length + i + 1).padStart(3, '0')}`, ...x }));
+  escribir('planes-backup.csv', p.cols, [...p.filas, ...nuevos]);
+  const c = vac.candidatos.find(x => x.id === a.empleado_id);
+  console.log(`[8] ${c.nombre} pasa a ${vac.rol}; ${vac.equipo - 1} personas pasan a depender de él.`);
+  nuevos.forEach(x => console.log(`    Plan ${x.plan_id}: ${x.skill_id} → ${x.nivel_objetivo} con ${x.formacion_id}`));
+  c.brechas.filter(b => !b.formacion.length).forEach(b => console.log(`    ${b.skill}: sin formación en el catálogo → acompañamiento de su manager`));
+  recalcular(`Movilidad aprobada (${a.alerta_id})`);
 }
 
 function validar(empleado, skill, nivel, manager) {

@@ -81,3 +81,20 @@ Media del nivel validado de las tres skills de IA (`ia-uso-diario`, `ia-automati
 
 - Un área con menos de 5 personas se agrupa en su división. Si aun así no llega a 5, no se publica: no se puede deducir el nivel de nadie.
 - Las skills de IA todavía **no son requisito** de ninguna función: no cambian el semáforo.
+
+## 9. Vacante y movilidad interna
+
+Cuando una persona causa baja, además de recalcular el mapa, el sistema calcula **el puesto que deja**.
+
+| Concepto | Regla ✏️ |
+|---|---|
+| Perfil del puesto | Las skills que la persona cubría en alguna función, con el nivel mínimo más alto que le pedían. Si tenía equipo, se añade `liderazgo` nivel 2. |
+| Candidato interno | Persona activa que cumple **al menos la mitad** del perfil. Se ordenan por skills cumplidas y, a igualdad, por menos niveles de distancia. Se muestran como mucho 3. |
+| Brechas | Para cada skill que le falta: nivel que tiene, nivel que necesita y formación del catálogo que la cierra. Un **mentoring interno no se propone si ya nadie cubre la skill** (no queda quien lo dé). |
+| Coste organizativo | Si el candidato es key person, asumir el puesto **concentra el riesgo** en esa persona. |
+
+La propuesta lleva **dos opciones excluyentes** con el mismo `grupo` en `alertas`: **A · buscar fuera** y **B · mover al primer candidato**. People aprueba una y la otra pasa a `descartada`.
+
+Si se aprueba la B: el candidato asume rol, nivel de puesto y manager de quien se va; el equipo pasa a depender de él; y se abre un plan en `planes-backup` por cada brecha de un nivel con formación. El mapa se recalcula. Una función con cobertura 0 sigue en rojo aunque haya plan: el semáforo mide lo que hay hoy, no lo que habrá.
+
+El compa-ratio del candidato frente a la banda del puesto que asumiría es dato de People: no aparece en el email a dirección.
