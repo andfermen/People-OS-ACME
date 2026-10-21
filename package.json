@@ -6,7 +6,8 @@
     "cobertura": "node calculo/cobertura.js",
     "verificar": "node calculo/verificar-casos.js",
     "sheets": "node calculo/exportar-sheets.js",
-    "demo": "node calculo/demo.js"
+    "demo": "node calculo/demo.js",
+    "plantilla": "node calculo/generar-plantilla.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

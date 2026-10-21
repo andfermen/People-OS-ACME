@@ -1,6 +1,6 @@
 # Visión · RRHH 360º con una sola persona
 
-> Pregunta de partida: ¿cómo gestiona **una persona** todo RRHH en una empresa regulada de 46 personas? La respuesta no es automatizarlo todo. Es automatizar lo **repetitivo y calculable**, usar la IA para **capturar y redactar**, y reservar a la persona para **decidir y conversar**.
+> Pregunta de partida: ¿cómo gestiona **una persona** todo RRHH en una empresa regulada de 160 personas? La respuesta no es automatizarlo todo. Es automatizar lo **repetitivo y calculable**, usar la IA para **capturar y redactar**, y reservar a la persona para **decidir y conversar**.
 
 ## Criterio
 
@@ -33,4 +33,4 @@ Límite que no se cruza: **la IA no decide nada sobre una persona.** El AI Act e
 
 1. Responde a la pregunta del CEO: **¿dónde somos frágiles?** En una empresa regulada, una función sin cobertura pone en riesgo la licencia.
 2. Es un **registro único de personas y skills** que alimenta movilidad, formación, rotación, clima y compensación. Se construye una vez y se usa cinco.
-3. Es lo que una persona sola no puede hacer a mano: cruzar 46 personas, 36 skills y 24 funciones cada vez que algo cambia.
+3. Es lo que una persona sola no puede hacer a mano: cruzar 160 personas, 39 skills y 24 funciones cada vez que algo cambia.
