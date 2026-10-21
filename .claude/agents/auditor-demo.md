@@ -38,7 +38,7 @@ Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que And
 **5 · Privacidad** (reglas de `CLAUDE.md` §1 y `docs/usos-mapa-cobertura.md`)
 - Ningún email real en el repo: busca `@gmail`, `@hotmail`, `@outlook` y cualquier dirección que no sea `@acme.example`.
 - Ni claves ni IDs: `sk-ant`, `api_key`, IDs de Google Sheets (cadenas de ~44 caracteres tras `spreadsheets/d/`). En los workflows, `Configuración` debe tener los marcadores `PEGAR_…`: eso es correcto.
-- `salidas/n8n/muestra-email-direccion.html` no puede contener compa-ratio, salarios, señales de rotación ni botones de aprobar.
+- En `salidas/n8n/muestra-email-people.html`, el bloque "Resumen (lo que vería dirección)" no puede contener compa-ratio, salarios ni señales de rotación: eso va solo en el bloque "Solo People".
 - Ninguna "probabilidad de fuga" ni puntuación de personas en textos para managers o dirección.
 
 **6 · Coherencia entre documentos y código**
@@ -46,7 +46,7 @@ Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que And
 - Cada comando `npm run …` que citan el guion y los LEEME existe en `package.json`.
 - Los nombres de nodos que cita `flujos/n8n/LEEME.md` existen en los JSON de `flujos/n8n/`.
 - `docs/decisiones.md`: numeración seguida (D-01, D-02…) sin saltos ni repetidas.
-- El guion describe el flujo real: escenario 1 (formulario de baja, botones *Aprobar* del email de People, formulario de reinicio) y escenario 2 (formulario de skill: de ámbar a verde).
+- El guion describe el flujo real: escenario 1 (formulario de baja y botones *Aprobar* del email a People) y escenario 2 (formulario de skill: de ámbar a verde).
 
 **7 · Lo prometido y no construido**
 Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si lo que describe ya está hecho del todo) y las secciones que dicen "opcional", "diseñado" o "extensión". Lista lo que el CEO podría pedir ver y no existe (por ejemplo, el informe mensual o el paso de ámbar a verde en n8n) como 🟡, con la frase corta para responder en directo.
@@ -75,6 +75,6 @@ Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si l
 - verificar: N/N · probar-n8n: N/N · GitHub al día · …
 
 ## Qué no he podido comprobar
-- El Sheet real (estado inicial: Elena activa, `alertas` vacía) → reiniciar con el formulario de reinicio del escenario 1 antes del ensayo.
+- El Sheet real (estado inicial: Elena activa, `alertas` vacía) → pedir a Claude Code "reinicia la demo" antes del ensayo.
 - n8n real (credenciales, workflows activos) y la llegada de los emails.
 ```

@@ -1,6 +1,6 @@
 # Guion de la demo (borrador, 20-25 min)
 
-> Antes de empezar: `npm run verificar` y `npm run probar-n8n` → todo en ✅. Reinicia con el **formulario reiniciar** (escenario 1). Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** y el **formulario skill**, el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
+> Antes de empezar: `npm run verificar` y `npm run probar-n8n` → todo en ✅. Pide a Claude Code **"reinicia la demo"**. Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** (escenario 1) y el **formulario skill** (escenario 2), el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
 > **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-002` (opción B) → `npm run demo -- aprobar ALR-003` (backup de Javier) → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
@@ -9,7 +9,7 @@
 | 2 | La pregunta | 2 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
 | 3 | Arquitectura | 4 | Diagrama de `docs/arquitectura.md`; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
 | 4 | El mapa | 4 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
-| 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → 2 emails (dirección y People) | Ver abajo |
+| 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → email a People | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
 | 7 | Usos | 4 | Rotación, encuesta y revisión salarial | Ver abajo |
 | 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
@@ -32,15 +32,15 @@
    - **CUS-01** *Gestión de claves*: 🟢 → 🔴 (cobertura 2 → 1). Marcos Fuentes pasa a ser **key person**.
    - **CUS-02** *Prueba de reservas*: 🔴 → 🔴 (cobertura 1 → 0).
    - CUS-03 baja de 8 a 7 pero sigue en verde: **no genera alerta**.
-3. Llegan dos emails. El de **dirección** empieza por **la decisión de cubrir el puesto**, con dos opciones:
+3. Llega un email a People. Arriba, el **resumen que vería dirección**; empieza por **la decisión de cubrir el puesto**, con dos opciones:
    - **A · Buscar fuera:** perfil calculado (gestión de claves 3, conciliación on-chain 3, liderazgo…), 2-3 meses.
    - **B · Mover a Marcos Fuentes:** cumple 3 de 5. Le falta conciliación on-chain (curso FOR-04; el mentoring ya no es posible porque lo daba Elena) y liderazgo. **Coste organizativo:** ya es la única persona que firma claves; asumir el puesto concentra todo el riesgo en él. *"El sistema no elige: pone el coste de cada opción encima de la mesa."*
    - Además: backup de Javier Lozano (★ con interés) y conversación de permanencia con Marcos.
-4. Remarcar: el email a dirección **no incluye** señales individuales ni salarios ni botones: decide People. El email **CONFIDENCIAL People** lleva los botones *Aprobar* y la nota: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda del puesto sería 0,76.
+4. Remarcar: el resumen para dirección **no incluye** señales individuales ni salarios: decide People. Abajo, en un bloque **solo People**, los botones *Aprobar* y la nota: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda del puesto sería 0,76.
 
 ## 6 · Cierre del ciclo
 
-1. En el email de People: **Aprobar ALR-002** (opción B, mover a Marcos). Se abre una página de confirmación. En `alertas`, ALR-002 `aprobada` y ALR-001 pasa sola a `descartada`. Marcos pasa a responsable de custodia, el equipo depende de él y se abre su plan de conciliación on-chain. El mapa no cambia de color: *"Promover a alguien no crea skills nuevas."*
+1. En el email: **Aprobar ALR-002** (opción B, mover a Marcos). Se abre una página de confirmación. En `alertas`, ALR-002 `aprobada` y ALR-001 pasa sola a `descartada`. Marcos pasa a responsable de custodia, el equipo depende de él y se abre su plan de conciliación on-chain. El mapa no cambia de color: *"Promover a alguien no crea skills nuevas."*
 2. **Aprobar ALR-003** (plan de backup de Javier) → fila nueva en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡** (lo dicen la página y un email).
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
 4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Escenario 2 · **formulario skill**: `E009`, `gestion-claves`, `3`, `E008`. Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email *Riesgo reducido*. *"Completar un curso no es tener la skill: la valida una persona."*

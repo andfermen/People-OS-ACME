@@ -4,12 +4,12 @@
 
 ## 1. Qué es esto
 
-Prueba técnica para un proceso de selección. El reto: **diseñar e implementar un sistema que permita a una sola persona gestionar el 360º de RRHH de una compañía apoyándose en IA y automatización.**
+Prueba técnica para un proceso de selección. El reto: **diseñar e implementar un sistema RRHH de una compañía apoyándose en IA y automatización.**
 
 - Empresa: **Acme**, ficticia, inspirada en Bit2Me (fintech cripto española, regulada). Estructura y áreas basadas en información pública de Bit2Me; nombre, personas y datos inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** En todo el repo la empresa se llama Acme; Bit2Me solo se menciona como referencia de inspiración en `empresa.md` y README.
 - Contexto clave del CEO: la compañía (~160 personas) está en un **plan "AI first"**: objetivos de adopción, herramientas, formación y rediseño/reducción de equipos. **El rol al que opta Andrea es liderar People en esa transformación.** Por tanto la prueba no es solo "un sistema de RRHH": es la evidencia de cómo lideraría People en un plan AI first. El mapa de skills es el instrumento de ese plan (ver §6 "Lente AI first" y `docs/plan-ai-first-people.md`).
 - Argumento meta: esta prueba se ha construido como trabajaría el departamento, **una persona + IA** (Claude Code, orquestador, API de Claude).
-- Presentación: **viernes, en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
+- Presentación: **en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
 - Lo que más pesa: **procesos funcionando de extremo a extremo.** No solo documentación.
 - Cuenta Google de la demo: **Gmail personal de Andrea** (Sheets, Drive, Gmail y conexiones del orquestador). **No escribir esa dirección en el repo**: en archivos y flujos usar la variable `EMAIL_DEMO`. Todo lo de la demo vive en la carpeta de Drive `Acme People OS` y los emails salen con el prefijo `[Acme People OS]` en el asunto. Nunca guardar contraseñas ni claves de API en el repo.
 
@@ -79,7 +79,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── cifras.js                 # `npm run cifras`: cifras que citan guion y plan (las usa el auditor)
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
-│   └── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18)
+│   └── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
@@ -94,7 +94,7 @@ Principios de diseño (argumentos para el CEO):
 └── flujos/
     └── n8n/
         ├── LEEME.md              # Montaje y ensayo del flujo principal
-        ├── E1-baja-de-elena.json         # Escenario 1: baja + aprobar desde el email + reiniciar (generado)
+        ├── E1-baja-de-elena.json         # Escenario 1: baja + aprobar desde el email (generado)
         ├── E2-actualizacion-de-skill.json  # Escenario 2: el manager valida una skill, ámbar → verde (generado)
         ├── src/                  # Código de los nodos + probar.js (`npm run probar-n8n`)
         └── test-captura-skills.json  # Prueba de captura (D-04)

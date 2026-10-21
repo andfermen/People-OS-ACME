@@ -2,18 +2,20 @@
 // Uso: npm run n8n  → flujos/n8n/E1-baja-de-elena.json, flujos/n8n/E2-actualizacion-de-skill.json
 //                    + salidas/n8n/definiciones.json (hay que hacer push: n8n lo lee de GitHub)
 //
-// Escenario 1 · Baja de Elena: tres entradas en un mismo workflow (formulario de baja, botón Aprobar del email,
-//   formulario de reinicio) que comparten configuración y lectura, y un desvío las manda a su rama.
+// Escenario 1 · Baja de Elena: dos entradas (formulario de baja y botón Aprobar del email) que comparten la lectura;
+//   un desvío las manda a su rama y las dos acaban en la misma escritura y el mismo email.
 // Escenario 2 · Actualización de skill: el manager valida un nivel nuevo → recálculo → email de cierre.
+// El Sheet se lee y escribe con nodos nativos de Google Sheets (la credencial de Google de n8n cloud no se puede usar
+// en nodos HTTP). El reinicio de la demo no está en n8n: lo hace Claude Code (flujos/n8n/LEEME.md).
 //
 // El código de los nodos sale de los mismos módulos que verifica `npm run verificar` (cobertura.js, propuesta.js, hojas.js)
-// más flujos/n8n/src/. Así hay una sola versión del cálculo. Cambiar una regla de definiciones/ no exige reimportar
-// los workflows: basta con `npm run n8n` (que reescribe definiciones.json) y push.
+// más flujos/n8n/src/. Así hay una sola versión del cálculo.
 
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { cargar } = require('./cobertura');
+const { LECTURAS, ESCRITURAS } = require('../flujos/n8n/src/comun');
 
 const RAIZ = path.join(__dirname, '..');
 const SRC = path.join(RAIZ, 'flujos', 'n8n', 'src');
@@ -21,23 +23,26 @@ const REPO_RAW = 'https://raw.githubusercontent.com/andfermen/People-OS-ACME/mai
 const leer = p => fs.readFileSync(p, 'utf8').replace(/\r\n/g, '\n');
 const sinModulo = t => t.split('\n').filter(l => !/^module\.exports|require\(/.test(l)).join('\n');
 
-// ---------- Definiciones en JSON (n8n cloud no lee YAML) ----------
+// ---------- Definiciones en JSON (n8n cloud no lee YAML) + bandas y encuesta (no cambian en la demo) + prompt de propuesta ----------
 const d = cargar();
 fs.mkdirSync(path.join(RAIZ, 'salidas', 'n8n'), { recursive: true });
 fs.writeFileSync(path.join(RAIZ, 'salidas', 'n8n', 'definiciones.json'),
-  JSON.stringify({ funciones: d.funciones, taxonomia: d.taxonomia, areas: d.areas, catalogo: d.catalogo }, null, 1) + '\n');
+  JSON.stringify({ funciones: d.funciones, taxonomia: d.taxonomia, areas: d.areas, catalogo: d.catalogo, bandas: d.bandas, encuesta: d.encuesta,
+    prompt_propuesta: leer(path.join(RAIZ, 'prompts', 'proponer-acciones.md')) }, null, 1) + '\n');
 
 // ---------- Biblioteca común de los nodos de código ----------
 const cob = leer(path.join(__dirname, 'cobertura.js'));
 const motor = cob.slice(cob.indexOf('const UMBRALES'), cob.indexOf('// ---------- Lectura')) + cob.slice(cob.indexOf('// ---------- Cálculo'), cob.indexOf('module.exports'));
 const LIB = ['// ===== Generado por calculo/exportar-n8n.js. No editar aquí: editar calculo/ y flujos/n8n/src/ =====',
-  motor, sinModulo(leer(path.join(__dirname, 'propuesta.js'))), sinModulo(leer(path.join(__dirname, 'hojas.js'))), leer(path.join(SRC, 'comun.js'))].join('\n');
+  motor, sinModulo(leer(path.join(__dirname, 'propuesta.js'))), sinModulo(leer(path.join(__dirname, 'hojas.js'))), sinModulo(leer(path.join(SRC, 'comun.js')))].join('\n');
 const codigo = archivo => `${LIB}\n// ===== Nodo =====\n${leer(path.join(SRC, archivo))}`;
 
 // ---------- Nodos ----------
 const uid = nombre => crypto.createHash('md5').update(nombre).digest('hex').replace(/^(.{8})(.{4})(.{4})(.{4})(.{12}).*/, '$1-$2-$3-$4-$5');
 const nodo = (wf, name, type, typeVersion, parameters, pos, extra = {}) => ({ id: uid(wf + name), name, type, typeVersion, position: pos, parameters, ...extra });
 const cfg = "$('Configuración').first().json";
+const doc = { __rl: true, mode: 'id', value: `={{ ${cfg}.sheet_id }}` };
+const hojaRl = nombre => ({ __rl: true, mode: 'name', value: nombre });
 
 const configuracion = (wf, pos, extra = []) => nodo(wf, 'Configuración', 'n8n-nodes-base.set', 3.4, {
   assignments: { assignments: [
@@ -46,101 +51,105 @@ const configuracion = (wf, pos, extra = []) => nodo(wf, 'Configuración', 'n8n-n
   ].map(([name, value]) => ({ id: uid(wf + name), name, value, type: 'string' })) },
   includeOtherFields: true, options: {},
 }, pos);
-const credGoogle = { authentication: 'predefinedCredentialType', nodeCredentialType: 'googleSheetsOAuth2Api' };
-const leerSheet = (wf, pos) => nodo(wf, 'Leer Sheet', 'n8n-nodes-base.httpRequest', 4.2, {
-  url: `=https://sheets.googleapis.com/v4/spreadsheets/{{ ${cfg}.sheet_id }}/values:batchGet?${['empleados', 'skills-empleados', 'planes-backup', 'bandas-salariales', 'encuesta-clima-agregada', 'historico-semaforo', 'alertas', 'key-people'].map(h => `ranges=${h}`).join('&')}&valueRenderOption=UNFORMATTED_VALUE`,
-  ...credGoogle, options: {},
-}, pos);
 const leerTexto = (wf, name, ruta, prop, pos) => nodo(wf, name, 'n8n-nodes-base.httpRequest', 4.2, {
   url: `={{ ${cfg}.repo }}/${ruta}`, options: { response: { response: { responseFormat: 'text', outputPropertyName: prop } } },
 }, pos);
+// Lectura nativa de una hoja: una vez por ejecución y aunque esté vacía (alertas al principio de la demo)
+const leerHoja = (wf, name, hoja, pos) => nodo(wf, name, 'n8n-nodes-base.googleSheets', 4.5, {
+  operation: 'read', documentId: doc, sheetName: hojaRl(hoja),
+  options: { outputFormatting: { values: { general: 'UNFORMATTED_VALUE', date: 'FORMATTED_STRING' } } },
+}, pos, { executeOnce: true, alwaysOutputData: true });
+// Escritura nativa de una hoja según ESCRITURAS (comun.js). Las columnas se emparejan por nombre; _hoja se ignora.
+const opcionesEscritura = { cellFormat: 'RAW', handlingExtraData: 'ignoreIt' };
+const escribirHoja = (wf, name, ruta, pos) => {
+  const e = ESCRITURAS[ruta];
+  const hoja = e.hoja || ruta;
+  const columnas = { mappingMode: 'autoMapInputData', value: {}, ...(e.clave ? { matchingColumns: [e.clave] } : {}), schema: [] };
+  return nodo(wf, name, 'n8n-nodes-base.googleSheets', 4.5, { operation: e.op === 'reemplazar' ? 'append' : e.op, documentId: doc, sheetName: hojaRl(hoja), columns: columnas, options: opcionesEscritura }, pos);
+};
 const code = (wf, name, fuente, pos) => nodo(wf, name, 'n8n-nodes-base.code', 2, { jsCode: fuente.endsWith('.js') ? codigo(fuente) : fuente }, pos);
-const escribir = (wf, name, pos) => nodo(wf, name, 'n8n-nodes-base.httpRequest', 4.2, {
-  method: 'POST', url: '={{ $json.url }}', ...credGoogle, sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.body) }}', options: {},
-}, pos);
-const gmail = (wf, name, para, asunto, mensaje, pos) => nodo(wf, name, 'n8n-nodes-base.gmail', 2.1, {
-  operation: 'send', sendTo: para, subject: asunto, emailType: 'html', message: mensaje, options: { appendAttribution: false },
+const gmail = (wf, name, pos) => nodo(wf, name, 'n8n-nodes-base.gmail', 2.1, {
+  operation: 'send', sendTo: '={{ $json.para }}', subject: '={{ $json.asunto }}', emailType: 'html', message: '={{ $json.html }}', options: { appendAttribution: false },
 }, pos);
 const formulario = (wf, name, titulo, descripcion, campos, pos) => nodo(wf, name, 'n8n-nodes-base.formTrigger', 2.2, {
   formTitle: titulo, formDescription: descripcion, formFields: { values: campos }, options: {},
 }, pos, { webhookId: uid(wf + name) });
+const nota = (wf, texto, pos, ancho, alto, color = 7) => nodo(wf, `Nota · ${texto.split('\n')[0]}`, 'n8n-nodes-base.stickyNote', 1, { content: texto, width: ancho, height: alto, color }, pos);
+const desvio = (wf, name, campo, valores, pos) => nodo(wf, name, 'n8n-nodes-base.switch', 3.2, { rules: { values: valores.map(v => ({
+  conditions: { options: { caseSensitive: true, leftValue: '', typeValidation: 'strict' }, combinator: 'and',
+    conditions: [{ id: uid(wf + name + v), leftValue: campo, rightValue: v, operator: { type: 'string', operation: 'equals' } }] },
+  renameOutput: true, outputKey: v,
+})) }, options: {} }, pos);
 
 const a = (nodeName, index = 0) => ({ node: nodeName, type: 'main', index });
 const cadena = nombres => Object.fromEntries(nombres.slice(0, -1).map((n, i) => [n, { main: [[a(nombres[i + 1])]] }]));
-const fila = (y, x0, nombres) => nombres.map((n, i) => [n, [x0 + i * 220, y]]);
 const workflow = (name, nodes, connections) => ({ name, nodes, connections, settings: { executionOrder: 'v1' } });
-const guardar = (archivo, wf) => { fs.writeFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), JSON.stringify(wf, null, 2) + '\n'); console.log(`flujos/n8n/${archivo} (${wf.nodes.length} nodos)`); };
+const guardar = (archivo, wf) => { fs.writeFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), JSON.stringify(wf, null, 2) + '\n'); console.log(`flujos/n8n/${archivo} (${wf.nodes.filter(n => !n.type.endsWith('stickyNote')).length} nodos)`); };
 
-// ---------- Escenario 1 · Baja de Elena (pasos 1-8 + reinicio) ----------
+// Bloque de escritura común: reparte las filas por hoja; key-people se vacía y se reescribe
+const REPARTIR = fuentes => `// Filas a escribir, vengan de la rama que vengan\nlet o = null;\nfor (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }\nreturn (o ? o.filas : []).map(json => ({ json }));`;
+const EMAIL = fuentes => `let o = null;\nfor (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }\nreturn o && o.email ? [{ json: o.email }] : [];`;
+function bloqueEscritura(wf, rutas, x, y) {
+  const nombres = { empleados: 'Actualizar empleados', 'skills-empleados': 'Actualizar skills', 'skills-empleados (nueva)': 'Añadir skill nueva', 'planes-backup': 'Guardar planes', alertas: 'Guardar alertas', cobertura: 'Guardar cobertura', 'historico-semaforo': 'Añadir al histórico', 'key-people': 'Vaciar key-people' };
+  const nodes = [desvio(wf, '¿A qué hoja?', '={{ $json._hoja }}', rutas, [x, y])];
+  const salidas = [];
+  rutas.forEach((r, i) => {
+    const pos = [x + 260, y - 260 + i * 110];
+    if (r === 'key-people') {
+      nodes.push(nodo(wf, 'Vaciar key-people', 'n8n-nodes-base.googleSheets', 4.5, { operation: 'clear', documentId: doc, sheetName: hojaRl('key-people'), clear: 'wholeSheet', keepFirstRow: true }, pos, { executeOnce: true }),
+        code(wf, 'Filas key-people', "return $('Repartir').all().filter(i => i.json._hoja === 'key-people');", [pos[0] + 220, pos[1]]),
+        escribirHoja(wf, 'Escribir key-people', 'key-people', [pos[0] + 440, pos[1]]));
+    } else nodes.push(escribirHoja(wf, nombres[r], r, pos));
+    salidas.push([a(nombres[r])]);
+  });
+  return { nodes, connections: { '¿A qué hoja?': { main: salidas }, ...(rutas.includes('key-people') ? cadena(['Vaciar key-people', 'Filas key-people', 'Escribir key-people']) : {}) } };
+}
+
+// ---------- Escenario 1 · Baja de Elena (pasos 1-8) ----------
 {
   const wf = 'E1';
-  const p = Object.fromEntries([
-    ['Formulario baja', [0, 100]], ['Botón Aprobar', [0, 350]], ['Formulario reiniciar', [0, 600]],
-    ...fila(350, 240, ['Configuración', 'Leer Sheet', 'Leer definiciones', 'Leer prompt', '¿Qué se ha pedido?']),
-    ...fila(100, 1780, ['Motor', '¿Empeora alguna función?', 'Claude propone', 'Propuesta final', 'Preparar escrituras', 'Escribir (baja)', 'Emails', 'Email a dirección', 'Email a People']),
-    ...fila(350, 1780, ['Aplicar decisión', 'Responder', 'Peticiones', 'Escribir (aprobación)', 'Email resultado', 'Enviar resultado']),
-    ...fila(600, 1340, ['Leer empleados (repo)', 'Leer planes (repo)', 'Leer skills (repo)', 'Reiniciar', 'Escribir (reinicio)']),
-  ]);
-  const accion = "={{ $json.query && $json.query.alerta ? 'aprobar' : ($json.confirmar ? 'reiniciar' : 'baja') }}";
-  const regla = (valor) => ({
-    conditions: { options: { caseSensitive: true, leftValue: '', typeValidation: 'strict' }, combinator: 'and',
-      conditions: [{ id: uid(wf + valor), leftValue: `={{ ${cfg}.accion }}`, rightValue: valor, operator: { type: 'string', operation: 'equals' } }] },
-    renameOutput: true, outputKey: valor,
-  });
+  const accion = "={{ $json.query && $json.query.alerta ? 'aprobar' : 'baja' }}";
+  const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura'];
+  const esc = bloqueEscritura(wf, ['empleados', 'alertas', 'planes-backup', 'cobertura', 'historico-semaforo', 'key-people'], 2700, 400);
   const nodes = [
-    formulario(wf, 'Formulario baja', 'Acme · Registrar una baja', 'Indica el id de la persona que deja la compañía (por ejemplo, E007). El sistema recalcula el mapa y avisa a dirección y a People.',
-      [{ fieldLabel: 'empleado_id', placeholder: 'E007', requiredField: true }], p['Formulario baja']),
-    nodo(wf, 'Botón Aprobar', 'n8n-nodes-base.webhook', 2, { httpMethod: 'GET', path: 'acme-aprobar', responseMode: 'responseNode', options: {} }, p['Botón Aprobar'], { webhookId: uid(wf + 'webhook') }),
-    formulario(wf, 'Formulario reiniciar', 'Acme · Reiniciar demo', 'Deja el Sheet como al principio: plantilla y planes del repo, alertas vacías y mapa inicial.',
-      [{ fieldLabel: 'confirmar', fieldType: 'dropdown', fieldOptions: { values: [{ option: 'Sí, reiniciar la demo' }] }, requiredField: true }], p['Formulario reiniciar']),
-    configuracion(wf, p['Configuración'], [['url_aprobar', 'PEGAR_PRODUCTION_URL_DEL_NODO_BOTON_APROBAR'], ['accion', accion]]),
-    leerSheet(wf, p['Leer Sheet']),
-    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', p['Leer definiciones']),
-    leerTexto(wf, 'Leer prompt', 'prompts/proponer-acciones.md', 'prompt', p['Leer prompt']),
-    leerTexto(wf, 'Leer empleados (repo)', 'datos/empleados.csv', 'csv', p['Leer empleados (repo)']),
-    leerTexto(wf, 'Leer planes (repo)', 'datos/planes-backup.csv', 'csv', p['Leer planes (repo)']),
-    leerTexto(wf, 'Leer skills (repo)', 'datos/skills-empleados.csv', 'csv', p['Leer skills (repo)']),
-    nodo(wf, '¿Qué se ha pedido?', 'n8n-nodes-base.switch', 3.2, { rules: { values: ['baja', 'aprobar', 'reiniciar'].map(regla) }, options: {} }, p['¿Qué se ha pedido?']),
-    // Rama baja (pasos 1-6)
-    code(wf, 'Motor', 'w1-motor.js', p['Motor']),
-    nodo(wf, '¿Empeora alguna función?', 'n8n-nodes-base.if', 2.2, {
-      conditions: { options: { caseSensitive: true, leftValue: '', typeValidation: 'strict' }, combinator: 'and',
-        conditions: [{ id: uid(wf + 'cond'), leftValue: '={{ $json.hay_alerta }}', rightValue: '', operator: { type: 'boolean', operation: 'true', singleValue: true } }] },
-      options: {},
-    }, p['¿Empeora alguna función?']),
+    nota(wf, '## 1 · Entradas\nFormulario de baja (E007) o botón Aprobar del email de People', [-40, 120], 260, 520, 4),
+    nota(wf, '## 2 · Lee el Sheet\nDefiniciones y prompt (repo); plantilla, skills, planes, alertas y mapa actual (Sheet)', [260, 220], 1660, 300, 7),
+    nota(wf, '## 3 · Calcula (reglas) y propone (Claude)\nArriba, la baja. Abajo, la decisión aprobada', [1940, 60], 700, 620, 6),
+    nota(wf, '## 4 · Escribe en el Sheet y avisa\nCada fila va a su hoja; un email a People', [2660, 60], 1160, 780, 5),
+    formulario(wf, 'Formulario baja', 'Acme · Registrar una baja', 'Indica el id de la persona que deja la compañía (por ejemplo, E007). El sistema recalcula el mapa y avisa a People.',
+      [{ fieldLabel: 'empleado_id', placeholder: 'E007', requiredField: true }], [0, 260]),
+    nodo(wf, 'Botón Aprobar', 'n8n-nodes-base.webhook', 2, { httpMethod: 'GET', path: 'acme-aprobar', responseMode: 'responseNode', options: {} }, [0, 480], { webhookId: uid(wf + 'webhook') }),
+    configuracion(wf, [300, 370], [['url_aprobar', 'PEGAR_PRODUCTION_URL_DEL_NODO_BOTON_APROBAR'], ['accion', accion]]),
+    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [520, 370]),
+    ...lecturas.map((h, i) => leerHoja(wf, LECTURAS[h], h, [760 + i * 190, 370])),
+    desvio(wf, '¿Qué se ha pedido?', `={{ ${cfg}.accion }}`, ['baja', 'aprobar'], [1780, 370]),
+    code(wf, 'Motor', 'e1-motor.js', [1980, 200]),
     nodo(wf, 'Claude propone', 'n8n-nodes-base.httpRequest', 4.2, {
       method: 'POST', url: 'https://api.anthropic.com/v1/messages', authentication: 'genericCredentialType', genericAuthType: 'httpHeaderAuth',
       sendHeaders: true, headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }, { name: 'content-type', value: 'application/json' }] },
       sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.body) }}', options: { timeout: 120000 },
-    }, p['Claude propone'], { onError: 'continueRegularOutput' }),
-    code(wf, 'Propuesta final', 'w1-propuesta.js', p['Propuesta final']),
-    code(wf, 'Preparar escrituras', 'w1-escrituras.js', p['Preparar escrituras']),
-    escribir(wf, 'Escribir (baja)', p['Escribir (baja)']),
-    code(wf, 'Emails', 'w1-emails.js', p['Emails']),
-    gmail(wf, 'Email a dirección', '={{ $json.para }}', '={{ $json.asunto_direccion }}', '={{ $json.html_direccion }}', p['Email a dirección']),
-    gmail(wf, 'Email a People', "={{ $('Emails').first().json.para }}", "={{ $('Emails').first().json.asunto_people }}", "={{ $('Emails').first().json.html_people }}", p['Email a People']),
-    // Rama aprobar (pasos 7-8)
-    code(wf, 'Aplicar decisión', 'w2-aplicar.js', p['Aplicar decisión']),
+    }, [2180, 200], { onError: 'continueRegularOutput' }),
+    code(wf, 'Propuesta final', 'e1-propuesta.js', [2360, 200]),
+    code(wf, 'Escrituras', 'e1-escrituras.js', [2540, 200]),
+    code(wf, 'Aplicar decisión', 'e1-aprobar.js', [1980, 540]),
     nodo(wf, 'Responder', 'n8n-nodes-base.respondToWebhook', 1.1, {
       respondWith: 'text', responseBody: '={{ $json.html }}', options: { responseHeaders: { entries: [{ name: 'Content-Type', value: 'text/html; charset=utf-8' }] } },
-    }, p['Responder']),
-    code(wf, 'Peticiones', "return $('Aplicar decisión').first().json.peticiones.map(json => ({ json }));", p['Peticiones']),
-    escribir(wf, 'Escribir (aprobación)', p['Escribir (aprobación)']),
-    code(wf, 'Email resultado', "const e = $('Aplicar decisión').first().json.email;\nreturn e ? [{ json: e }] : [];", p['Email resultado']),
-    gmail(wf, 'Enviar resultado', '={{ $json.para }}', '={{ $json.asunto }}', '={{ $json.html }}', p['Enviar resultado']),
-    // Rama reiniciar
-    code(wf, 'Reiniciar', 'w0-reiniciar.js', p['Reiniciar']),
-    escribir(wf, 'Escribir (reinicio)', p['Escribir (reinicio)']),
+    }, [2200, 640]),
+    code(wf, 'Repartir', REPARTIR(['Escrituras', 'Aplicar decisión']), [2700, 300]),
+    ...esc.nodes.map(n => (n.name === '¿A qué hoja?' ? { ...n, position: [2860, 400] } : { ...n, position: [n.position[0] + 160, n.position[1]] })),
+    code(wf, 'Email', EMAIL(['Escrituras', 'Aplicar decisión']), [2700, 760]),
+    gmail(wf, 'Enviar email', [2900, 760]),
   ];
   const connections = {
-    'Formulario baja': { main: [[a('Configuración')]] }, 'Botón Aprobar': { main: [[a('Configuración')]] }, 'Formulario reiniciar': { main: [[a('Configuración')]] },
-    ...cadena(['Configuración', 'Leer Sheet', 'Leer definiciones', 'Leer prompt', '¿Qué se ha pedido?']),
-    '¿Qué se ha pedido?': { main: [[a('Motor')], [a('Aplicar decisión')], [a('Leer empleados (repo)')]] },
-    'Motor': { main: [[a('¿Empeora alguna función?')]] },
-    '¿Empeora alguna función?': { main: [[a('Claude propone')], [a('Preparar escrituras')]] },
-    ...cadena(['Claude propone', 'Propuesta final', 'Preparar escrituras', 'Escribir (baja)', 'Emails', 'Email a dirección', 'Email a People']),
-    ...cadena(['Aplicar decisión', 'Responder', 'Peticiones', 'Escribir (aprobación)', 'Email resultado', 'Enviar resultado']),
-    ...cadena(['Leer empleados (repo)', 'Leer planes (repo)', 'Leer skills (repo)', 'Reiniciar', 'Escribir (reinicio)']),
+    'Formulario baja': { main: [[a('Configuración')]] }, 'Botón Aprobar': { main: [[a('Configuración')]] },
+    ...cadena(['Configuración', 'Leer definiciones', ...lecturas.map(h => LECTURAS[h]), '¿Qué se ha pedido?']),
+    '¿Qué se ha pedido?': { main: [[a('Motor')], [a('Aplicar decisión')]] },
+    ...cadena(['Motor', 'Claude propone', 'Propuesta final', 'Escrituras']),
+    'Escrituras': { main: [[a('Repartir'), a('Email')]] },
+    'Aplicar decisión': { main: [[a('Responder'), a('Repartir'), a('Email')]] },
+    'Repartir': { main: [[a('¿A qué hoja?')]] },
+    ...esc.connections,
+    'Email': { main: [[a('Enviar email')]] },
   };
   guardar('E1-baja-de-elena.json', workflow('Acme People OS · Escenario 1 · Baja de Elena', nodes, connections));
 }
@@ -148,23 +157,32 @@ const guardar = (archivo, wf) => { fs.writeFileSync(path.join(RAIZ, 'flujos', 'n
 // ---------- Escenario 2 · Actualización de skill (ámbar → verde) ----------
 {
   const wf = 'E2';
-  const orden = ['Formulario skill', 'Configuración', 'Leer Sheet', 'Leer definiciones', 'Validar skill', 'Escribir en Sheet', 'Email', 'Enviar email'];
-  const p = Object.fromEntries(fila(300, 0, orden));
+  const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'cobertura'];
+  const esc = bloqueEscritura(wf, ['skills-empleados', 'skills-empleados (nueva)', 'planes-backup', 'cobertura', 'historico-semaforo', 'key-people'], 1740, 400);
   const nodes = [
+    nota(wf, '## Escenario 2 · Actualización de skill\n"Tres meses después": el manager valida el nivel que ha alcanzado Javier. Completar un curso no sube el nivel; lo valida una persona.', [-40, 60], 1700, 200, 4),
     formulario(wf, 'Formulario skill', 'Acme · Validar una skill', 'El manager confirma el nivel que ha alcanzado una persona de su equipo (por ejemplo, Javier tras su formación). Completar un curso no sube el nivel: lo valida el manager.', [
       { fieldLabel: 'empleado_id', placeholder: 'E009', requiredField: true },
       { fieldLabel: 'skill_id', placeholder: 'gestion-claves', requiredField: true },
       { fieldLabel: 'nivel', fieldType: 'dropdown', fieldOptions: { values: ['1', '2', '3', '4'].map(option => ({ option })) }, requiredField: true },
       { fieldLabel: 'validado_por', placeholder: 'E008 (su manager)', requiredField: true },
-    ], p['Formulario skill']),
-    configuracion(wf, p['Configuración']),
-    leerSheet(wf, p['Leer Sheet']),
-    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', p['Leer definiciones']),
-    code(wf, 'Validar skill', 'e2-skill.js', p['Validar skill']),
-    escribir(wf, 'Escribir en Sheet', p['Escribir en Sheet']),
-    code(wf, 'Email', "return [{ json: $('Validar skill').first().json.email }];", p['Email']),
-    gmail(wf, 'Enviar email', '={{ $json.para }}', '={{ $json.asunto }}', '={{ $json.html }}', p['Enviar email']),
+    ], [0, 400]),
+    configuracion(wf, [220, 400]),
+    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [440, 400]),
+    ...lecturas.map((h, i) => leerHoja(wf, LECTURAS[h], h, [660 + i * 180, 400])),
+    code(wf, 'Validar skill', 'e2-skill.js', [1400, 400]),
+    code(wf, 'Repartir', REPARTIR(['Validar skill']), [1580, 300]),
+    ...esc.nodes,
+    code(wf, 'Email', EMAIL(['Validar skill']), [1580, 620]),
+    gmail(wf, 'Enviar email', [1780, 620]),
   ];
-  guardar('E2-actualizacion-de-skill.json', workflow('Acme People OS · Escenario 2 · Actualización de skill', nodes, cadena(orden)));
+  const connections = {
+    ...cadena(['Formulario skill', 'Configuración', 'Leer definiciones', ...lecturas.map(h => LECTURAS[h]), 'Validar skill']),
+    'Validar skill': { main: [[a('Repartir'), a('Email')]] },
+    'Repartir': { main: [[a('¿A qué hoja?')]] },
+    ...esc.connections,
+    'Email': { main: [[a('Enviar email')]] },
+  };
+  guardar('E2-actualizacion-de-skill.json', workflow('Acme People OS · Escenario 2 · Actualización de skill', nodes, connections));
 }
 console.log('salidas/n8n/definiciones.json');

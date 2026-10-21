@@ -24,7 +24,7 @@ flowchart LR
   C -- no --> H[Guardar foto]
   C -- sí --> D[Candidatos a backup · formación · señales<br/>vacante: perfil y candidatos internos]
   D --> E[Claude propone acciones<br/>prompts/proponer-acciones.md]
-  E --> F[Filas en alertas<br/>email a dirección · email a People]
+  E --> F[Filas en alertas<br/>email a People: resumen para dirección + botones]
   F --> G[People aprueba<br/>botón en su email]
   G -- aprobada --> P[planes-backup · cambio de rol<br/>la otra opción, descartada]
   P --> A
@@ -38,7 +38,7 @@ flowchart LR
 | 3 Comparación | **Regla** | `historico-semaforo` | foto nueva en `historico-semaforo` |
 | 4 Contexto | **Regla** | `catalogo-formacion`, señales | — |
 | 5 Propuesta | **IA** | salida de 2-4 | — |
-| 6 Aviso | Orquestador (escenario 1) | — | `alertas` (pendiente, con `grupo` para opciones excluyentes), email a dirección y a People |
+| 6 Aviso | Orquestador (escenario 1) | — | `alertas` (pendiente, con `grupo` para opciones excluyentes), un email a People (resumen para dirección + bloque confidencial con botones) |
 | 7 Decisión | **Humano** | email de People (enlace) | `alertas.decision` (aprobada / descartada) |
 | 8 Ciclo | Orquestador (escenario 1) | `alertas` | `planes-backup`, `empleados` (si es movilidad) → recálculo |
 

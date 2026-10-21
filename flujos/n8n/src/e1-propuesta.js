@@ -1,7 +1,9 @@
-// Escenario 1 (rama baja) · nodo "Propuesta final": paso 5. Usa la respuesta de Claude; si falla o no es JSON válido, la propuesta por reglas.
+// Escenario 1 (baja) · nodo "Propuesta final": paso 5. Usa la respuesta de Claude; si falla o no es JSON válido, la propuesta por reglas.
 const m = $('Motor').first().json;
 const res = $input.first().json;
 let prop, fuente = 'Claude';
+// Si ninguna función empeora no hay nada que proponer ni que avisar
+if (!m.hay_alerta) return [{ json: { fuente: '-', resumen_direccion: '', detalle_people: '', alertas: [] } }];
 try {
   const t = res.content.find(b => b.type === 'text').text;
   prop = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
