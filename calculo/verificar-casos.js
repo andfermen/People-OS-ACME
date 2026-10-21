@@ -74,6 +74,12 @@ const bajaLucia = calcular(simularBaja(base, 'E022'));
 caso('Escenario baja de Lucía: CMP-04 empeora (1 → 0) y Marta (con interés) es la primera candidata a recualificar',
   comparar(hoy, bajaLucia).some(c => c.id === 'CMP-04' && c.cambio === 'empeora') && fn(bajaLucia, 'CMP-04').skills[0].candidatos[0].id === 'E013');
 
+// Coherencia AI first + vacante: si el puesto solo sostiene funciones a rediseñar, no se propone cubrirlo tal cual
+const { contexto, propuestaPorReglas } = require('./propuesta');
+const propLucia = propuestaPorReglas(contexto(bajaLucia, comparar(hoy, bajaLucia), 'Baja de Lucía', vacante(base, 'E022'), simularBaja(base, 'E022')));
+caso('Baja de Lucía: se propone rediseñar CMP-04 y no buscar fuera a alguien para hacer el informe como ahora',
+  propLucia.acciones.some(a => a.tipo === 'rediseno') && !propLucia.acciones.some(a => a.grupo));
+
 const mad = Object.fromEntries(hoy.madurez_ia.map(m => [m.segmento, m]));
 caso('Madurez IA por área: Ingeniería por encima de CX y ningún grupo publicado con n < 5',
   mad['Ingeniería'].indice > mad['Atención al cliente (CX)'].indice && hoy.madurez_ia.every(m => m.n >= 5));

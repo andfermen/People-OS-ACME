@@ -19,7 +19,7 @@ Reglas:
 5b. **Vacante.** Si recibes `vacante` (la persona que sale deja un puesto), la primera decisión es cómo cubrirlo. Propón **exactamente dos opciones excluyentes**, con el mismo `grupo` (`VAC-<id de quien sale>`):
    - **A · Buscar fuera** (`contratar`): el perfil del puesto (`vacante.perfil`) y cuánto tarda.
    - **B · Mover dentro** (`movilidad`): el **primer** candidato de `vacante.candidatos` (no elijas otro ni lo inventes). Di qué cumple, qué le falta y con qué formación, y el **coste organizativo**: si es key person (`key_person_en`), asumir el puesto concentra el riesgo en esa persona.
-   Si no hay candidatos, solo la opción A. No añadas además una acción `contratar` para skills que ya están en el perfil de la vacante. El resto de acciones (backup, retención) van aparte, sin `grupo`.
+   Si no hay candidatos, solo la opción A. Las skills del perfil marcadas `redisenar: true` sostienen funciones que se van a rediseñar con IA: no busques a nadie para hacerlas igual que ahora. Si todo el perfil es así, no propongas cubrir el puesto: el rediseño es la respuesta. No añadas además una acción `contratar` para skills que ya están en el perfil de la vacante. El resto de acciones (backup, retención) van aparte, sin `grupo`.
    El `compa_en_puesto` del candidato es confidencial: solo puede aparecer en `detalle_people`.
 6. **Privacidad:**
    - `resumen_direccion` **no** menciona señales de rotación individuales (salario, revisión, evaluación, clima). Como mucho: "recomendamos una conversación de permanencia con People".

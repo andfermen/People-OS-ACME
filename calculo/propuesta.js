@@ -9,6 +9,8 @@ function contexto(r, cambios, evento, vac, datos) {
   // Si alguna función se rediseña con IA, la recualificación sale de las formaciones de IA del catálogo
   if (afectadas.some(x => x.respuesta === 'redisenar')) datos.catalogo.filter(c => c.skill.startsWith('ia-')).forEach(c => formaciones.add(c.id));
   if (vac) {
+    // Lente AI first: una skill del puesto que solo sostiene funciones a rediseñar no se cubre tal cual (ni dentro ni fuera)
+    vac.perfil.forEach(p => { p.redisenar = !!p.funcion && r.funciones.find(f => f.id === p.funcion)?.respuesta === 'redisenar'; });
     vac.candidatos.forEach(c => { implicadas.add(c.id); c.brechas.forEach(b => b.formacion.forEach(x => formaciones.add(x))); });
     // Solo People: compa-ratio del candidato frente a la banda del puesto que asumiría
     const banda = datos.bandas.find(b => b.banda_id === datos.empleados.find(e => e.id === vac.id).banda_id);
@@ -24,12 +26,12 @@ function contexto(r, cambios, evento, vac, datos) {
 // Decisión de cubrir el puesto: dos opciones excluyentes con el mismo grupo (A fuera, B el mejor candidato interno)
 function opcionesVacante(ctx) {
   const v = ctx.vacante;
-  if (!v) return [];
+  if (!v || !v.perfil.some(p => p.skill !== 'liderazgo' && !p.redisenar)) return [];
   const grupo = `VAC-${v.id}`;
   const prioridad = ctx.funciones_afectadas.map(x => x.prioridad).sort()[0] || 'P1';
-  const ops = [{ prioridad, funcion_id: '', tipo: 'contratar', grupo, accion: `Opción A · Buscar fuera: ${v.rol} (${v.perfil.map(p => `${p.skill} ${p.nivel}`).join(', ')})`, empleado_id: '', skill_id: '', formacion_id: '',
+  const ops = [{ prioridad, funcion_id: '', tipo: 'contratar', grupo, accion: `Opción A · Buscar fuera: ${v.rol} (${v.perfil.filter(p => !p.redisenar).map(p => `${p.skill} ${p.nivel}`).join(', ')})`, empleado_id: '', skill_id: '', formacion_id: '',
     por_que: v.candidatos.length ? 'Nadie dentro cumple el perfil completo.' : 'Ningún candidato interno cumple la mitad del perfil.',
-    riesgo_si_no: `Proceso de 2-3 meses; mientras tanto, ${v.equipo} personas sin responsable.` }];
+    riesgo_si_no: `Proceso de 2-3 meses; mientras tanto, ${v.equipo ? `${v.equipo} personas sin responsable` : 'sus funciones dependen de quien quede'}.` }];
   const c = v.candidatos[0];
   if (c) {
     const conForm = c.brechas.find(b => b.formacion.length);
@@ -61,9 +63,10 @@ function propuestaPorReglas(ctx) {
     }
   }
   const n = ctx.cambios.filter(c => c.cambio === 'empeora').length;
-  const v = ctx.vacante, c = v?.candidatos[0];
+  const nOpciones = acciones.filter(a => a.grupo).length;
+  const v = nOpciones ? ctx.vacante : null, c = nOpciones > 1 ? v.candidatos[0] : null;
   const resumen = v
-    ? `${ctx.evento}: ${n} función(es) empeoran. Primera decisión: cómo cubrir el puesto de ${v.rol}, buscando fuera (A)${c ? ` o moviendo a ${c.nombre} (B)` : ''}. Además se proponen ${acciones.length - (c ? 2 : 1)} acciones para reducir el riesgo mientras tanto. Todo queda pendiente de aprobación por People.`
+    ? `${ctx.evento}: ${n} función(es) empeoran. Primera decisión: cómo cubrir el puesto de ${v.rol}, buscando fuera (A)${c ? ` o moviendo a ${c.nombre} (B)` : ''}. Además se proponen ${acciones.length - nOpciones} acción(es) para reducir el riesgo mientras tanto. Todo queda pendiente de aprobación por People.`
     : `${ctx.evento}: ${n} función(es) empeoran. Se proponen ${acciones.length} acciones para su aprobación por People.`;
   const sen = c && ctx.senales.find(s => s.id === c.id);
   const detalle = c ? `${c.nombre}: probabilidad ${sen?.probabilidad || 'baja'} (${sen?.senales.join('; ') || 'sin señales'}). Si asume el puesto con su salario actual, su compa-ratio en la banda ${c.banda_puesto} sería ${c.compa_en_puesto}: la opción B exige revisar condiciones.` : '';

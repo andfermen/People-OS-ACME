@@ -19,14 +19,14 @@
 
 ```mermaid
 flowchart LR
-  A[Cambio en la plantilla<br/>baja · cambio de rol · backup aprobado] --> B[Recalcular<br/>cobertura · semáforo · key people]
+  A[Baja · formulario W1<br/>o decisión aprobada · W2] --> B[Recalcular<br/>cobertura · semáforo · key people]
   B --> C{¿Empeora frente a<br/>historico-semaforo?}
   C -- no --> H[Guardar foto]
-  C -- sí --> D[Candidatos a backup<br/>formación · señales]
+  C -- sí --> D[Candidatos a backup · formación · señales<br/>vacante: perfil y candidatos internos]
   D --> E[Claude propone acciones<br/>prompts/proponer-acciones.md]
-  E --> F[Email a dirección<br/>+ fila en alertas]
-  F --> G[People decide<br/>en hoja alertas]
-  G -- aprobada --> P[Fila en planes-backup]
+  E --> F[Filas en alertas<br/>email a dirección · email a People]
+  F --> G[People aprueba<br/>botón en su email · W2]
+  G -- aprobada --> P[planes-backup · cambio de rol<br/>la otra opción, descartada]
   P --> A
   B --> H
 ```
@@ -38,11 +38,13 @@ flowchart LR
 | 3 Comparación | **Regla** | `historico-semaforo` | foto nueva en `historico-semaforo` |
 | 4 Contexto | **Regla** | `catalogo-formacion`, señales | — |
 | 5 Propuesta | **IA** | salida de 2-4 | — |
-| 6 Aviso | Orquestador | — | `alertas` (pendiente), email |
-| 7 Decisión | **Humano** | `alertas` | `alertas.decision` |
-| 8 Ciclo | Orquestador | `alertas` | `planes-backup` → vuelve al paso 1 |
+| 6 Aviso | Orquestador (W1) | — | `alertas` (pendiente, con `grupo` para opciones excluyentes), email a dirección y a People |
+| 7 Decisión | **Humano** | email de People (enlace) | `alertas.decision` (aprobada / descartada) |
+| 8 Ciclo | Orquestador (W2) | `alertas` | `planes-backup`, `empleados` (si es movilidad) → recálculo |
 
-Segundo disparador: mensual → mismo cálculo → `prompts/informe-direccion.md` → email a dirección.
+Cómo está montado en n8n (W0 reiniciar, W1, W2): `flujos/n8n/LEEME.md` y D-16.
+
+Segundo disparador (diseñado, sin construir todavía): mensual → mismo cálculo → `prompts/informe-direccion.md` → email a dirección.
 
 ## Dónde está la IA y dónde no
 
