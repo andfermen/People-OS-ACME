@@ -70,10 +70,13 @@ Principios de diseño (argumentos para el CEO):
 │   └── areas.yaml                # Área → división (agregación de encuestas)
 ├── calculo/
 │   ├── cobertura.js              # Motor de referencia: semáforo, key people, candidatos, señales, escenarios
+│   ├── demo.js                   # `npm run demo`: flujo 1-8 + opcional en local (plan B, D-12)
 │   ├── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
 │   ├── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
 │   ├── generar-plantilla.js      # `npm run plantilla`: amplía la plantilla a 160 sin tocar los casos (D-13)
-│   └── demo.js                   # `npm run demo`: flujo 1-8 + opcional en local (plan B, D-12)
+│   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
+│   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
+│   └── exportar-n8n.js           # `npm run n8n`: genera los workflows W0-W2 y salidas/n8n/definiciones.json (D-16)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
@@ -86,8 +89,11 @@ Principios de diseño (argumentos para el CEO):
 │   ├── planes-backup.csv         # Backups en desarrollo (lo escribe la aprobación del paso 8)
 │   └── encuesta-clima-agregada.csv
 └── flujos/
-    ├── make/
     └── n8n/
+        ├── LEEME.md              # Montaje y ensayo del flujo principal
+        ├── W0-reiniciar-demo.json, W1-baja-recalcular-avisar.json, W2-aprobar.json  # generados
+        ├── src/                  # Código de los nodos + probar.js (`npm run probar-n8n`)
+        └── test-captura-skills.json  # Prueba de captura (D-04)
 ```
 
 ## 5. Proceso central · Mapa de skills y cobertura de funciones
@@ -201,8 +207,8 @@ La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a
 - [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
 - [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la referencia a Bit2Me (D-13, D-14).
 - [x] **Mié mediodía** · Test n8n vs Make → **n8n** (D-04).
-- [ ] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
-- [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador. Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
+- [x] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
+- [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador (generado y probado: `flujos/n8n/`, D-16; falta montarlo en n8n y ensayar). Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
 - [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. `plan-ai-first-people.md`. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
 - [ ] **Vie** · Presentación.
 

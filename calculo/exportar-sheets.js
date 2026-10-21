@@ -3,6 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const { cargar, calcular } = require('./cobertura');
+const { COLS, filasCobertura, filasKeyPeople, filasHistorico } = require('./hojas');
 
 const RAIZ = path.join(__dirname, '..');
 const OUT = path.join(RAIZ, 'salidas', 'sheets');
@@ -32,33 +33,21 @@ escribir('funciones', ['funcion_id', 'nombre', 'area', 'criticidad', 'cobertura_
 escribir('catalogo-formacion', ['formacion_id', 'skill_id', 'de_nivel', 'a_nivel', 'tipo', 'nombre', 'semanas', 'coste_eur'],
   datos.catalogo.map(c => [c.id, c.skill, c.de, c.a, c.tipo, c.nombre, c.semanas, c.coste_eur]));
 
-// cobertura: una fila por función (la vista del mapa de calor)
-const icono = { verde: '🟢', ambar: '🟡', rojo: '🔴' };
+// cobertura: una fila por función (la vista del mapa de calor).
 // impacto_ia y respuesta van al final: el formato condicional del mapa sigue leyendo el semáforo en la columna E
-escribir('cobertura', ['funcion_id', 'area', 'nombre', 'criticidad', 'semaforo', 'icono', 'prioridad', 'cobertura', 'objetivo', 'skill_mas_debil', 'cubren', 'backup_en_desarrollo', 'candidatos_con_interes', 'impacto_ia', 'respuesta'],
-  r.funciones.map(f => {
-    const s = f.skills.reduce((a, b) => (b.cobertura < a.cobertura ? b : a));
-    const debiles = f.skills.filter(x => x.semaforo !== 'verde');
-    return [f.id, f.area, f.nombre, f.criticidad, f.semaforo, icono[f.semaforo], f.prioridad, f.cobertura, f.objetivo, s.skill,
-      s.personas.map(nombre).join('; '),
-      debiles.flatMap(x => x.backups_en_desarrollo).map(nombre).join('; '),
-      debiles.flatMap(x => (x.candidatos || []).filter(c => c.con_interes).map(c => c.nombre)).join('; '),
-      f.impacto_ia, f.respuesta === 'redisenar' ? 'rediseñar con IA' : 'cubrir'];
-  }));
+escribir('cobertura', COLS.cobertura, filasCobertura(r, nombre));
 
 // Madurez IA por área (plan AI first): agregada, sin personas
 escribir('madurez-ia', ['segmento', 'n', 'ia_uso_diario', 'ia_automatizacion', 'ia_criterio', 'indice'],
   r.madurez_ia.map(m => [m.segmento, m.n, m['ia-uso-diario'], m['ia-automatizacion'], m['ia-criterio'], m.indice]));
 
-escribir('key-people', ['empleado_id', 'nombre', 'area', 'rol', 'oculta', 'funciones', 'skills'],
-  r.key_people.map(k => [k.id, k.nombre, k.area, k.rol, k.oculta ? 'si' : 'no',
-    k.funciones.map(f => f.funcion).join('; '), k.funciones.map(f => f.skill).join('; ')]));
+escribir('key-people', COLS.keyPeople, filasKeyPeople(r));
 
 // Señales: hoja restringida a People (no compartir con managers)
 escribir('senales-rotacion-PEOPLE', ['empleado_id', 'nombre', 'compa_ratio', 'probabilidad', 'senales'],
   r.senales_rotacion.map(s => [s.id, s.nombre, s.compa_ratio, s.probabilidad, s.senales.join('; ')]));
 
-escribir('historico-semaforo', ['fecha', 'funcion_id', 'semaforo', 'cobertura', 'prioridad'],
-  r.funciones.map(f => [fecha, f.id, f.semaforo, f.cobertura, f.prioridad]));
+// historico-semaforo: una foto por recálculo; evento distingue varias fotos del mismo día
+escribir('historico-semaforo', COLS.historico, filasHistorico(r, fecha, 'inicial'));
 
-escribir('alertas', ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision', 'grupo'], []);
+escribir('alertas', COLS.alertas, []);

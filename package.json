@@ -7,7 +7,9 @@
     "verificar": "node calculo/verificar-casos.js",
     "sheets": "node calculo/exportar-sheets.js",
     "demo": "node calculo/demo.js",
-    "plantilla": "node calculo/generar-plantilla.js"
+    "plantilla": "node calculo/generar-plantilla.js",
+    "n8n": "node calculo/exportar-n8n.js",
+    "probar-n8n": "node flujos/n8n/src/probar.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

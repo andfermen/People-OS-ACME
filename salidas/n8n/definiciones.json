@@ -1,0 +1,877 @@
+{
+ "funciones": {
+  "defaults": {
+   "cobertura_objetivo": 2
+  },
+  "funciones": [
+   {
+    "id": "TRD-01",
+    "nombre": "Ejecución y operativa de mercados",
+    "area": "Exchange y trading",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "trading-mercados",
+      "nivel": 3
+     },
+     {
+      "skill": "gestion-riesgo-mercado",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "TRD-02",
+    "nombre": "Gestión de liquidez y market making",
+    "area": "Exchange y trading",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "market-making",
+      "nivel": 3
+     },
+     {
+      "skill": "sql-analitica",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "TRD-03",
+    "nombre": "Riesgo de mercado y límites",
+    "area": "Exchange y trading",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-riesgo-mercado",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "CUS-01",
+    "nombre": "Gestión de claves y ceremonias de firma",
+    "area": "Custodia",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-claves",
+      "nivel": 3
+     },
+     {
+      "skill": "operativa-wallets",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CUS-02",
+    "nombre": "Prueba de reservas y conciliación on-chain",
+    "area": "Custodia",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "conciliacion-onchain",
+      "nivel": 3
+     },
+     {
+      "skill": "analisis-blockchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CUS-03",
+    "nombre": "Operativa diaria de wallets",
+    "area": "Custodia",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "operativa-wallets",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-01",
+    "nombre": "Alta y verificación de clientes (KYC/KYB)",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "kyc-onboarding",
+      "nivel": 2
+     },
+     {
+      "skill": "normativa-pbc",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-02",
+    "nombre": "Monitorización de transacciones",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "monitorizacion-transacciones",
+      "nivel": 3
+     },
+     {
+      "skill": "analisis-blockchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-03",
+    "nombre": "Comunicación de operaciones sospechosas",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "normativa-pbc",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "CMP-04",
+    "nombre": "Reporting regulatorio AML",
+    "area": "Compliance AML/KYC",
+    "criticidad": "importante",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "sql-analitica",
+      "nivel": 3
+     },
+     {
+      "skill": "normativa-pbc",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "LEG-01",
+    "nombre": "Licencia MiCA y relación con el supervisor",
+    "area": "Legal y regulatorio",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "regulacion-mica",
+      "nivel": 3
+     },
+     {
+      "skill": "gestion-stakeholders",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "LEG-02",
+    "nombre": "Contratos y protección de datos",
+    "area": "Legal y regulatorio",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "contratos-mercantil",
+      "nivel": 3
+     },
+     {
+      "skill": "proteccion-datos",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "SEG-01",
+    "nombre": "Detección y respuesta a incidentes",
+    "area": "Seguridad",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "respuesta-incidentes",
+      "nivel": 3
+     },
+     {
+      "skill": "ciberseguridad-defensiva",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "SEG-02",
+    "nombre": "Seguridad de aplicaciones",
+    "area": "Seguridad",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "seguridad-aplicaciones",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "ING-01",
+    "nombre": "Desarrollo de plataforma",
+    "area": "Ingeniería",
+    "criticidad": "importante",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "desarrollo-backend",
+      "nivel": 3
+     },
+     {
+      "skill": "desarrollo-frontend",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "ING-02",
+    "nombre": "Infraestructura y disponibilidad",
+    "area": "Ingeniería",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "infraestructura-cloud",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "ING-03",
+    "nombre": "Integración de redes blockchain y nodos",
+    "area": "Ingeniería",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "nodos-blockchain",
+      "nivel": 3
+     },
+     {
+      "skill": "desarrollo-backend",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "PRD-01",
+    "nombre": "Gestión de producto",
+    "area": "Producto",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-producto",
+      "nivel": 3
+     },
+     {
+      "skill": "diseno-ux",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CX-01",
+    "nombre": "Atención al cliente",
+    "area": "Atención al cliente (CX)",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "atencion-cliente",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CX-02",
+    "nombre": "Soporte técnico de segundo nivel",
+    "area": "Atención al cliente (CX)",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "atencion-cliente-tecnica",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "MKT-01",
+    "nombre": "Marketing y comunicación comercial regulada",
+    "area": "Marketing",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "marketing-digital",
+      "nivel": 3
+     },
+     {
+      "skill": "comunicacion-regulada",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "FIN-01",
+    "nombre": "Contabilidad y fiscalidad de criptoactivos",
+    "area": "Finanzas",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "contabilidad-cripto",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "FIN-02",
+    "nombre": "Tesorería y salvaguarda de fondos de clientes",
+    "area": "Finanzas",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "tesoreria",
+      "nivel": 3
+     },
+     {
+      "skill": "conciliacion-onchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "PEO-01",
+    "nombre": "Gestión de personas",
+    "area": "People",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-personas",
+      "nivel": 3
+     }
+    ]
+   }
+  ]
+ },
+ "taxonomia": {
+  "niveles": {
+   "1": {
+    "nombre": "Básico",
+    "descripcion": "Conoce los conceptos. Ejecuta con supervisión."
+   },
+   "2": {
+    "nombre": "Autónomo",
+    "descripcion": "Hace las tareas habituales sin supervisión."
+   },
+   "3": {
+    "nombre": "Avanzado",
+    "descripcion": "Resuelve casos complejos o no habituales. Puede sostener la función solo."
+   },
+   "4": {
+    "nombre": "Referente",
+    "descripcion": "Define cómo se hace, forma a otros y es referencia dentro y fuera."
+   }
+  },
+  "skills": [
+   {
+    "id": "trading-mercados",
+    "tipo": "hard",
+    "nombre": "Operativa de mercados cripto",
+    "descripcion": "Ejecución de órdenes, libro de órdenes, incidencias de mercado."
+   },
+   {
+    "id": "market-making",
+    "tipo": "hard",
+    "nombre": "Gestión de liquidez y market making",
+    "descripcion": "Provisión de liquidez, spreads, proveedores de liquidez."
+   },
+   {
+    "id": "gestion-riesgo-mercado",
+    "tipo": "hard",
+    "nombre": "Riesgo de mercado y límites",
+    "descripcion": "Exposición, límites, stress tests de posiciones propias."
+   },
+   {
+    "id": "gestion-claves",
+    "tipo": "hard",
+    "nombre": "Gestión de claves criptográficas",
+    "descripcion": "MPC/multifirma, HSM, ceremonias de firma, recuperación de claves."
+   },
+   {
+    "id": "operativa-wallets",
+    "tipo": "hard",
+    "nombre": "Operativa de wallets hot/cold",
+    "descripcion": "Movimientos entre wallets, umbrales, retiradas de clientes."
+   },
+   {
+    "id": "conciliacion-onchain",
+    "tipo": "hard",
+    "nombre": "Conciliación on-chain y prueba de reservas",
+    "descripcion": "Cuadrar saldos on-chain con el registro interno y demostrar reservas."
+   },
+   {
+    "id": "analisis-blockchain",
+    "tipo": "hard",
+    "nombre": "Análisis on-chain",
+    "descripcion": "Trazar transacciones y usar herramientas de análisis de blockchain."
+   },
+   {
+    "id": "normativa-pbc",
+    "tipo": "hard",
+    "nombre": "Prevención de blanqueo (PBC/FT)",
+    "descripcion": "Normativa, análisis de casos y comunicación de operaciones sospechosas."
+   },
+   {
+    "id": "kyc-onboarding",
+    "tipo": "hard",
+    "nombre": "Verificación KYC/KYB",
+    "descripcion": "Alta y verificación de clientes particulares y empresas."
+   },
+   {
+    "id": "monitorizacion-transacciones",
+    "tipo": "hard",
+    "nombre": "Monitorización de transacciones",
+    "descripcion": "Reglas de alerta, revisión de alertas, escalado."
+   },
+   {
+    "id": "regulacion-mica",
+    "tipo": "hard",
+    "nombre": "Regulación MiCA",
+    "descripcion": "Requisitos de la licencia de servicios de criptoactivos y relación con el supervisor."
+   },
+   {
+    "id": "proteccion-datos",
+    "tipo": "hard",
+    "nombre": "Protección de datos (RGPD)",
+    "descripcion": "Bases legales, registro de actividades, derechos de los interesados."
+   },
+   {
+    "id": "contratos-mercantil",
+    "tipo": "hard",
+    "nombre": "Contratos y derecho mercantil",
+    "descripcion": "Redacción y negociación de contratos con clientes y proveedores."
+   },
+   {
+    "id": "desarrollo-backend",
+    "tipo": "hard",
+    "nombre": "Desarrollo backend",
+    "descripcion": "Servicios, APIs y bases de datos de la plataforma."
+   },
+   {
+    "id": "desarrollo-frontend",
+    "tipo": "hard",
+    "nombre": "Desarrollo frontend",
+    "descripcion": "Web y app de clientes."
+   },
+   {
+    "id": "infraestructura-cloud",
+    "tipo": "hard",
+    "nombre": "Infraestructura cloud y SRE",
+    "descripcion": "Despliegue, disponibilidad, observabilidad."
+   },
+   {
+    "id": "nodos-blockchain",
+    "tipo": "hard",
+    "nombre": "Nodos e integración de redes blockchain",
+    "descripcion": "Operar nodos, integrar nuevas redes y tokens."
+   },
+   {
+    "id": "ciberseguridad-defensiva",
+    "tipo": "hard",
+    "nombre": "Ciberseguridad defensiva",
+    "descripcion": "Monitorización de seguridad, detección de amenazas."
+   },
+   {
+    "id": "respuesta-incidentes",
+    "tipo": "hard",
+    "nombre": "Respuesta a incidentes de seguridad",
+    "descripcion": "Contención, investigación y comunicación de incidentes."
+   },
+   {
+    "id": "seguridad-aplicaciones",
+    "tipo": "hard",
+    "nombre": "Seguridad de aplicaciones",
+    "descripcion": "Código seguro, pentesting, gestión de vulnerabilidades."
+   },
+   {
+    "id": "sql-analitica",
+    "tipo": "hard",
+    "nombre": "Análisis de datos y SQL",
+    "descripcion": "Consultas, modelos de datos e informes a partir de las bases de datos."
+   },
+   {
+    "id": "gestion-producto",
+    "tipo": "hard",
+    "nombre": "Gestión de producto",
+    "descripcion": "Descubrimiento, priorización y roadmap."
+   },
+   {
+    "id": "diseno-ux",
+    "tipo": "hard",
+    "nombre": "Diseño UX/UI",
+    "descripcion": "Investigación de usuarios, prototipos, sistema de diseño."
+   },
+   {
+    "id": "atencion-cliente",
+    "tipo": "hard",
+    "nombre": "Atención al cliente",
+    "descripcion": "Consultas de primer nivel por chat y email."
+   },
+   {
+    "id": "atencion-cliente-tecnica",
+    "tipo": "hard",
+    "nombre": "Soporte técnico de segundo nivel",
+    "descripcion": "Incidencias de depósitos y retiradas, transacciones atascadas."
+   },
+   {
+    "id": "contabilidad-cripto",
+    "tipo": "hard",
+    "nombre": "Contabilidad y fiscalidad de criptoactivos",
+    "descripcion": "Registro contable, valoración y fiscalidad de activos digitales."
+   },
+   {
+    "id": "tesoreria",
+    "tipo": "hard",
+    "nombre": "Tesorería y salvaguarda de fondos",
+    "descripcion": "Liquidez en euros, segregación de fondos de clientes, bancos."
+   },
+   {
+    "id": "reporting-financiero",
+    "tipo": "hard",
+    "nombre": "Reporting financiero",
+    "descripcion": "Cierres, cuentas anuales, informes a dirección."
+   },
+   {
+    "id": "marketing-digital",
+    "tipo": "hard",
+    "nombre": "Marketing digital",
+    "descripcion": "Captación, campañas, métricas de adquisición."
+   },
+   {
+    "id": "comunicacion-regulada",
+    "tipo": "hard",
+    "nombre": "Comunicación comercial regulada",
+    "descripcion": "Publicidad de criptoactivos conforme a la normativa (avisos de riesgo, mensajes permitidos)."
+   },
+   {
+    "id": "gestion-personas",
+    "tipo": "hard",
+    "nombre": "Gestión de personas",
+    "descripcion": "Selección, onboarding, desempeño, relaciones laborales."
+   },
+   {
+    "id": "compensacion",
+    "tipo": "hard",
+    "nombre": "Compensación y beneficios",
+    "descripcion": "Bandas, revisión salarial, igualdad retributiva."
+   },
+   {
+    "id": "liderazgo",
+    "tipo": "soft",
+    "nombre": "Liderazgo de equipos",
+    "descripcion": "Dirigir, desarrollar y dar feedback a un equipo."
+   },
+   {
+    "id": "comunicacion",
+    "tipo": "soft",
+    "nombre": "Comunicación",
+    "descripcion": "Explicar con claridad, por escrito y oralmente."
+   },
+   {
+    "id": "gestion-stakeholders",
+    "tipo": "soft",
+    "nombre": "Gestión de stakeholders",
+    "descripcion": "Relación con el supervisor, socios y dirección; negociación."
+   },
+   {
+    "id": "resolucion-problemas",
+    "tipo": "soft",
+    "nombre": "Resolución de problemas",
+    "descripcion": "Analizar causas y decidir con información incompleta."
+   },
+   {
+    "id": "ia-uso-diario",
+    "tipo": "ia",
+    "nombre": "Uso de IA en el trabajo diario",
+    "descripcion": "1 la prueba de vez en cuando · 2 la usa a diario en sus tareas · 3 rediseña su forma de trabajar con IA · 4 enseña a otros y define buenas prácticas."
+   },
+   {
+    "id": "ia-automatizacion",
+    "tipo": "ia",
+    "nombre": "Automatización y agentes",
+    "descripcion": "1 entiende qué se puede automatizar · 2 monta automatizaciones simples con herramientas aprobadas · 3 diseña flujos con agentes e integra sistemas · 4 referente de la compañía."
+   },
+   {
+    "id": "ia-criterio",
+    "tipo": "ia",
+    "nombre": "Criterio y verificación de resultados de IA",
+    "descripcion": "1 sabe que la IA se equivoca · 2 revisa y contrasta lo que produce · 3 diseña controles y sabe cuándo no usarla · 4 define el gobierno de uso (datos, privacidad, AI Act)."
+   }
+  ]
+ },
+ "areas": {
+  "Exchange y trading": "Mercados",
+  "Custodia": "Mercados",
+  "Compliance AML/KYC": "Riesgo y cumplimiento",
+  "Legal y regulatorio": "Riesgo y cumplimiento",
+  "Seguridad": "Riesgo y cumplimiento",
+  "Ingeniería": "Tecnología y producto",
+  "Producto": "Tecnología y producto",
+  "Atención al cliente (CX)": "Cliente y negocio",
+  "Marketing": "Cliente y negocio",
+  "Finanzas": "Corporativo",
+  "People": "Corporativo",
+  "Dirección": "Corporativo"
+ },
+ "catalogo": [
+  {
+   "id": "FOR-01",
+   "skill": "gestion-claves",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Mentoring en ceremonias de firma con la persona de referencia",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-02",
+   "skill": "gestion-claves",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Custodia de activos digitales: MPC y HSM",
+   "semanas": 6,
+   "coste_eur": 2400
+  },
+  {
+   "id": "FOR-03",
+   "skill": "conciliacion-onchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Acompañar el cierre mensual de prueba de reservas (3 cierres)",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-04",
+   "skill": "conciliacion-onchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Prueba de reservas y auditoría on-chain",
+   "semanas": 4,
+   "coste_eur": 1800
+  },
+  {
+   "id": "FOR-05",
+   "skill": "normativa-pbc",
+   "de": 2,
+   "a": 3,
+   "tipo": "certificacion",
+   "nombre": "Certificación en prevención de blanqueo de capitales",
+   "semanas": 16,
+   "coste_eur": 1500
+  },
+  {
+   "id": "FOR-06",
+   "skill": "normativa-pbc",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Coanálisis de expedientes de operaciones sospechosas",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-07",
+   "skill": "sql-analitica",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "SQL avanzado y modelado de datos",
+   "semanas": 6,
+   "coste_eur": 900
+  },
+  {
+   "id": "FOR-08",
+   "skill": "sql-analitica",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Pair-working en el reporting regulatorio con Datos",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-09",
+   "skill": "contabilidad-cripto",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Contabilidad y fiscalidad de criptoactivos",
+   "semanas": 8,
+   "coste_eur": 1200
+  },
+  {
+   "id": "FOR-10",
+   "skill": "seguridad-aplicaciones",
+   "de": 2,
+   "a": 3,
+   "tipo": "certificacion",
+   "nombre": "Certificación en pentesting de aplicaciones web",
+   "semanas": 12,
+   "coste_eur": 1600
+  },
+  {
+   "id": "FOR-11",
+   "skill": "respuesta-incidentes",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Gestión de incidentes y análisis forense",
+   "semanas": 6,
+   "coste_eur": 2000
+  },
+  {
+   "id": "FOR-12",
+   "skill": "respuesta-incidentes",
+   "de": 2,
+   "a": 3,
+   "tipo": "rotacion",
+   "nombre": "Entrar en la rotación de guardias con un senior como sombra",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-13",
+   "skill": "gestion-personas",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Gestión de personas para managers",
+   "semanas": 6,
+   "coste_eur": 800
+  },
+  {
+   "id": "FOR-14",
+   "skill": "nodos-blockchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Integrar una red nueva con el equipo blockchain",
+   "semanas": 10,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-15",
+   "skill": "gestion-riesgo-mercado",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Riesgo de mercado en activos digitales",
+   "semanas": 6,
+   "coste_eur": 1500
+  },
+  {
+   "id": "FOR-16",
+   "skill": "atencion-cliente-tecnica",
+   "de": 2,
+   "a": 3,
+   "tipo": "rotacion",
+   "nombre": "Rotación en soporte de segundo nivel",
+   "semanas": 6,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-17",
+   "skill": "regulacion-mica",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "MiCA en la práctica: obligaciones del proveedor",
+   "semanas": 4,
+   "coste_eur": 1100
+  },
+  {
+   "id": "FOR-18",
+   "skill": "comunicacion-regulada",
+   "de": 1,
+   "a": 2,
+   "tipo": "mentoring-interno",
+   "nombre": "Revisión conjunta de campañas con Legal",
+   "semanas": 6,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-19",
+   "skill": "ia-uso-diario",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "IA en el día a día: herramientas aprobadas y buenas prácticas",
+   "semanas": 3,
+   "coste_eur": 300
+  },
+  {
+   "id": "FOR-20",
+   "skill": "ia-automatizacion",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "Automatizar procesos con IA sin programar",
+   "semanas": 6,
+   "coste_eur": 900
+  },
+  {
+   "id": "FOR-21",
+   "skill": "ia-automatizacion",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Diseñar un flujo con agentes junto a Ingeniería",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-22",
+   "skill": "ia-criterio",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "Verificar resultados de IA: errores, sesgos y AI Act",
+   "semanas": 3,
+   "coste_eur": 400
+  }
+ ]
+}

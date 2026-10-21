@@ -1,0 +1,314 @@
+{
+  "name": "Acme People OS · W2 · Aprobar desde el email",
+  "nodes": [
+    {
+      "id": "a993fab3-9ce0-7b65-d909-69bc67b9fb8a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ],
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "acme-aprobar",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "webhookId": "840edba5-83e5-2b27-6923-35226717a23f"
+    },
+    {
+      "id": "805fb059-7461-918d-e89e-4633fd741e5e",
+      "name": "Configuración",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        440,
+        300
+      ],
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b42e1438-bcef-9a98-cb56-a436a23567d1",
+              "name": "sheet_id",
+              "value": "PEGAR_ID_DEL_SHEET",
+              "type": "string"
+            },
+            {
+              "id": "294034bc-8760-2735-a892-2798fa08b6c5",
+              "name": "email_demo",
+              "value": "PEGAR_EMAIL_DEMO",
+              "type": "string"
+            },
+            {
+              "id": "8f1beb62-277f-c4e9-6582-872cf9707c93",
+              "name": "url_aprobar",
+              "value": "PEGAR_URL_PRODUCCION_DE_W2",
+              "type": "string"
+            },
+            {
+              "id": "2a4e2030-c2d7-916b-c8fb-dae89ee9481b",
+              "name": "modelo",
+              "value": "claude-sonnet-5-5",
+              "type": "string"
+            },
+            {
+              "id": "a3ea2a63-1b31-0748-53bc-3d6f9b3287eb",
+              "name": "repo",
+              "value": "https://raw.githubusercontent.com/andfermen/People-OS-ACME/main",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      }
+    },
+    {
+      "id": "c6fb3d70-41e1-1484-334e-03d84731b761",
+      "name": "Leer Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        660,
+        300
+      ],
+      "parameters": {
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $('Configuración').first().json.sheet_id }}/values:batchGet?ranges=empleados&ranges=skills-empleados&ranges=planes-backup&ranges=bandas-salariales&ranges=encuesta-clima-agregada&ranges=historico-semaforo&ranges=alertas&ranges=key-people&valueRenderOption=UNFORMATTED_VALUE",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "options": {}
+      }
+    },
+    {
+      "id": "4af35b89-39ca-5fbb-d17d-f3bf3ce7032a",
+      "name": "Leer definiciones",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        300
+      ],
+      "parameters": {
+        "url": "={{ $('Configuración').first().json.repo }}/salidas/n8n/definiciones.json",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "definiciones"
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "153979e1-6818-e89a-96d5-cbe3540cd969",
+      "name": "Aplicar decisión",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        300
+      ],
+      "parameters": {
+        "jsCode": "// ===== Generado por calculo/exportar-n8n.js. No editar aquí: editar calculo/ y flujos/n8n/src/ =====\nconst UMBRALES = { compaRatio: 0.9, mesesSinRevision: 18, evaluacionAlta: 4, mesesManagerReciente: 6, nMinimoEncuesta: 5 };\nconst ORDEN = { verde: 0, ambar: 1, rojo: 2 };\nconst PUNTOS_SEMAFORO = { rojo: 3, ambar: 2, verde: 0 };\nconst PUNTOS_CRITICIDAD = { critica: 3, importante: 2, soporte: 1 };\n\n// ---------- Cálculo ----------\nfunction prioridad(semaforo, criticidad) {\n  const p = PUNTOS_SEMAFORO[semaforo] * PUNTOS_CRITICIDAD[criticidad];\n  return p >= 9 ? 'P1' : p >= 6 ? 'P2' : p >= 3 ? 'P3' : p >= 2 ? 'P4' : '-';\n}\n\nfunction calcular(datos) {\n  const { funciones, empleados, skills, planes, catalogo } = datos;\n  const objetivoDefecto = funciones.defaults.cobertura_objetivo;\n  const activos = new Map(empleados.filter(e => e.estado === 'activo').map(e => [e.id, e]));\n  const nivel = new Map(); // \"E007|gestion-claves\" -> nivel validado\n  for (const s of skills) if (activos.has(s.empleado_id) && s.nivel_validado) nivel.set(`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado);\n  const nivelDe = (id, skill) => nivel.get(`${id}|${skill}`) || 0;\n  const interes = id => (activos.get(id).skills_interes || '').split(';').filter(Boolean);\n  const planesActivos = planes.filter(p => p.estado === 'activo' && activos.has(p.empleado_id));\n\n  // 1. Cobertura y semáforo por skill y por función\n  const resultado = funciones.funciones.map(f => {\n    const objetivo = f.cobertura_objetivo || objetivoDefecto;\n    const skillsF = f.skills_requeridas.map(({ skill, nivel: min }) => {\n      const cubren = [...activos.keys()].filter(id => nivelDe(id, skill) >= min);\n      const backups = planesActivos\n        .filter(p => p.skill_id === skill && nivelDe(p.empleado_id, skill) === min - 1)\n        .map(p => p.empleado_id);\n      const n = cubren.length;\n      const semaforo = n >= objetivo ? 'verde' : n >= 2 ? 'ambar' : n === 1 && backups.length ? 'ambar' : 'rojo';\n      return { skill, nivel_minimo: min, cobertura: n, personas: cubren, backups_en_desarrollo: backups, semaforo };\n    });\n    const peor = skillsF.reduce((a, b) => (ORDEN[b.semaforo] > ORDEN[a.semaforo] || (b.semaforo === a.semaforo && b.cobertura < a.cobertura) ? b : a));\n    // Lente AI first (reglas-semaforo.md §7): en rojo con impacto IA alto no se forma un backup del proceso actual\n    const respuesta = peor.semaforo === 'rojo' && f.impacto_ia === 'alto' ? 'redisenar' : 'cubrir';\n    return {\n      id: f.id, nombre: f.nombre, area: f.area, criticidad: f.criticidad, impacto_ia: f.impacto_ia, objetivo,\n      cobertura: Math.min(...skillsF.map(s => s.cobertura)),\n      semaforo: peor.semaforo, prioridad: prioridad(peor.semaforo, f.criticidad), respuesta, skills: skillsF,\n    };\n  });\n\n  // 2. Key people: única cobertura de una skill en función crítica o importante\n  const keyPeople = new Map();\n  for (const f of resultado) {\n    if (f.criticidad === 'soporte') continue;\n    for (const s of f.skills) if (s.cobertura === 1) {\n      const id = s.personas[0];\n      if (!keyPeople.has(id)) keyPeople.set(id, []);\n      keyPeople.get(id).push({ funcion: f.id, skill: s.skill, semaforo: f.semaforo });\n    }\n  }\n\n  // 3. Candidatos a backup y formación para skills en rojo/ámbar\n  for (const f of resultado) for (const s of f.skills) {\n    if (s.semaforo === 'verde') continue;\n    s.candidatos = [...activos.keys()]\n      .filter(id => nivelDe(id, s.skill) === s.nivel_minimo - 1 && !s.backups_en_desarrollo.includes(id))\n      .map(id => ({ id, nombre: activos.get(id).nombre, area: activos.get(id).area, con_interes: interes(id).includes(s.skill), es_key_person: keyPeople.has(id) }))\n      .sort((a, b) => b.con_interes - a.con_interes || a.es_key_person - b.es_key_person);\n    // Un mentoring interno necesita a alguien que ya cubra la skill: con cobertura 0 no se propone\n    s.formacion = catalogo.filter(c => c.skill === s.skill && c.a === s.nivel_minimo && !(c.tipo === 'mentoring-interno' && s.cobertura === 0)).map(c => c.id);\n  }\n\n  // 4. Señales de rotación (solo key people y personas que cubren funciones en rojo/ámbar)\n  const enRiesgo = new Set(keyPeople.keys());\n  for (const f of resultado) if (f.semaforo !== 'verde') for (const s of f.skills) if (s.semaforo !== 'verde') s.personas.forEach(id => enRiesgo.add(id));\n  const senales = [...enRiesgo].map(id => ({ id, nombre: activos.get(id).nombre, ...senalesRotacion(activos.get(id), datos) }));\n\n  return {\n    funciones: resultado,\n    key_people: [...keyPeople].map(([id, funcs]) => {\n      const e = activos.get(id);\n      const areaDe = fid => resultado.find(f => f.id === fid).area;\n      // Oculta: puesto junior/intermedio, o sostiene una función de otra área (reglas-semaforo.md §3)\n      const oculta = ['junior', 'intermedio'].includes(e.nivel_puesto) || funcs.some(f => areaDe(f.funcion) !== e.area);\n      return { id, nombre: e.nombre, area: e.area, rol: e.rol, nivel_puesto: e.nivel_puesto, oculta, funciones: funcs };\n    }),\n    senales_rotacion: senales,\n    madurez_ia: madurezIa(datos),\n  };\n}\n\n// Madurez IA por área: nivel medio validado de cada skill de IA (sin la skill = 0).\n// Áreas con menos de 5 personas se agrupan en su división, como las encuestas; si aun así no llegan a 5,\n// no se publican. Así no se puede deducir el nivel de nadie.\nfunction madurezIa(datos) {\n  const skillsIa = datos.taxonomia.skills.filter(s => s.tipo === 'ia').map(s => s.id);\n  const activos = datos.empleados.filter(e => e.estado === 'activo');\n  const nivel = new Map(datos.skills.filter(s => s.nivel_validado).map(s => [`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado]));\n  const grupos = new Map();\n  const cuenta = activos.reduce((m, e) => ((m[e.area] = (m[e.area] || 0) + 1), m), {});\n  for (const e of activos) {\n    const seg = cuenta[e.area] >= UMBRALES.nMinimoEncuesta ? e.area : `${datos.areas[e.area]} (áreas pequeñas)`;\n    if (!grupos.has(seg)) grupos.set(seg, []);\n    grupos.get(seg).push(e.id);\n  }\n  const media = ids => Object.fromEntries(skillsIa.map(s => [s, +(ids.reduce((t, id) => t + (nivel.get(`${id}|${s}`) || 0), 0) / ids.length).toFixed(1)]));\n  return [...grupos].filter(([, ids]) => ids.length >= UMBRALES.nMinimoEncuesta).map(([segmento, ids]) => {\n    const m = media(ids);\n    return { segmento, n: ids.length, ...m, indice: +(skillsIa.reduce((t, s) => t + m[s], 0) / skillsIa.length).toFixed(1) };\n  }).sort((a, b) => b.indice - a.indice);\n}\n\nfunction climaDe(area, datos) {\n  const enc = datos.encuesta;\n  const fila = (tipo, seg) => enc.find(r => r.segmento_tipo === tipo && r.segmento === seg && r.publicable === 'si' && +r.n >= UMBRALES.nMinimoEncuesta);\n  return fila('area', area) || fila('division', datos.areas[area]) || null;\n}\n\nfunction senalesRotacion(e, datos) {\n  const banda = datos.bandas.find(b => b.banda_id === e.banda_id);\n  const compa = +(e.salario_ficticio / banda.medio).toFixed(2);\n  const media = +datos.encuesta.find(r => r.segmento_tipo === 'compania').engagement;\n  const clima = climaDe(e.area, datos);\n  const activas = [];\n  if (compa < UMBRALES.compaRatio) activas.push(`S1 compa-ratio ${compa}`);\n  if (+e.meses_desde_ultima_revision > UMBRALES.mesesSinRevision) activas.push(`S2 ${e.meses_desde_ultima_revision} meses sin revisión`);\n  if (clima && +clima.engagement < media) activas.push(`S3 clima ${clima.segmento} ${clima.engagement} < ${media}`);\n  if (+e.ultima_evaluacion >= UMBRALES.evaluacionAlta) activas.push(`S4 evaluación ${e.ultima_evaluacion}`);\n  if (+e.meses_con_manager_actual <= UMBRALES.mesesManagerReciente) activas.push(`S5 ${e.meses_con_manager_actual} meses con su manager`);\n  const probabilidad = activas.length >= 3 ? 'alta' : activas.length === 2 ? 'media' : 'baja';\n  return { compa_ratio: compa, senales: activas, probabilidad };\n}\n\n// ---------- Escenarios ----------\nfunction simularBaja(datos, id) {\n  return { ...datos, empleados: datos.empleados.map(e => (e.id === id ? { ...e, estado: 'baja' } : e)) };\n}\nfunction simularBackup(datos, empleado, skill, funcion) {\n  const plan = { plan_id: 'SIM', empleado_id: empleado, skill_id: skill, funcion_id: funcion || '', estado: 'activo' };\n  return { ...datos, planes: [...datos.planes, plan] };\n}\n\n// ---------- Vacante y movilidad interna (reglas-semaforo.md §9) ----------\n// Perfil del puesto que deja una persona: las skills que cubría en alguna función, con el nivel mínimo más alto\n// que le pedían, y liderazgo si tenía equipo. Candidatos internos: quien cumple al menos la mitad del perfil.\nconst NIVEL_LIDERAZGO_VACANTE = 2;\nfunction vacante(datos, id, despues = calcular(simularBaja(datos, id))) {\n  const sale = datos.empleados.find(e => e.id === id);\n  const nivel = new Map(datos.skills.filter(s => s.nivel_validado).map(s => [`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado]));\n  const niv = (e, skill) => nivel.get(`${e}|${skill}`) || 0;\n  const req = new Map();\n  for (const f of datos.funciones.funciones) for (const s of f.skills_requeridas)\n    if (niv(id, s.skill) >= s.nivel && (!req.has(s.skill) || s.nivel > req.get(s.skill).nivel)) req.set(s.skill, { skill: s.skill, nivel: s.nivel, funcion: f.id });\n  const equipo = datos.empleados.filter(e => e.manager_id === id && e.estado === 'activo').map(e => e.id);\n  if (equipo.length) req.set('liderazgo', { skill: 'liderazgo', nivel: NIVEL_LIDERAZGO_VACANTE, funcion: '' });\n  const perfil = [...req.values()];\n\n  const cobertura = skill => datos.empleados.filter(e => e.estado === 'activo' && e.id !== id && niv(e.id, skill) >= (req.get(skill)?.nivel || 1)).length;\n  const keyPeople = new Map(despues.key_people.map(k => [k.id, k.funciones.map(f => f.funcion)]));\n  const candidatos = datos.empleados.filter(e => e.estado === 'activo' && e.id !== id).map(e => {\n    const brechas = perfil.filter(p => niv(e.id, p.skill) < p.nivel).map(p => ({\n      skill: p.skill, tiene: niv(e.id, p.skill), necesita: p.nivel, funcion: p.funcion,\n      formacion: datos.catalogo.filter(c => c.skill === p.skill && c.de === niv(e.id, p.skill) && c.a === p.nivel\n        && !(c.tipo === 'mentoring-interno' && cobertura(p.skill) === 0)).map(c => c.id),\n    }));\n    return { id: e.id, nombre: e.nombre, rol: e.rol, area: e.area, cumple: perfil.length - brechas.length, de: perfil.length, brechas, key_person_en: keyPeople.get(e.id) || [] };\n  }).filter(c => c.cumple >= Math.ceil(c.de / 2))\n    .sort((a, b) => b.cumple - a.cumple || a.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0) - b.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0))\n    .slice(0, 3);\n  return { id, nombre: sale.nombre, rol: sale.rol, area: sale.area, equipo: equipo.length, perfil, candidatos };\n}\n\n// Aprobar la opción interna: el candidato asume el puesto (rol, nivel, manager), el equipo pasa a depender de él\n// y se abre un plan por cada brecha de un nivel que tenga formación en el catálogo. Devuelve filas nuevas, no escribe nada.\nfunction aplicarMovilidad(empleados, vac, candidatoId, fecha, origen) {\n  const sale = empleados.find(e => e.id === vac.id);\n  const nuevos = empleados.map(e =>\n    e.id === candidatoId ? { ...e, rol: sale.rol, nivel_puesto: sale.nivel_puesto, manager_id: sale.manager_id, meses_con_manager_actual: '0' }\n      : e.manager_id === vac.id && e.estado === 'activo' ? { ...e, manager_id: candidatoId, meses_con_manager_actual: '0' } : e);\n  const c = vac.candidatos.find(x => x.id === candidatoId);\n  const planes = c.brechas.filter(b => b.necesita - b.tiene === 1 && b.formacion.length).map(b => ({\n    empleado_id: candidatoId, skill_id: b.skill, nivel_objetivo: b.necesita, funcion_id: b.funcion, formacion_id: b.formacion[0],\n    fecha_inicio: fecha, fecha_objetivo: '', estado: 'activo', origen,\n  }));\n  return { empleados: nuevos, planes };\n}\n\n// Compara con una foto anterior: funciones que empeoran o mejoran\nfunction comparar(antes, despues) {\n  const previo = new Map(antes.funciones.map(f => [f.id, f]));\n  return despues.funciones.flatMap(f => {\n    const a = previo.get(f.id);\n    if (!a) return [];\n    // Cambio de color, o cambio de cobertura sin cambiar de color fuera del verde\n    const d = ORDEN[f.semaforo] - ORDEN[a.semaforo] || (f.semaforo !== 'verde' ? a.cobertura - f.cobertura : 0);\n    if (!d) return [];\n    return [{ id: f.id, nombre: f.nombre, cambio: d > 0 ? 'empeora' : 'mejora', de: a.semaforo, a: f.semaforo, cobertura_antes: a.cobertura, cobertura_despues: f.cobertura }];\n  });\n}\n\n\n// Propuesta de acciones (pasos 4-5): contexto para Claude y propuesta por reglas si no hay IA.\n// Sin dependencias: lo usan la demo local (demo.js) y el nodo de código de n8n (exportar-n8n.js).\n\nfunction contexto(r, cambios, evento, vac, datos) {\n  const ids = cambios.filter(c => c.cambio === 'empeora').map(c => c.id);\n  const afectadas = r.funciones.filter(x => ids.includes(x.id));\n  const implicadas = new Set(afectadas.flatMap(x => x.skills.filter(s => s.semaforo !== 'verde').flatMap(s => s.personas)));\n  const formaciones = new Set(afectadas.flatMap(x => x.skills.flatMap(s => s.formacion || [])));\n  // Si alguna función se rediseña con IA, la recualificación sale de las formaciones de IA del catálogo\n  if (afectadas.some(x => x.respuesta === 'redisenar')) datos.catalogo.filter(c => c.skill.startsWith('ia-')).forEach(c => formaciones.add(c.id));\n  if (vac) {\n    vac.candidatos.forEach(c => { implicadas.add(c.id); c.brechas.forEach(b => b.formacion.forEach(x => formaciones.add(x))); });\n    // Solo People: compa-ratio del candidato frente a la banda del puesto que asumiría\n    const banda = datos.bandas.find(b => b.banda_id === datos.empleados.find(e => e.id === vac.id).banda_id);\n    vac.candidatos.forEach(c => { c.compa_en_puesto = +(datos.empleados.find(e => e.id === c.id).salario_ficticio / banda.medio).toFixed(2); c.banda_puesto = banda.banda_id; });\n  }\n  return {\n    evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people, vacante: vac,\n    senales: r.senales_rotacion.filter(s => implicadas.has(s.id)),\n    catalogo: datos.catalogo.filter(c => formaciones.has(c.id)),\n  };\n}\n\n// Decisión de cubrir el puesto: dos opciones excluyentes con el mismo grupo (A fuera, B el mejor candidato interno)\nfunction opcionesVacante(ctx) {\n  const v = ctx.vacante;\n  if (!v) return [];\n  const grupo = `VAC-${v.id}`;\n  const prioridad = ctx.funciones_afectadas.map(x => x.prioridad).sort()[0] || 'P1';\n  const ops = [{ prioridad, funcion_id: '', tipo: 'contratar', grupo, accion: `Opción A · Buscar fuera: ${v.rol} (${v.perfil.map(p => `${p.skill} ${p.nivel}`).join(', ')})`, empleado_id: '', skill_id: '', formacion_id: '',\n    por_que: v.candidatos.length ? 'Nadie dentro cumple el perfil completo.' : 'Ningún candidato interno cumple la mitad del perfil.',\n    riesgo_si_no: `Proceso de 2-3 meses; mientras tanto, ${v.equipo} personas sin responsable.` }];\n  const c = v.candidatos[0];\n  if (c) {\n    const conForm = c.brechas.find(b => b.formacion.length);\n    ops.push({ prioridad, funcion_id: c.brechas.find(b => b.funcion)?.funcion || '', tipo: 'movilidad', grupo, accion: `Opción B · Mover a ${c.nombre} (${c.rol}) a ${v.rol}`, empleado_id: c.id, skill_id: conForm?.skill || '', formacion_id: conForm?.formacion[0] || '',\n      por_que: `Cumple ${c.cumple} de ${c.de} skills del puesto. Le falta: ${c.brechas.map(b => `${b.skill} ${b.tiene} → ${b.necesita}${b.formacion.length ? ` (${b.formacion[0]})` : ' (sin formación en el catálogo)'}`).join('; ')}.`,\n      riesgo_si_no: c.key_person_en.length ? `Coste organizativo: ya es la única cobertura de ${c.key_person_en.join(', ')}; asumir el puesto concentra el riesgo en una persona.` : 'Coste organizativo: su puesto actual queda por cubrir.' });\n  }\n  return ops;\n}\n\nfunction propuestaPorReglas(ctx) {\n  const acciones = opcionesVacante(ctx);\n  const enVacante = skill => ctx.vacante?.perfil.some(p => p.skill === skill);\n  for (const fn of ctx.funciones_afectadas) for (const s of fn.skills.filter(x => x.semaforo !== 'verde')) {\n    const cand = (s.candidatos || []).find(c => !c.es_key_person);\n    const form = ctx.catalogo.find(c => c.skill === s.skill);\n    if (fn.respuesta === 'redisenar') {\n      // Lente AI first: no se forma a nadie en el proceso actual; se rediseña y se recualifica\n      const formIa = ctx.catalogo.find(c => c.skill === 'ia-automatizacion' && c.de === 1);\n      acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'rediseno', accion: `Rediseñar ${fn.nombre} con IA y automatización${cand ? ` y recualificar a ${cand.nombre}` : ''}`, empleado_id: cand?.id || '', skill_id: 'ia-automatizacion', formacion_id: formIa?.id || '', por_que: `Cobertura ${s.cobertura} en ${s.skill} e impacto IA alto: formar un backup en el proceso actual es invertir en un proceso que va a cambiar.${cand?.con_interes ? ` ${cand.nombre} tiene interés declarado.` : ''}`, riesgo_si_no: `${fn.nombre} sigue dependiendo de ${s.cobertura} persona(s) y de un proceso manual.` });\n      if (s.cobertura === 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'redistribuir', accion: `Cubrir ${fn.nombre} con apoyo temporal mientras dura el rediseño`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: 'Nadie cubre la skill hoy.', riesgo_si_no: 'La próxima entrega queda sin responsable.' });\n    }\n    else if (cand && s.cobertura > 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'backup', accion: `Plan de backup: ${cand.nombre} en ${s.skill} (${s.nivel_minimo - 1} → ${s.nivel_minimo})`, empleado_id: cand.id, skill_id: s.skill, formacion_id: form?.id || '', por_que: `Cobertura ${s.cobertura}. ${cand.nombre} está a un nivel${cand.con_interes ? ' y tiene interés declarado' : ''}.`, riesgo_si_no: `La función ${fn.nombre} depende de ${s.cobertura} persona.` });\n    else if (enVacante(s.skill)) { /* la cubre la decisión de la vacante (opciones A/B) */ }\n    else acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'contratar', accion: `Abrir vacante con ${s.skill} nivel ${s.nivel_minimo}`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: `Cobertura ${s.cobertura} y ningún candidato interno llega a tiempo.`, riesgo_si_no: `${fn.nombre} queda sin nadie que pueda sostenerla.` });\n    if (s.cobertura === 1) {\n      const kp = s.personas[0];\n      acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'retencion', accion: `Conversación de permanencia con ${ctx.key_people.find(k => k.id === kp)?.nombre || kp}`, empleado_id: kp, skill_id: s.skill, formacion_id: '', por_que: 'Es la única cobertura de la skill.', riesgo_si_no: 'Una segunda salida deja la función sin cobertura.' });\n    }\n  }\n  const n = ctx.cambios.filter(c => c.cambio === 'empeora').length;\n  const v = ctx.vacante, c = v?.candidatos[0];\n  const resumen = v\n    ? `${ctx.evento}: ${n} función(es) empeoran. Primera decisión: cómo cubrir el puesto de ${v.rol}, buscando fuera (A)${c ? ` o moviendo a ${c.nombre} (B)` : ''}. Además se proponen ${acciones.length - (c ? 2 : 1)} acciones para reducir el riesgo mientras tanto. Todo queda pendiente de aprobación por People.`\n    : `${ctx.evento}: ${n} función(es) empeoran. Se proponen ${acciones.length} acciones para su aprobación por People.`;\n  const sen = c && ctx.senales.find(s => s.id === c.id);\n  const detalle = c ? `${c.nombre}: probabilidad ${sen?.probabilidad || 'baja'} (${sen?.senales.join('; ') || 'sin señales'}). Si asume el puesto con su salario actual, su compa-ratio en la banda ${c.banda_puesto} sería ${c.compa_en_puesto}: la opción B exige revisar condiciones.` : '';\n  return { acciones, resumen_direccion: resumen, detalle_people: detalle, observaciones: 'Propuesta generada por reglas (sin IA).' };\n}\n\n// Mensaje de usuario para prompts/proponer-acciones.md (mismo orden que la sección ## User del prompt)\nfunction mensajeClaude(ctx) {\n  const j = v => JSON.stringify(v, null, 1);\n  return `Evento: ${ctx.evento}\n\nCambios en el mapa:\n${j(ctx.cambios)}\n\nFunciones afectadas (detalle del cálculo):\n${j(ctx.funciones_afectadas)}\n\nKey people tras el cambio:\n${j(ctx.key_people)}\n\nSeñales de rotación (solo personas implicadas, confidencial People):\n${j(ctx.senales)}\n\nVacante (puesto que deja la persona, si aplica):\n${j(ctx.vacante)}\n\nFormaciones disponibles:\n${j(ctx.catalogo)}`;\n}\n\n\n// Filas de las hojas calculadas del Sheet (cobertura, key-people, histórico, alertas).\n// Sin dependencias: lo usan exportar-sheets.js y los nodos de código de n8n (exportar-n8n.js).\n\nconst COLS = {\n  cobertura: ['funcion_id', 'area', 'nombre', 'criticidad', 'semaforo', 'icono', 'prioridad', 'cobertura', 'objetivo', 'skill_mas_debil', 'cubren', 'backup_en_desarrollo', 'candidatos_con_interes', 'impacto_ia', 'respuesta'],\n  keyPeople: ['empleado_id', 'nombre', 'area', 'rol', 'oculta', 'funciones', 'skills'],\n  historico: ['fecha', 'funcion_id', 'semaforo', 'cobertura', 'prioridad', 'evento'],\n  alertas: ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision', 'grupo'],\n};\nconst ICONO = { verde: '🟢', ambar: '🟡', rojo: '🔴' };\n\nfunction filasCobertura(r, nombre) {\n  return r.funciones.map(f => {\n    const s = f.skills.reduce((a, b) => (b.cobertura < a.cobertura ? b : a));\n    const debiles = f.skills.filter(x => x.semaforo !== 'verde');\n    return [f.id, f.area, f.nombre, f.criticidad, f.semaforo, ICONO[f.semaforo], f.prioridad, f.cobertura, f.objetivo, s.skill,\n      s.personas.map(nombre).join('; '),\n      debiles.flatMap(x => x.backups_en_desarrollo).map(nombre).join('; '),\n      debiles.flatMap(x => (x.candidatos || []).filter(c => c.con_interes).map(c => c.nombre)).join('; '),\n      f.impacto_ia, f.respuesta === 'redisenar' ? 'rediseñar con IA' : 'cubrir'];\n  });\n}\n\nfunction filasKeyPeople(r) {\n  return r.key_people.map(k => [k.id, k.nombre, k.area, k.rol, k.oculta ? 'si' : 'no',\n    k.funciones.map(f => f.funcion).join('; '), k.funciones.map(f => f.skill).join('; ')]);\n}\n\nfunction filasHistorico(r, fecha, evento) {\n  return r.funciones.map(f => [fecha, f.id, f.semaforo, f.cobertura, f.prioridad, evento]);\n}\n\n\n// Utilidades de los nodos de código de n8n: leer el Sheet (una llamada batchGet) y preparar escrituras (batchUpdate y append).\n// exportar-n8n.js las concatena con el motor (cobertura.js), la propuesta (propuesta.js) y las filas (hojas.js).\n\nconst HOJAS_LECTURA = ['empleados', 'skills-empleados', 'planes-backup', 'bandas-salariales', 'encuesta-clima-agregada', 'historico-semaforo', 'alertas', 'key-people'];\nconst API = id => `https://sheets.googleapis.com/v4/spreadsheets/${id}`;\nconst hoyISO = () => new Date().toISOString().slice(0, 10);\n\n// Respuesta de batchGet → { hoja: { cabecera, filas: [{ ...columnas, _fila }] } }. _fila es la fila real del Sheet.\nfunction tablas(resp) {\n  const t = {};\n  HOJAS_LECTURA.forEach((h, i) => {\n    const values = (resp.valueRanges[i] || {}).values || [];\n    const cabecera = (values[0] || []).map(String);\n    const filas = values.slice(1).map((row, j) => {\n      const o = { _fila: j + 2 };\n      cabecera.forEach((c, k) => { o[c] = row[k] == null ? '' : String(row[k]); });\n      return o;\n    }).filter(o => cabecera.some(c => o[c] !== ''));\n    t[h] = { cabecera, filas };\n  });\n  return t;\n}\n\nfunction datosDesde(T, defs) {\n  return {\n    funciones: defs.funciones, taxonomia: defs.taxonomia, areas: defs.areas, catalogo: defs.catalogo,\n    empleados: T['empleados'].filas, skills: T['skills-empleados'].filas, planes: T['planes-backup'].filas,\n    bandas: T['bandas-salariales'].filas, encuesta: T['encuesta-clima-agregada'].filas,\n  };\n}\n\n// Última foto del histórico: las filas con la misma fecha y evento que la última fila\nfunction ultimaFoto(filas) {\n  if (!filas.length) return null;\n  const u = filas[filas.length - 1];\n  return { funciones: filas.filter(x => x.fecha === u.fecha && x.evento === u.evento).map(x => ({ id: x.funcion_id, semaforo: x.semaforo, cobertura: +x.cobertura, nombre: '' })) };\n}\n\n// ---------- Escrituras ----------\nconst letra = n => { let s = ''; for (; n > 0; n = Math.floor((n - 1) / 26)) s = String.fromCharCode(65 + ((n - 1) % 26)) + s; return s; };\nconst valor = v => (v == null ? '' : typeof v === 'string' && /^-?\\d+(\\.\\d+)?$/.test(v) && !/^0\\d/.test(v) ? +v : v);\n\n// Una fila existente (por _fila), con las columnas en el orden de la cabecera del Sheet\nfunction filaEn(hoja, cabecera, obj) {\n  return { range: `'${hoja}'!A${obj._fila}:${letra(cabecera.length)}${obj._fila}`, values: [cabecera.map(c => valor(obj[c]))] };\n}\n// Bloque desde la fila 2 que sustituye el contenido; rellena con vacíos hasta minFilas para borrar lo que hubiera\nfunction bloque(hoja, ncols, filas, minFilas = 0) {\n  const n = Math.max(filas.length, minFilas);\n  if (!n) return null;\n  const values = [...filas.map(f => f.map(valor)), ...Array(n - filas.length).fill(Array(ncols).fill(''))];\n  return { range: `'${hoja}'!A2:${letra(ncols)}${n + 1}`, values };\n}\nconst batch = (id, data) => ({ method: 'POST', url: `${API(id)}/values:batchUpdate`, body: { valueInputOption: 'RAW', data: data.filter(Boolean) } });\nconst append = (id, hoja, filas) => ({ method: 'POST', url: `${API(id)}/values/${encodeURIComponent(`'${hoja}'!A1`)}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`, body: { values: filas.map(f => f.map(valor)) } });\n\n// Escrituras del mapa tras un recálculo: cobertura y key-people (sustituir) + foto en el histórico (añadir)\nfunction escriturasMapa(T, r, datos, evento) {\n  const nombre = id => datos.empleados.find(e => e.id === id)?.nombre || id;\n  return {\n    data: [bloque('cobertura', COLS.cobertura.length, filasCobertura(r, nombre)),\n      bloque('key-people', COLS.keyPeople.length, filasKeyPeople(r), T['key-people'].filas.length)],\n    historico: filasHistorico(r, hoyISO(), evento),\n  };\n}\n\n// ---------- Email (HTML sencillo, se ve bien en Gmail) ----------\nconst esc = s => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nconst html = cuerpo => `<div style=\"font-family:Arial,sans-serif;font-size:14px;color:#222;max-width:680px\">${cuerpo}<p style=\"color:#888;font-size:12px;margin-top:24px\">Acme People OS · datos ficticios · generado automáticamente</p></div>`;\nfunction listaCambios(cambios) {\n  return `<ul>${cambios.map(c => `<li><b>${esc(c.id)}</b> ${esc(c.nombre)}: ${ICONO[c.de]} → ${ICONO[c.a]} (cobertura ${c.cobertura_antes} → ${c.cobertura_despues})</li>`).join('')}</ul>`;\n}\n\n// ===== Nodo =====\n// W2 · nodo \"Aplicar decisión\": pasos 7-8. Aprueba la alerta (y descarta las otras opciones del mismo grupo),\n// aplica el cambio (plan de backup o movilidad), recalcula y prepara la página de respuesta, las escrituras y el email.\nconst cfg = $('Configuración').first().json;\nconst T = tablas($('Leer Sheet').first().json);\nconst defs = JSON.parse($('Leer definiciones').first().json.definiciones);\nconst base = datosDesde(T, defs);\nconst hoy = hoyISO();\nconst pagina = (titulo, cuerpo = '') => html(`<h2>${titulo}</h2>${cuerpo}<p><a href=\"https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit\">Abrir el Sheet</a></p>`);\nconst salida = (htmlPagina, peticiones = [], email = null) => [{ json: { html: htmlPagina, peticiones, email } }];\n\nconst alertaId = String(($('Webhook').first().json.query || {}).alerta || '').trim().toUpperCase();\nconst alertas = T['alertas'].filas;\nconst a = alertas.find(x => x.alerta_id === alertaId);\nif (!a) return salida(pagina(`No existe la alerta ${esc(alertaId)}`));\nif (a.decision !== 'pendiente') return salida(pagina(`${esc(alertaId)} ya está ${esc(a.decision)}`, `<p>${esc(a.accion)}</p><p>No se ha cambiado nada.</p>`));\n\n// 7 · Decisión: aprobada + descartar las otras opciones de la misma decisión\nconst decidir = (x, decision) => filaEn('alertas', T['alertas'].cabecera, { ...x, decision, decidido_por: 'People', fecha_decision: hoy });\nconst descartadas = a.grupo ? alertas.filter(x => x !== a && x.grupo === a.grupo && x.decision === 'pendiente') : [];\nconst data = [decidir(a, 'aprobada'), ...descartadas.map(x => decidir(x, 'descartada'))];\nconst notas = descartadas.map(x => `${x.alerta_id} descartada (misma decisión): ${x.accion}`);\n\n// 8 · Aplicar el cambio\nlet datos = base;\nconst planesNuevos = [];\nconst nuevoPlan = p => ({ plan_id: `PB-${String(base.planes.length + planesNuevos.length + 1).padStart(3, '0')}`, ...p });\nif (a.tipo_accion === 'backup') {\n  const fn = base.funciones.funciones.find(f => f.id === a.funcion_id);\n  planesNuevos.push(nuevoPlan({ empleado_id: a.empleado_id, skill_id: a.skill_id, nivel_objetivo: fn.skills_requeridas.find(s => s.skill === a.skill_id).nivel, funcion_id: a.funcion_id, formacion_id: a.formacion_id, fecha_inicio: hoy, fecha_objetivo: '', estado: 'activo', origen: alertaId }));\n  notas.push(`Plan de backup ${planesNuevos[0].plan_id}: ${a.skill_id} → ${planesNuevos[0].nivel_objetivo} con ${a.formacion_id}`);\n}\nif (a.tipo_accion === 'movilidad') {\n  const vac = vacante(base, a.grupo.replace('VAC-', ''));\n  const mov = aplicarMovilidad(base.empleados, vac, a.empleado_id, hoy, alertaId);\n  const antes = new Map(base.empleados.map(e => [e.id, JSON.stringify(e)]));\n  mov.empleados.filter(e => antes.get(e.id) !== JSON.stringify(e)).forEach(e => data.push(filaEn('empleados', T['empleados'].cabecera, e)));\n  mov.planes.forEach(p => planesNuevos.push(nuevoPlan(p)));\n  datos = { ...datos, empleados: mov.empleados };\n  const c = vac.candidatos.find(x => x.id === a.empleado_id);\n  notas.push(`${c.nombre} pasa a ${vac.rol}; su equipo pasa a depender de él.`, ...planesNuevos.map(p => `Plan ${p.plan_id}: ${p.skill_id} → ${p.nivel_objetivo} con ${p.formacion_id}`),\n    ...c.brechas.filter(b => !b.formacion.length).map(b => `${b.skill}: sin formación en el catálogo → acompañamiento de su manager`));\n}\ndatos = { ...datos, planes: [...datos.planes, ...planesNuevos] };\n\nconst peticiones = [];\nlet cambios = [];\nlet resumen = '<p>La acción queda registrada. No cambia la plantilla ni los planes, así que el mapa no se recalcula.</p>';\nif (a.tipo_accion === 'backup' || a.tipo_accion === 'movilidad') {\n  const evento = `Decisión aprobada (${alertaId})`;\n  const r = calcular(datos);\n  const nombres = new Map(r.funciones.map(f => [f.id, f.nombre]));\n  cambios = comparar(ultimaFoto(T['historico-semaforo'].filas) || calcular(base), r).map(c => ({ ...c, nombre: nombres.get(c.id) }));\n  const mapa = escriturasMapa(T, r, datos, evento);\n  data.push(...mapa.data);\n  peticiones.push(append(cfg.sheet_id, 'historico-semaforo', mapa.historico));\n  resumen = cambios.length ? `<h3>Cambios en el mapa</h3>${listaCambios(cambios)}` : '<p>El mapa no cambia de color: mover o formar a alguien no crea skills validadas todavía.</p>';\n}\npeticiones.unshift(batch(cfg.sheet_id, data));\nif (planesNuevos.length) peticiones.push(append(cfg.sheet_id, 'planes-backup', planesNuevos.map(p => T['planes-backup'].cabecera.map(c => p[c]))));\n\nconst cuerpo = `<p><b>${esc(a.accion)}</b></p><ul>${notas.map(n => `<li>${esc(n)}</li>`).join('')}</ul>${resumen}`;\nreturn salida(pagina(`✅ ${esc(alertaId)} aprobada`, cuerpo), peticiones,\n  { para: cfg.email_demo, asunto: `[Acme People OS] Decisión aprobada · ${alertaId} · ${cambios.filter(c => c.cambio === 'mejora').length ? 'el riesgo baja' : 'registrada'}`, html: html(`<h2>Decisión aprobada por People</h2>${cuerpo}`) });\n"
+      }
+    },
+    {
+      "id": "c31d1141-5a8b-80a9-be0e-26f5ada54ce4",
+      "name": "Responder",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        300
+      ],
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $json.html }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html; charset=utf-8"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "4df55ad7-600d-5055-3046-2500dbd14ba9",
+      "name": "Peticiones",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1540,
+        300
+      ],
+      "parameters": {
+        "jsCode": "return $('Aplicar decisión').first().json.peticiones.map(json => ({ json }));"
+      }
+    },
+    {
+      "id": "238e80cf-1771-3aa3-2afb-700c67ef0553",
+      "name": "Escribir en Sheet",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1760,
+        300
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "f42d7387-5a7e-d96e-b255-b8a30472235f",
+      "name": "Email resultado",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1980,
+        300
+      ],
+      "parameters": {
+        "jsCode": "const e = $('Aplicar decisión').first().json.email;\nreturn e ? [{ json: e }] : [];"
+      }
+    },
+    {
+      "id": "3ee3215e-c1f1-4369-0394-8ca8d56a8fe5",
+      "name": "Email a People",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2200,
+        300
+      ],
+      "parameters": {
+        "operation": "send",
+        "sendTo": "={{ $json.para }}",
+        "subject": "={{ $json.asunto }}",
+        "emailType": "html",
+        "message": "={{ $json.html }}",
+        "options": {
+          "appendAttribution": false
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Configuración",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuración": {
+      "main": [
+        [
+          {
+            "node": "Leer Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Sheet": {
+      "main": [
+        [
+          {
+            "node": "Leer definiciones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer definiciones": {
+      "main": [
+        [
+          {
+            "node": "Aplicar decisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aplicar decisión": {
+      "main": [
+        [
+          {
+            "node": "Responder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder": {
+      "main": [
+        [
+          {
+            "node": "Peticiones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Peticiones": {
+      "main": [
+        [
+          {
+            "node": "Escribir en Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escribir en Sheet": {
+      "main": [
+        [
+          {
+            "node": "Email resultado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email resultado": {
+      "main": [
+        [
+          {
+            "node": "Email a People",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
