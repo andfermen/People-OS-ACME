@@ -25,8 +25,12 @@ function leerCsv(archivo) {
 }
 function leerYaml(archivo) { return yaml.load(fs.readFileSync(archivo, 'utf8')); }
 
-function cargar(raiz = RAIZ) {
-  const d = p => path.join(raiz, p);
+// dirEstado: carpeta opcional con copias de los CSV que cambian en la demo (empleados, skills, planes).
+function cargar(raiz = RAIZ, dirEstado = null) {
+  const d = p => {
+    const propio = dirEstado && p.startsWith('datos/') && path.join(dirEstado, path.basename(p));
+    return propio && fs.existsSync(propio) ? propio : path.join(raiz, p);
+  };
   return {
     funciones: leerYaml(d('definiciones/funciones.yaml')),
     taxonomia: leerYaml(d('definiciones/taxonomia-skills.yaml')),

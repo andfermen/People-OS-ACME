@@ -63,3 +63,15 @@ Formato: qué se decide, alternativas consideradas y por qué.
 - **Qué:** `calculo/cobertura.js` implementa las reglas tal y como están escritas. `npm run verificar` comprueba que los datos producen los casos de la demo.
 - **Alternativas:** construir el cálculo directamente en Sheets o en el orquestador, sin referencia.
 - **Por qué:** permite comprobar los datos y las reglas antes de construir el flujo y detectar errores antes del ensayo. Con n8n, el mismo código va en el nodo de código. Con Make, sirve para comprobar que las fórmulas de Sheets dan el mismo resultado. La decisión de D-04 sigue abierta.
+
+## D-11 · "Formación completada" sin hoja nueva
+
+- **Qué:** para el flujo opcional (nueva skill adquirida), el plan de backup pasa a `estado = completado` en `planes-backup` cuando el manager valida el nuevo nivel en `skills-empleados`. No se crea una hoja `formacion`.
+- **Alternativas:** una hoja `formacion` aparte con el avance de cada curso.
+- **Por qué:** una hoja menos que mantener y explicar. El plan ya tiene su formación asociada (`formacion_id`). Lo que cambia el semáforo es la **validación del manager**, no el curso: completar un curso no equivale a tener la skill.
+
+## D-12 · Demo local como plan B (`npm run demo`)
+
+- **Qué:** `calculo/demo.js` ejecuta en local los pasos 1-8 y el opcional (baja → recálculo → propuesta → alertas → email → aprobación → recálculo → validación → verde), con el estado en `salidas/demo/`.
+- **Alternativas:** plan B solo con capturas y vídeo.
+- **Por qué:** si el orquestador falla en directo, el proceso se sigue viendo funcionar de verdad. Con `ANTHROPIC_API_KEY` redacta Claude; sin ella, una propuesta por reglas, para que la demo no dependa de la red ni de la API.

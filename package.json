@@ -5,7 +5,8 @@
   "scripts": {
     "cobertura": "node calculo/cobertura.js",
     "verificar": "node calculo/verificar-casos.js",
-    "sheets": "node calculo/exportar-sheets.js"
+    "sheets": "node calculo/exportar-sheets.js",
+    "demo": "node calculo/demo.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"

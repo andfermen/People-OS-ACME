@@ -1,7 +1,7 @@
 # Guion de la demo (borrador, 20-25 min)
 
 > Antes de empezar: `npm run verificar` → todos los casos en ✅. Ten abiertos el Sheet (hoja `cobertura`), el orquestador, el buzón de dirección y este guion.
-> **Plan B:** si algo falla en directo, enseña las capturas y el vídeo grabado el jueves, o ejecuta `npm run cobertura -- --baja E007` en la terminal.
+> **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-001` → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
 |---|---|---|---|---|

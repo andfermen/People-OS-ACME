@@ -67,7 +67,8 @@ Principios de diseño (argumentos para el CEO):
 ├── calculo/
 │   ├── cobertura.js              # Motor de referencia: semáforo, key people, candidatos, señales, escenarios
 │   ├── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
-│   └── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
+│   ├── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
+│   └── demo.js                   # `npm run demo`: flujo 1-8 + opcional en local (plan B, D-12)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
