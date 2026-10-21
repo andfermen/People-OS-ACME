@@ -6,9 +6,12 @@
 
 Prueba técnica para un proceso de selección. El reto: **diseñar e implementar un sistema que permita a una sola persona gestionar el 360º de RRHH de una compañía apoyándose en IA y automatización.**
 
-- Empresa de referencia: **Acme**, fintech cripto española regulada **ficticia**. Nombre, estructura y áreas son inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** Nunca usar datos reales.
+- Empresa: **Acme**, ficticia, inspirada en Bit2Me (fintech cripto española, regulada). Estructura y áreas basadas en información pública de Bit2Me; nombre, personas y datos inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** En todo el repo la empresa se llama Acme; Bit2Me solo se menciona como referencia de inspiración en `empresa.md` y README.
+- Contexto clave del CEO: la compañía (~160 personas) está en un **plan "AI first"**: objetivos de adopción, herramientas, formación y rediseño/reducción de equipos. **El rol al que opta Andrea es liderar People en esa transformación.** Por tanto la prueba no es solo "un sistema de RRHH": es la evidencia de cómo lideraría People en un plan AI first. El mapa de skills es el instrumento de ese plan (ver §6 "Lente AI first" y `docs/plan-ai-first-people.md`).
+- Argumento meta: esta prueba se ha construido como trabajaría el departamento, **una persona + IA** (Claude Code, orquestador, API de Claude).
 - Presentación: **viernes, en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
 - Lo que más pesa: **procesos funcionando de extremo a extremo.** No solo documentación.
+- Cuenta Google de la demo: **Gmail personal de Andrea** (Sheets, Drive, Gmail y conexiones del orquestador). **No escribir esa dirección en el repo**: en archivos y flujos usar la variable `EMAIL_DEMO`. Todo lo de la demo vive en la carpeta de Drive `Acme People OS` y los emails salen con el prefijo `[Acme People OS]` en el asunto. Nunca guardar contraseñas ni claves de API en el repo.
 
 ## 2. Quién trabaja aquí y cómo
 
@@ -53,11 +56,12 @@ Principios de diseño (argumentos para el CEO):
 │   ├── vision-procesos-rrhh.md   # Mapa 360º, qué se automatiza y qué no
 │   ├── arquitectura.md           # Capas, flujo de datos, diagrama
 │   ├── usos-mapa-cobertura.md    # Rotación, encuestas, revisión salarial  ← ya existe
+│   ├── plan-ai-first-people.md   # Cómo lideraría People en el plan AI first (adopción, herramientas, formación, estructura)
 │   ├── decisiones.md
 │   ├── escalado.md               # Cómo se añade un proceso nuevo
 │   └── guion-demo.md
 ├── definiciones/
-│   ├── empresa.md                # Áreas, tamaño, contexto (ficticio)
+│   ├── empresa.md                # Acme: áreas, tamaño, contexto (ficticio, inspirado en Bit2Me)
 │   ├── taxonomia-skills.yaml     # Skills hard/soft y descripción de niveles 1-4
 │   ├── funciones.yaml            # Funciones por área, criticidad, skills requeridas, cobertura objetivo
 │   ├── reglas-semaforo.md        # Cálculo de cobertura, semáforo y key people
@@ -126,6 +130,7 @@ Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre 
 3. **Plan de upskilling dirigido al riesgo**: para cada función en rojo/ámbar, personas a un nivel de distancia con interés + formación del catálogo.
 4. **Movilidad interna** (antes proceso aparte): candidatos internos para una vacante, con el coste organizativo de moverlos (¿deja una función en rojo?).
 5. **Usos de gestión** → `docs/usos-mapa-cobertura.md`.
+6. **Madurez IA por área**: nivel medio de las skills de IA por área, para priorizar el plan AI first de formación.
 
 ## 6. Semáforo de cobertura (definición de referencia, editable en `reglas-semaforo.md`)
 
@@ -143,6 +148,20 @@ Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre 
 - **Key person** = persona que es la única cobertura de una skill requerida en una función crítica o importante.
 - **Prioridad** = semáforo × criticidad. Rojo en función crítica = prioridad 1.
 
+### Lente AI first (cambios mínimos, mismo modelo)
+1. **Skills de IA transversales en la taxonomía** (2-3, con niveles 1-4): uso de IA en el trabajo diario, automatización/agentes, criterio y verificación de resultados de IA. Así el mismo mapa mide la **madurez IA por área**.
+2. **Campo `impacto_ia` en `funciones.yaml`** (alto/medio/bajo): cuánto va a transformar la IA esa función.
+3. **Regla de decisión:** en una función roja con `impacto_ia` alto, la propuesta no es formar un backup en la forma actual de hacer el trabajo, sino **rediseñar la función con IA y recualificar**. Formar a alguien en un proceso que va a desaparecer es invertir en el pasado.
+4. **Caso de demo:** al menos una función roja con `impacto_ia` alto, para que la propuesta de la IA sea distinta a la de custodia.
+5. **Cautela de gobierno:** una lista de funciones con impacto IA alto puede leerse como "lista de despidos". El mapa no señala personas para salir: prioriza recualificación antes que reducción, se comunica con transparencia y las decisiones de estructura son de dirección con criterio documentado. Vista de `impacto_ia` solo para dirección y People.
+
+### `docs/plan-ai-first-people.md` (contenido esperado, breve)
+Cuatro palancas, cada una con qué mide el sistema, qué decide una persona y un horizonte 30/60/90 días:
+- **Adopción:** madurez IA por área como línea base y objetivos por área.
+- **Herramientas:** catálogo de herramientas aprobadas y reglas de uso (datos, privacidad, AI Act).
+- **Formación:** upskilling dirigido por el mapa (riesgo + madurez IA), no formación genérica para todos.
+- **Estructura:** rediseño de funciones con `impacto_ia` alto; recualificación antes que reducción; gestión del cambio y comunicación.
+
 ### Datos necesarios
 - `empleados.csv`: `id, nombre, email, area, rol, nivel_puesto, manager_id, antiguedad_meses, ultima_evaluacion (1-5), skills_interes, banda_id, salario_ficticio, meses_desde_ultima_revision, estado (activo/baja)` + `genero`, `meses_con_manager_actual` (D-06)
 - `planes-backup.csv`: `plan_id, empleado_id, skill_id, nivel_objetivo, funcion_id, formacion_id, fecha_inicio, fecha_objetivo, estado, origen` (D-07)
@@ -150,7 +169,7 @@ Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre 
 - `bandas-salariales.csv`: `banda_id, minimo, medio, maximo` (compa-ratio = salario / medio)
 - `encuesta-clima-agregada.csv`: resultados ya agregados por segmento, con `n` (nunca respuestas individuales)
 
-Plantilla ficticia: 40-50 personas en todas las áreas (exchange/trading, custodia, compliance AML/KYC, legal/regulatorio, producto, ingeniería, seguridad, CX, finanzas, marketing, People).
+Plantilla ficticia: **~160 personas**, como la compañía real, para que el CEO reconozca su escala (también hace realista el umbral de anonimato n ≥ 5). Los casos de demo se construyen a mano; el resto se genera. Áreas: exchange/trading, custodia, compliance AML/KYC, legal/regulatorio, producto, ingeniería, seguridad, CX, finanzas, marketing, People. *(Pendiente: los datos actuales tienen 46 personas; hay que ampliarlos sin romper los casos de abajo.)*
 
 Casos que **deben existir** para la demo:
 - Función crítica en rojo con key person evidente (ej. custodia).
@@ -177,24 +196,26 @@ Decidir **miércoles a mediodía** con una prueba de 1 hora:
 
 ## 10. Plan
 
-- [ ] **Mar** · ~~Repo + este archivo~~ ✓. Cuenta Google nueva para la demo (pendiente Andrea).
+- [x] **Mar** · Repo + este archivo. Cuenta Google para la demo.
 - [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
+- [ ] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto, plantilla a ~160 personas, `empresa.md` con la referencia a Bit2Me.
 - [ ] **Mié mediodía** · Test n8n vs Make → `decisiones.md`.
 - [ ] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador. Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
-- [ ] **Jue PM** · Vistas de rotación/encuesta/salarial. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
+- [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. `plan-ai-first-people.md`. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
 - [ ] **Vie** · Presentación.
 
 ## 11. Guion (borrador, 20-25 min)
 
 1. El problema: RRHH 360º con una persona; qué se automatiza y qué no (2 min).
-2. La pregunta del CEO: *¿dónde somos frágiles?* (2 min).
+2. La pregunta del CEO: *¿dónde somos frágiles?* Y en un plan AI first, también: *¿qué funciones van a cambiar y quién está preparado?* (2 min).
 3. Arquitectura y principios (4 min).
 4. El mapa: semáforo, key people ocultas, de dónde salen los datos (captura explicada) (4 min).
 5. Demo "se va la responsable de custodia": recálculo → rojo → email con propuesta (4 min).
 6. Cierre del ciclo: aprobar plan de backup → custodia pasa a ámbar (2 min). Opcional: "tres meses después", el backup completa la formación, el manager valida → verde.
 7. Usos: rotación, encuestas, revisión salarial (4 min).
-8. Escalado al resto del departamento, límites y decisiones (3 min).
+8. Cómo lo usaría para liderar el plan AI first (adopción, herramientas, formación, estructura) y cómo escala al resto de People (3 min).
+9. Cierre: "esta prueba la he construido como trabajaría el departamento: una persona + IA" (1 min).
 
 ## 12. Fuera de alcance
 
