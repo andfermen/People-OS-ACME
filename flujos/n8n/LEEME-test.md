@@ -5,8 +5,9 @@
 ## Antes de empezar
 - Cuenta n8n cloud (prueba gratuita) y la cuenta Google de la demo.
 - Una **API key de Claude** (console.anthropic.com → API Keys).
-- El Sheet ya montado (`salidas/sheets/LEEME.md`), con una hoja vacía más llamada `captura-pendiente` cuya fila 1 sea:
-  `empleado_id,skill_id,nivel_declarado,nivel_validado,validado_por,fecha,evidencia,confianza,pregunta_para_manager,intereses`
+- El Sheet de la demo (ya montado, con la hoja `captura-pendiente` y su cabecera:
+  `empleado_id,skill_id,nivel_declarado,nivel_validado,validado_por,fecha,evidencia,confianza,pregunta_para_manager,intereses`).
+- Los últimos commits subidos a GitHub (`git push`): el flujo lee la taxonomía de la rama `main` del remoto, no de tu ordenador.
 - El flujo lee la taxonomía y el prompt desde GitHub. **Ahora el repo es privado**, así que elige una opción:
   - **A (recomendada, todos los datos son ficticios):** GitHub → *Settings → General → Change visibility → Public*.
   - **B:** dejarlo privado. Crea un token en GitHub (*Settings → Developer settings → Fine-grained tokens*, solo lectura de *Contents* de este repo) y, en los dos nodos *Leer …*, añade una credencial **Header Auth** con Name `Authorization` y Value `Bearer <token>`.
