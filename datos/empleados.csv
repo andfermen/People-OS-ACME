@@ -70,7 +70,7 @@ E068,Guillermo Fernández Arroyo,guillermo.fernandez@acme.example,H,Compliance A
 E069,Sergio Suárez Pastor,sergio.suarez@acme.example,H,Compliance AML/KYC,Analista AML,intermedio,E011,16,3,,GEN-2,37500,14,16,activo
 E070,Lorenzo Torres Castro,lorenzo.torres@acme.example,H,Compliance AML/KYC,Analista KYC,intermedio,E011,21,4,,GEN-2,34500,6,8,activo
 E071,César Ramírez Pastor,cesar.ramirez@acme.example,H,Compliance AML/KYC,Analista KYC,junior,E011,23,3,kyc-onboarding,GEN-1,26500,6,23,activo
-E072,Begoña Vázquez Giménez,begona.vazquez@acme.example,M,Legal y regulatorio,Abogado,intermedio,E017,41,5,,GEN-3,45500,12,8,activo
+E072,Begoña Vázquez Giménez,begona.vazquez@acme.example,M,Legal y regulatorio,Abogada,intermedio,E017,41,5,,GEN-3,45500,12,8,activo
 E073,Teresa Ruiz Gil,teresa.ruiz@acme.example,M,Legal y regulatorio,Paralegal,junior,E017,3,3,contratos-mercantil,GEN-1,27500,3,3,activo
 E074,Lorenzo Vázquez Gallardo,lorenzo.vazquez@acme.example,H,Legal y regulatorio,Abogado,intermedio,E017,19,4,,GEN-3,51500,5,19,activo
 E075,Esther Duran Moreno,esther.duran@acme.example,M,Legal y regulatorio,Paralegal,junior,E017,14,5,,GEN-1,26000,8,14,activo
@@ -80,46 +80,46 @@ E078,Mercedes Arroyo Rubio,mercedes.arroyo@acme.example,M,Seguridad,Analista SOC
 E079,Bruno Muñoz Duran,bruno.munoz@acme.example,H,Seguridad,Analista de seguridad,junior,E033,9,5,,TEC-1,32500,9,9,activo
 E080,Esther Rodríguez León,esther.rodriguez@acme.example,M,Seguridad,Analista SOC,intermedio,E033,13,3,,TEC-2,47500,7,7,activo
 E081,Bruno Romero Medina,bruno.romero@acme.example,H,Ingeniería,Ingeniero backend,intermedio,E025,58,4,ia-automatizacion,TEC-2,43000,14,19,activo
-E082,Verónica Rubio Caballero,veronica.rubio@acme.example,M,Ingeniería,Ingeniero backend senior,senior,E025,53,4,,TEC-3,64000,14,6,activo
+E082,Verónica Rubio Caballero,veronica.rubio@acme.example,M,Ingeniería,Ingeniera backend senior,senior,E025,53,4,,TEC-3,64000,14,6,activo
 E083,Manuel Rubio Méndez,manuel.rubio@acme.example,H,Ingeniería,Ingeniero frontend,intermedio,E025,37,3,,TEC-2,43500,12,13,activo
 E084,Francisco Cuesta Aguado,francisco.cuesta@acme.example,H,Ingeniería,Ingeniero móvil,intermedio,E025,36,4,,TEC-2,43500,3,31,activo
-E085,Elisa Romero León,elisa.romero@acme.example,M,Ingeniería,Ingeniero de QA,junior,E025,7,3,,TEC-1,35500,7,7,activo
+E085,Elisa Romero León,elisa.romero@acme.example,M,Ingeniería,Ingeniera de QA,junior,E025,7,3,,TEC-1,35500,7,7,activo
 E086,Vicente Bravo Márquez,vicente.bravo@acme.example,H,Ingeniería,Ingeniero DevOps,intermedio,E025,60,3,ia-automatizacion,TEC-2,42500,9,30,activo
-E087,Mónica León Ortiz,monica.leon@acme.example,M,Ingeniería,Ingeniero backend,intermedio,E025,38,3,ia-automatizacion,TEC-2,43000,4,38,activo
+E087,Mónica León Ortiz,monica.leon@acme.example,M,Ingeniería,Ingeniera backend,intermedio,E025,38,3,ia-automatizacion,TEC-2,43000,4,38,activo
 E088,Roberto Sánchez Suárez,roberto.sanchez@acme.example,H,Ingeniería,Ingeniero backend senior,senior,E025,49,5,,TEC-3,58000,5,7,activo
 E089,Samuel Mora García,samuel.mora@acme.example,H,Ingeniería,Ingeniero frontend,intermedio,E025,38,3,,TEC-2,47500,5,22,activo
-E090,Helena Castro Pastor,helena.castro@acme.example,M,Ingeniería,Ingeniero móvil,intermedio,E025,31,2,desarrollo-frontend,TEC-2,49000,6,10,activo
+E090,Helena Castro Pastor,helena.castro@acme.example,M,Ingeniería,Ingeniera móvil,intermedio,E025,31,2,desarrollo-frontend,TEC-2,49000,6,10,activo
 E091,Manuel Duran Escudero,manuel.duran@acme.example,H,Ingeniería,Ingeniero de QA,junior,E025,3,4,desarrollo-frontend,TEC-1,31500,3,3,activo
 E092,Eduardo Márquez Vega,eduardo.marquez@acme.example,H,Ingeniería,Ingeniero DevOps,intermedio,E025,12,4,ia-automatizacion,TEC-2,46500,12,12,activo
-E093,Helena Arroyo Ortiz,helena.arroyo@acme.example,M,Ingeniería,Ingeniero backend,intermedio,E025,28,4,ia-automatizacion,TEC-2,45500,2,12,activo
+E093,Helena Arroyo Ortiz,helena.arroyo@acme.example,M,Ingeniería,Ingeniera backend,intermedio,E025,28,4,ia-automatizacion,TEC-2,45500,2,12,activo
 E094,Juan Rivas Duran,juan.rivas@acme.example,H,Ingeniería,Ingeniero backend senior,senior,E025,60,3,,TEC-3,58500,13,39,activo
 E095,Miguel Medina Ruiz,miguel.medina@acme.example,H,Ingeniería,Ingeniero frontend,intermedio,E025,53,5,,TEC-2,48500,12,15,activo
-E096,Gloria Muñoz Aguado,gloria.munoz@acme.example,M,Ingeniería,Ingeniero móvil,intermedio,E025,54,3,ia-automatizacion,TEC-2,47000,6,16,activo
-E097,Andrea Moreno González,andrea.moreno@acme.example,M,Ingeniería,Ingeniero de QA,junior,E025,22,3,,TEC-1,34000,8,22,activo
+E096,Gloria Muñoz Aguado,gloria.munoz@acme.example,M,Ingeniería,Ingeniera móvil,intermedio,E025,54,3,ia-automatizacion,TEC-2,47000,6,16,activo
+E097,Andrea Moreno González,andrea.moreno@acme.example,M,Ingeniería,Ingeniera de QA,junior,E025,22,3,,TEC-1,34000,8,22,activo
 E098,Antonio Santos Escudero,antonio.santos@acme.example,H,Ingeniería,Ingeniero DevOps,intermedio,E025,30,3,desarrollo-backend,TEC-2,49500,9,7,activo
 E099,Guillermo Prieto Márquez,guillermo.prieto@acme.example,H,Ingeniería,Ingeniero backend,intermedio,E025,47,2,,TEC-2,44500,12,35,activo
-E100,Begoña Navarro Romero,begona.navarro@acme.example,M,Ingeniería,Ingeniero backend senior,senior,E025,44,4,infraestructura-cloud,TEC-3,62500,10,6,activo
+E100,Begoña Navarro Romero,begona.navarro@acme.example,M,Ingeniería,Ingeniera backend senior,senior,E025,44,4,infraestructura-cloud,TEC-3,62500,10,6,activo
 E101,David Santos Martín,david.santos@acme.example,H,Ingeniería,Ingeniero frontend,intermedio,E025,37,4,ia-automatizacion,TEC-2,43500,8,30,activo
-E102,Begoña Mora Vega,begona.mora@acme.example,M,Ingeniería,Ingeniero móvil,intermedio,E025,11,4,ia-automatizacion,TEC-2,46500,2,11,activo
+E102,Begoña Mora Vega,begona.mora@acme.example,M,Ingeniería,Ingeniera móvil,intermedio,E025,11,4,ia-automatizacion,TEC-2,46500,2,11,activo
 E103,Jaime Cuesta Hernández,jaime.cuesta@acme.example,H,Ingeniería,Ingeniero de QA,junior,E025,15,5,,TEC-1,35500,3,15,activo
 E104,Julián Lozano Aguado,julian.lozano@acme.example,H,Ingeniería,Ingeniero DevOps,intermedio,E025,52,2,desarrollo-backend,TEC-2,48500,9,39,activo
-E105,Alicia León Sánchez,alicia.leon@acme.example,M,Ingeniería,Ingeniero backend,intermedio,E025,30,3,,TEC-2,49000,2,30,activo
-E106,Gloria Ortiz Mora,gloria.ortiz@acme.example,M,Ingeniería,Ingeniero backend senior,senior,E025,49,3,nodos-blockchain,TEC-3,60000,11,30,activo
+E105,Alicia León Sánchez,alicia.leon@acme.example,M,Ingeniería,Ingeniera backend,intermedio,E025,30,3,,TEC-2,49000,2,30,activo
+E106,Gloria Ortiz Mora,gloria.ortiz@acme.example,M,Ingeniería,Ingeniera backend senior,senior,E025,49,3,nodos-blockchain,TEC-3,60000,11,30,activo
 E107,Julián Cuesta Giménez,julian.cuesta@acme.example,H,Ingeniería,Ingeniero frontend,intermedio,E025,33,5,ia-automatizacion,TEC-2,46000,4,13,activo
 E108,Francisco Castro Bermejo,francisco.castro2@acme.example,H,Ingeniería,Ingeniero móvil,intermedio,E025,53,4,,TEC-2,47500,10,20,activo
 E109,Guillermo Sánchez Jiménez,guillermo.sanchez@acme.example,H,Ingeniería,Ingeniero de QA,junior,E025,10,3,desarrollo-backend,TEC-1,31500,10,10,activo
 E110,Guillermo Gil Lozano,guillermo.gil@acme.example,H,Ingeniería,Ingeniero DevOps,intermedio,E025,23,3,infraestructura-cloud,TEC-2,47500,13,11,activo
 E111,Rodrigo Ibáñez Carrasco,rodrigo.ibanez@acme.example,H,Ingeniería,Ingeniero backend,intermedio,E025,34,3,,TEC-2,47500,7,34,activo
-E112,Esther González Soto,esther.gonzalez@acme.example,M,Ingeniería,Ingeniero backend senior,senior,E025,45,2,nodos-blockchain,TEC-3,60000,13,38,activo
-E113,Olga Cuesta Rubio,olga.cuesta@acme.example,M,Ingeniería,Ingeniero frontend,intermedio,E025,52,2,,TEC-2,48000,2,36,activo
+E112,Esther González Soto,esther.gonzalez@acme.example,M,Ingeniería,Ingeniera backend senior,senior,E025,45,2,nodos-blockchain,TEC-3,60000,13,38,activo
+E113,Olga Cuesta Rubio,olga.cuesta@acme.example,M,Ingeniería,Ingeniera frontend,intermedio,E025,52,2,,TEC-2,48000,2,36,activo
 E114,César Ortiz Méndez,cesar.ortiz@acme.example,H,Producto,Product manager,intermedio,E020,29,2,,TEC-2,46500,9,29,activo
-E115,Carla Hernández Flores,carla.hernandez@acme.example,M,Producto,Diseñador UX/UI,intermedio,E020,14,4,,TEC-2,46500,4,14,activo
+E115,Carla Hernández Flores,carla.hernandez@acme.example,M,Producto,Diseñadora UX/UI,intermedio,E020,14,4,,TEC-2,46500,4,14,activo
 E116,Elisa Reyes León,elisa.reyes@acme.example,M,Producto,Analista de producto,junior,E020,19,4,,TEC-1,32500,10,10,activo
 E117,Esther Bravo Moreno,esther.bravo@acme.example,M,Producto,Product manager,intermedio,E020,28,3,,TEC-2,44500,11,28,activo
 E118,Manuel Esteban Rivas,manuel.esteban@acme.example,H,Producto,Diseñador UX/UI,intermedio,E020,24,4,desarrollo-frontend,TEC-2,48000,3,24,activo
 E119,Gloria Rivas Pérez,gloria.rivas@acme.example,M,Producto,Analista de producto,junior,E020,2,4,,TEC-1,31500,2,2,activo
 E120,Adriana García Fernández,adriana.garcia@acme.example,M,Producto,Product manager,intermedio,E020,44,3,diseno-ux,TEC-2,45000,4,27,activo
-E121,Zoe Rodríguez Sánchez,zoe.rodriguez@acme.example,M,Producto,Diseñador UX/UI,intermedio,E020,21,4,,TEC-2,42500,12,21,activo
+E121,Zoe Rodríguez Sánchez,zoe.rodriguez@acme.example,M,Producto,Diseñadora UX/UI,intermedio,E020,21,4,,TEC-2,42500,12,21,activo
 E122,Alicia García Martín,alicia.garcia@acme.example,M,Atención al cliente (CX),Agente de soporte,junior,E036,10,4,,GEN-1,26500,6,10,activo
 E123,Lorenzo Carrasco Márquez,lorenzo.carrasco@acme.example,H,Atención al cliente (CX),Agente de soporte,intermedio,E036,54,3,,GEN-1,27000,3,32,activo
 E124,Daniela Pastor Pérez,daniela.pastor@acme.example,M,Atención al cliente (CX),Agente de soporte nivel 2,intermedio,E036,11,5,,GEN-2,34500,11,9,activo

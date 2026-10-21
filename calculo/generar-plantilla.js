@@ -86,6 +86,10 @@ const NOMBRES = {
   M: ['Adriana', 'Alicia', 'Amparo', 'Andrea', 'Begoña', 'Blanca', 'Carla', 'Celia', 'Claudia', 'Daniela', 'Elisa', 'Esther', 'Gloria', 'Helena', 'Inmaculada', 'Isabel', 'Julia', 'Laia', 'Lorena', 'Mercedes', 'Miriam', 'Mónica', 'Nuria', 'Olga', 'Pilar', 'Rosa', 'Sofía', 'Susana', 'Teresa', 'Verónica', 'Yolanda', 'Zoe'],
 };
 const APELLIDOS = ['Aguado', 'Alonso', 'Arroyo', 'Bermejo', 'Bravo', 'Caballero', 'Calvo', 'Campos', 'Carrasco', 'Castro', 'Cuesta', 'Duran', 'Escudero', 'Esteban', 'Fernández', 'Flores', 'Gallardo', 'García', 'Gil', 'Giménez', 'González', 'Guerrero', 'Hernández', 'Ibáñez', 'Jiménez', 'León', 'López', 'Lozano', 'Márquez', 'Martín', 'Medina', 'Méndez', 'Mora', 'Moreno', 'Muñoz', 'Navarro', 'Ortiz', 'Pastor', 'Pérez', 'Prieto', 'Ramírez', 'Reyes', 'Rivas', 'Rodríguez', 'Romero', 'Rubio', 'Ruiz', 'Sánchez', 'Santos', 'Serrano', 'Soto', 'Suárez', 'Torres', 'Vázquez', 'Vega', 'Velasco'];
+// Rol en femenino cuando corresponde, como en los datos hechos a mano
+const rolSegun = (rol, genero) => (genero === 'M'
+  ? rol.replace(/^Ingeniero/, 'Ingeniera').replace(/^Operador /, 'Operadora ').replace(/^Abogado/, 'Abogada').replace(/^Diseñador /, 'Diseñadora ')
+  : rol);
 const sinTildes = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // ---------- CSV ----------
@@ -139,7 +143,7 @@ for (const [area, def] of Object.entries(AREAS)) {
     const antiguedad = p.nivel === 'junior' ? entre(2, 24) : entre(10, 60);
     const banda = bandas[p.banda];
     nuevas.push({
-      id, nombre, email, genero, area, rol: p.rol, nivel_puesto: p.nivel, manager_id: def.manager,
+      id, nombre, email, genero, area, rol: rolSegun(p.rol, genero), nivel_puesto: p.nivel, manager_id: def.manager,
       antiguedad_meses: antiguedad, ultima_evaluacion: elegir([3, 3, 3, 4, 4, 2, 5]),
       skills_interes: azar() < 0.4 ? elegir(posibles) : '', banda_id: p.banda,
       salario_ficticio: Math.round((+banda.medio * (0.92 + azar() * 0.16)) / 500) * 500,
