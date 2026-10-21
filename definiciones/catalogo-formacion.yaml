@@ -22,3 +22,8 @@ formaciones:
   - { id: FOR-16, skill: atencion-cliente-tecnica, de: 2, a: 3, tipo: rotacion,       nombre: "Rotación en soporte de segundo nivel",                           semanas: 6,  coste_eur: 0 }
   - { id: FOR-17, skill: regulacion-mica,       de: 2, a: 3, tipo: curso-externo,     nombre: "MiCA en la práctica: obligaciones del proveedor",                semanas: 4,  coste_eur: 1100 }
   - { id: FOR-18, skill: comunicacion-regulada, de: 1, a: 2, tipo: mentoring-interno, nombre: "Revisión conjunta de campañas con Legal",                        semanas: 6,  coste_eur: 0 }
+  # --- IA (plan AI first): recualificación cuando una función se rediseña
+  - { id: FOR-19, skill: ia-uso-diario,         de: 1, a: 2, tipo: curso-externo,     nombre: "IA en el día a día: herramientas aprobadas y buenas prácticas",  semanas: 3,  coste_eur: 300 }
+  - { id: FOR-20, skill: ia-automatizacion,     de: 1, a: 2, tipo: curso-externo,     nombre: "Automatizar procesos con IA sin programar",                      semanas: 6,  coste_eur: 900 }
+  - { id: FOR-21, skill: ia-automatizacion,     de: 2, a: 3, tipo: mentoring-interno, nombre: "Diseñar un flujo con agentes junto a Ingeniería",                semanas: 8,  coste_eur: 0 }
+  - { id: FOR-22, skill: ia-criterio,           de: 1, a: 2, tipo: curso-externo,     nombre: "Verificar resultados de IA: errores, sesgos y AI Act",           semanas: 3,  coste_eur: 400 }

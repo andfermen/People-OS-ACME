@@ -72,6 +72,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── cobertura.js              # Motor de referencia: semáforo, key people, candidatos, señales, escenarios
 │   ├── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
 │   ├── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
+│   ├── generar-plantilla.js      # `npm run plantilla`: amplía la plantilla a 160 sin tocar los casos (D-13)
 │   └── demo.js                   # `npm run demo`: flujo 1-8 + opcional en local (plan B, D-12)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
@@ -169,7 +170,7 @@ Cuatro palancas, cada una con qué mide el sistema, qué decide una persona y un
 - `bandas-salariales.csv`: `banda_id, minimo, medio, maximo` (compa-ratio = salario / medio)
 - `encuesta-clima-agregada.csv`: resultados ya agregados por segmento, con `n` (nunca respuestas individuales)
 
-Plantilla ficticia: **~160 personas**, como la compañía real, para que el CEO reconozca su escala (también hace realista el umbral de anonimato n ≥ 5). Los casos de demo se construyen a mano; el resto se genera. Áreas: exchange/trading, custodia, compliance AML/KYC, legal/regulatorio, producto, ingeniería, seguridad, CX, finanzas, marketing, People. *(Pendiente: los datos actuales tienen 46 personas; hay que ampliarlos sin romper los casos de abajo.)*
+Plantilla ficticia: **~160 personas**, como la compañía real, para que el CEO reconozca su escala (también hace realista el umbral de anonimato n ≥ 5). Los casos de demo se construyen a mano (E001-E046); el resto se genera con `npm run plantilla`, con topes de nivel para no alterar los casos (D-13). Áreas: exchange/trading, custodia, compliance AML/KYC, legal/regulatorio, producto, ingeniería, seguridad, CX, finanzas, marketing, People.
 
 Casos que **deben existir** para la demo:
 - Función crítica en rojo con key person evidente (ej. custodia).
@@ -198,7 +199,7 @@ Decidir **miércoles a mediodía** con una prueba de 1 hora:
 
 - [x] **Mar** · Repo + este archivo. Cuenta Google para la demo.
 - [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
-- [ ] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto, plantilla a ~160 personas, `empresa.md` con la referencia a Bit2Me.
+- [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la referencia a Bit2Me (D-13, D-14).
 - [ ] **Mié mediodía** · Test n8n vs Make → `decisiones.md`.
 - [ ] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador. Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).

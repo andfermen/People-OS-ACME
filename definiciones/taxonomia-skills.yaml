@@ -50,3 +50,8 @@ skills:
   - { id: comunicacion,           tipo: soft, nombre: "Comunicación",                          descripcion: "Explicar con claridad, por escrito y oralmente." }
   - { id: gestion-stakeholders,   tipo: soft, nombre: "Gestión de stakeholders",               descripcion: "Relación con el supervisor, socios y dirección; negociación." }
   - { id: resolucion-problemas,   tipo: soft, nombre: "Resolución de problemas",               descripcion: "Analizar causas y decidir con información incompleta." }
+  # --- IA (transversales, plan AI first). Las tiene medidas toda la plantilla: miden la madurez IA por área.
+  #     No son requisito de ninguna función todavía: no cambian el semáforo.
+  - { id: ia-uso-diario,      tipo: ia, nombre: "Uso de IA en el trabajo diario",          descripcion: "1 la prueba de vez en cuando · 2 la usa a diario en sus tareas · 3 rediseña su forma de trabajar con IA · 4 enseña a otros y define buenas prácticas." }
+  - { id: ia-automatizacion,  tipo: ia, nombre: "Automatización y agentes",                descripcion: "1 entiende qué se puede automatizar · 2 monta automatizaciones simples con herramientas aprobadas · 3 diseña flujos con agentes e integra sistemas · 4 referente de la compañía." }
+  - { id: ia-criterio,        tipo: ia, nombre: "Criterio y verificación de resultados de IA", descripcion: "1 sabe que la IA se equivoca · 2 revisa y contrasta lo que produce · 3 diseña controles y sabe cuándo no usarla · 4 define el gobierno de uso (datos, privacidad, AI Act)." }

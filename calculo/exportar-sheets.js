@@ -26,23 +26,29 @@ for (const f of ['empleados', 'skills-empleados', 'bandas-salariales', 'planes-b
   fs.copyFileSync(path.join(RAIZ, 'datos', `${f}.csv`), path.join(OUT, `${f}.csv`));
 
 // funciones: una fila por función y skill requerida (formato tabla, para fórmulas)
-escribir('funciones', ['funcion_id', 'nombre', 'area', 'criticidad', 'cobertura_objetivo', 'skill_id', 'nivel_minimo'],
-  datos.funciones.funciones.flatMap(f => f.skills_requeridas.map(s => [f.id, f.nombre, f.area, f.criticidad, f.cobertura_objetivo || def, s.skill, s.nivel])));
+escribir('funciones', ['funcion_id', 'nombre', 'area', 'criticidad', 'cobertura_objetivo', 'skill_id', 'nivel_minimo', 'impacto_ia'],
+  datos.funciones.funciones.flatMap(f => f.skills_requeridas.map(s => [f.id, f.nombre, f.area, f.criticidad, f.cobertura_objetivo || def, s.skill, s.nivel, f.impacto_ia])));
 
 escribir('catalogo-formacion', ['formacion_id', 'skill_id', 'de_nivel', 'a_nivel', 'tipo', 'nombre', 'semanas', 'coste_eur'],
   datos.catalogo.map(c => [c.id, c.skill, c.de, c.a, c.tipo, c.nombre, c.semanas, c.coste_eur]));
 
 // cobertura: una fila por función (la vista del mapa de calor)
 const icono = { verde: '🟢', ambar: '🟡', rojo: '🔴' };
-escribir('cobertura', ['funcion_id', 'area', 'nombre', 'criticidad', 'semaforo', 'icono', 'prioridad', 'cobertura', 'objetivo', 'skill_mas_debil', 'cubren', 'backup_en_desarrollo', 'candidatos_con_interes'],
+// impacto_ia y respuesta van al final: el formato condicional del mapa sigue leyendo el semáforo en la columna E
+escribir('cobertura', ['funcion_id', 'area', 'nombre', 'criticidad', 'semaforo', 'icono', 'prioridad', 'cobertura', 'objetivo', 'skill_mas_debil', 'cubren', 'backup_en_desarrollo', 'candidatos_con_interes', 'impacto_ia', 'respuesta'],
   r.funciones.map(f => {
     const s = f.skills.reduce((a, b) => (b.cobertura < a.cobertura ? b : a));
     const debiles = f.skills.filter(x => x.semaforo !== 'verde');
     return [f.id, f.area, f.nombre, f.criticidad, f.semaforo, icono[f.semaforo], f.prioridad, f.cobertura, f.objetivo, s.skill,
       s.personas.map(nombre).join('; '),
       debiles.flatMap(x => x.backups_en_desarrollo).map(nombre).join('; '),
-      debiles.flatMap(x => (x.candidatos || []).filter(c => c.con_interes).map(c => c.nombre)).join('; ')];
+      debiles.flatMap(x => (x.candidatos || []).filter(c => c.con_interes).map(c => c.nombre)).join('; '),
+      f.impacto_ia, f.respuesta === 'redisenar' ? 'rediseñar con IA' : 'cubrir'];
   }));
+
+// Madurez IA por área (plan AI first): agregada, sin personas
+escribir('madurez-ia', ['segmento', 'n', 'ia_uso_diario', 'ia_automatizacion', 'ia_criterio', 'indice'],
+  r.madurez_ia.map(m => [m.segmento, m.n, m['ia-uso-diario'], m['ia-automatizacion'], m['ia-criterio'], m.indice]));
 
 escribir('key-people', ['empleado_id', 'nombre', 'area', 'rol', 'oculta', 'funciones', 'skills'],
   r.key_people.map(k => [k.id, k.nombre, k.area, k.rol, k.oculta ? 'si' : 'no',

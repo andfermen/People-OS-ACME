@@ -17,3 +17,7 @@ FOR-15,gestion-riesgo-mercado,2,3,curso-externo,Riesgo de mercado en activos dig
 FOR-16,atencion-cliente-tecnica,2,3,rotacion,Rotación en soporte de segundo nivel,6,0
 FOR-17,regulacion-mica,2,3,curso-externo,MiCA en la práctica: obligaciones del proveedor,4,1100
 FOR-18,comunicacion-regulada,1,2,mentoring-interno,Revisión conjunta de campañas con Legal,6,0
+FOR-19,ia-uso-diario,1,2,curso-externo,IA en el día a día: herramientas aprobadas y buenas prácticas,3,300
+FOR-20,ia-automatizacion,1,2,curso-externo,Automatizar procesos con IA sin programar,6,900
+FOR-21,ia-automatizacion,2,3,mentoring-interno,Diseñar un flujo con agentes junto a Ingeniería,8,0
+FOR-22,ia-criterio,1,2,curso-externo,"Verificar resultados de IA: errores, sesgos y AI Act",3,400

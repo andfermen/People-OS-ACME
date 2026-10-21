@@ -73,10 +73,12 @@ function calcular(datos) {
       return { skill, nivel_minimo: min, cobertura: n, personas: cubren, backups_en_desarrollo: backups, semaforo };
     });
     const peor = skillsF.reduce((a, b) => (ORDEN[b.semaforo] > ORDEN[a.semaforo] || (b.semaforo === a.semaforo && b.cobertura < a.cobertura) ? b : a));
+    // Lente AI first (reglas-semaforo.md §7): en rojo con impacto IA alto no se forma un backup del proceso actual
+    const respuesta = peor.semaforo === 'rojo' && f.impacto_ia === 'alto' ? 'redisenar' : 'cubrir';
     return {
-      id: f.id, nombre: f.nombre, area: f.area, criticidad: f.criticidad, objetivo,
+      id: f.id, nombre: f.nombre, area: f.area, criticidad: f.criticidad, impacto_ia: f.impacto_ia, objetivo,
       cobertura: Math.min(...skillsF.map(s => s.cobertura)),
-      semaforo: peor.semaforo, prioridad: prioridad(peor.semaforo, f.criticidad), skills: skillsF,
+      semaforo: peor.semaforo, prioridad: prioridad(peor.semaforo, f.criticidad), respuesta, skills: skillsF,
     };
   });
 
@@ -116,7 +118,29 @@ function calcular(datos) {
       return { id, nombre: e.nombre, area: e.area, rol: e.rol, nivel_puesto: e.nivel_puesto, oculta, funciones: funcs };
     }),
     senales_rotacion: senales,
+    madurez_ia: madurezIa(datos),
   };
+}
+
+// Madurez IA por área: nivel medio validado de cada skill de IA (sin la skill = 0).
+// Áreas con menos de 5 personas se agrupan en su división, como las encuestas; si aun así no llegan a 5,
+// no se publican. Así no se puede deducir el nivel de nadie.
+function madurezIa(datos) {
+  const skillsIa = datos.taxonomia.skills.filter(s => s.tipo === 'ia').map(s => s.id);
+  const activos = datos.empleados.filter(e => e.estado === 'activo');
+  const nivel = new Map(datos.skills.filter(s => s.nivel_validado).map(s => [`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado]));
+  const grupos = new Map();
+  const cuenta = activos.reduce((m, e) => ((m[e.area] = (m[e.area] || 0) + 1), m), {});
+  for (const e of activos) {
+    const seg = cuenta[e.area] >= UMBRALES.nMinimoEncuesta ? e.area : `${datos.areas[e.area]} (áreas pequeñas)`;
+    if (!grupos.has(seg)) grupos.set(seg, []);
+    grupos.get(seg).push(e.id);
+  }
+  const media = ids => Object.fromEntries(skillsIa.map(s => [s, +(ids.reduce((t, id) => t + (nivel.get(`${id}|${s}`) || 0), 0) / ids.length).toFixed(1)]));
+  return [...grupos].filter(([, ids]) => ids.length >= UMBRALES.nMinimoEncuesta).map(([segmento, ids]) => {
+    const m = media(ids);
+    return { segmento, n: ids.length, ...m, indice: +(skillsIa.reduce((t, s) => t + m[s], 0) / skillsIa.length).toFixed(1) };
+  }).sort((a, b) => b.indice - a.indice);
 }
 
 function climaDe(area, datos) {
@@ -162,7 +186,7 @@ function comparar(antes, despues) {
   });
 }
 
-module.exports = { cargar, calcular, simularBaja, simularBackup, comparar, prioridad };
+module.exports = { cargar, calcular, simularBaja, simularBackup, comparar, prioridad, madurezIa };
 
 // ---------- CLI ----------
 if (require.main === module) {
@@ -181,7 +205,7 @@ if (require.main === module) {
   console.log('\nMAPA DE COBERTURA');
   for (const f of r.funciones) {
     const debil = f.skills.filter(s => s.semaforo !== 'verde').map(s => `${s.skill}=${s.cobertura}${s.backups_en_desarrollo.length ? ' +backup' : ''}`).join(', ');
-    console.log(`${icono[f.semaforo]} ${f.prioridad.padEnd(2)} ${f.id.padEnd(7)} ${f.criticidad.padEnd(10)} cob ${f.cobertura}/${f.objetivo}  ${f.nombre}${debil ? '  · ' + debil : ''}`);
+    console.log(`${icono[f.semaforo]} ${f.prioridad.padEnd(2)} ${f.id.padEnd(7)} ${f.criticidad.padEnd(10)} cob ${f.cobertura}/${f.objetivo}  ${f.nombre}${debil ? '  · ' + debil : ''}${f.respuesta === 'redisenar' ? '  ⟳ rediseñar con IA' : ''}`);
   }
   console.log('\nKEY PEOPLE');
   for (const k of r.key_people) console.log(`- ${k.nombre} (${k.rol}, ${k.area}): ${k.funciones.map(f => `${f.funcion}/${f.skill}`).join(', ')}`);
@@ -190,6 +214,8 @@ if (require.main === module) {
     const c = s.candidatos.map(c => `${c.nombre}${c.con_interes ? ' ★interés' : ''}${c.es_key_person ? ' ⚠key person' : ''}`).join('; ') || 'ninguno → valorar contratar';
     console.log(`- ${f.id} ${s.skill}: ${c} · formación: ${s.formacion.join(', ') || '—'}`);
   }
+  console.log('\nMADUREZ IA POR ÁREA (media 0-4: uso diario · automatización · criterio)');
+  for (const m of r.madurez_ia) console.log(`- ${m.segmento} (n=${m.n}): ${m.indice}  [${m['ia-uso-diario']} · ${m['ia-automatizacion']} · ${m['ia-criterio']}]`);
   console.log('\nSEÑALES DE ROTACIÓN (vista solo People)');
   for (const s of r.senales_rotacion) console.log(`- ${s.nombre}: ${s.probabilidad} (${s.senales.join('; ') || 'ninguna'})`);
   if (cambios.length) {

@@ -48,5 +48,20 @@ caso('Opcional nueva skill: Javier validado en nivel 3 pasa CUS-01 de ámbar a v
 caso('Sin falsas alertas: tras la baja, ninguna función que sigue en verde aparece como "empeora"',
   cambios.every(c => c.a !== 'verde'));
 
+// Escala y lente AI first (CLAUDE.md §6)
+const activos = base.empleados.filter(x => x.estado === 'activo').length;
+caso(`Plantilla a escala de la compañía: ${activos} personas activas (~160)`, activos >= 150 && activos <= 170);
+
+caso('AI first: CMP-04 en rojo con impacto IA alto → respuesta "rediseñar"; CUS-02 (impacto medio) → "cubrir"',
+  fn(hoy, 'CMP-04').semaforo === 'rojo' && fn(hoy, 'CMP-04').respuesta === 'redisenar' && fn(hoy, 'CUS-02').respuesta === 'cubrir');
+
+const bajaLucia = calcular(simularBaja(base, 'E022'));
+caso('Escenario baja de Lucía: CMP-04 empeora (1 → 0) y Marta (con interés) es la primera candidata a recualificar',
+  comparar(hoy, bajaLucia).some(c => c.id === 'CMP-04' && c.cambio === 'empeora') && fn(bajaLucia, 'CMP-04').skills[0].candidatos[0].id === 'E013');
+
+const mad = Object.fromEntries(hoy.madurez_ia.map(m => [m.segmento, m]));
+caso('Madurez IA por área: Ingeniería por encima de CX y ningún grupo publicado con n < 5',
+  mad['Ingeniería'].indice > mad['Atención al cliente (CX)'].indice && hoy.madurez_ia.every(m => m.n >= 5));
+
 console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nTodos los casos de la demo se cumplen');
 process.exit(fallos ? 1 : 0);

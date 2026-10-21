@@ -75,3 +75,15 @@ Formato: qué se decide, alternativas consideradas y por qué.
 - **Qué:** `calculo/demo.js` ejecuta en local los pasos 1-8 y el opcional (baja → recálculo → propuesta → alertas → email → aprobación → recálculo → validación → verde), con el estado en `salidas/demo/`.
 - **Alternativas:** plan B solo con capturas y vídeo.
 - **Por qué:** si el orquestador falla en directo, el proceso se sigue viendo funcionar de verdad. Con `ANTHROPIC_API_KEY` redacta Claude; sin ella, una propuesta por reglas, para que la demo no dependa de la red ni de la API.
+
+## D-13 · Acme inspirada en Bit2Me, a escala real (~160 personas)
+
+- **Qué:** Acme sigue siendo ficticia (D-05), pero su estructura se inspira en Bit2Me y la plantilla pasa de 46 a 160 personas. Las 46 hechas a mano se conservan; las otras 114 se generan con `npm run plantilla` (semilla fija), con topes de nivel en las skills de los casos de la demo.
+- **Alternativas:** quedarse en 46 personas; generar las 160 desde cero.
+- **Por qué:** el CEO tiene que reconocer la escala de su compañía, y con 160 el umbral de anonimato (n ≥ 5) es realista: Custodia o Seguridad ya se pueden mostrar solas. Conservar las 46 y poner topes mantiene intactos los casos de la demo: el mapa de riesgo sale igual (mismos colores, mismas 5 key people), y `npm run verificar` lo comprueba. Además refuerza el mensaje: más personas no significa más cobertura.
+
+## D-14 · Lente AI first sobre el mismo mapa
+
+- **Qué:** tres skills de IA transversales (uso diario, automatización, criterio) medidas para toda la plantilla; un campo `impacto_ia` por función; y una regla: en rojo con impacto alto, la respuesta es **rediseñar con IA y recualificar**, no formar un backup. Nueva salida: madurez IA por área (hoja `madurez-ia`).
+- **Alternativas:** un sistema aparte para el plan AI first; que la IA decida en cada caso si rediseñar o cubrir.
+- **Por qué:** el plan AI first necesita una línea base y criterio para formar y rediseñar, y el mapa de skills ya es ese instrumento: un modelo, no dos. La regla es explícita y la aplica el cálculo, coherente con "el riesgo se calcula, no se opina". Las skills de IA no son todavía requisito de ninguna función, para no mover el semáforo sin una decisión de dirección. Caso de demo: el reporting AML (CMP-04), que depende de Lucía. Cautela: `impacto_ia` describe funciones, no personas; solo lo ven dirección y People.

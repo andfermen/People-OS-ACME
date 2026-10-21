@@ -6,17 +6,18 @@
 | # | Bloque | Min | Qué enseñar | Frase clave |
 |---|---|---|---|---|
 | 1 | El problema | 2 | `docs/vision-procesos-rrhh.md`: qué se automatiza y qué no | "Automatizo lo calculable; la IA captura y redacta; yo decido y converso." |
-| 2 | La pregunta | 2 | — | "Si mañana no viene una persona, ¿qué función queda descubierta?" |
+| 2 | La pregunta | 2 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
 | 3 | Arquitectura | 4 | Diagrama de `docs/arquitectura.md`; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
 | 4 | El mapa | 4 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
 | 5 | Demo: baja | 4 | Marcar a Elena (E007) como `baja` → flujo → email | Ver abajo |
 | 6 | Cierre del ciclo | 2 | Aprobar la alerta del backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
 | 7 | Usos | 4 | Rotación, encuesta y revisión salarial | Ver abajo |
-| 8 | Escalado y límites | 3 | `docs/escalado.md`, `docs/decisiones.md` | "Mide dependencia de skills, no de relaciones." |
+| 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/escalado.md` | Ver abajo |
+| 9 | Cierre | 1 | — | "Esta prueba la he construido como trabajaría el departamento: una persona + IA." |
 
 ## 4 · El mapa (estado inicial)
 
-- 24 funciones: **4 en rojo, 3 en ámbar, 17 en verde.**
+- 160 personas, 24 funciones: **4 en rojo, 3 en ámbar, 17 en verde.**
 - **P1:** CUS-02 *Prueba de reservas*. Solo Elena Prieto (responsable de custodia) sabe hacerla.
 - **Key person oculta:** Lucía Benítez, analista de datos **de Producto**, es la única que puede sacar el **reporting regulatorio AML de Compliance**. Nadie en Compliance la habría marcado. *"Este es el dato que no tenía nadie."*
 - Ámbar con backup: CMP-03 *Comunicación de operaciones sospechosas*. Carmen tiene a Diego en un plan activo.
@@ -30,7 +31,7 @@
 2. El flujo recalcula. Resultado esperado (comprobado con `npm run cobertura -- --baja E007`):
    - **CUS-01** *Gestión de claves*: 🟢 → 🔴 (cobertura 2 → 1). Marcos Fuentes pasa a ser **key person**.
    - **CUS-02** *Prueba de reservas*: 🔴 → 🔴 (cobertura 1 → 0).
-   - CUS-03 baja de 4 a 3 pero sigue en verde: **no genera alerta**.
+   - CUS-03 baja de 8 a 7 pero sigue en verde: **no genera alerta**.
 3. Email a dirección con la propuesta: backup de Javier Lozano (★ con interés), conversación de permanencia con Marcos y vacante para la prueba de reservas.
 4. Remarcar: el email a dirección **no incluye** señales individuales. Esas están solo en la hoja de People.
 
@@ -43,9 +44,16 @@
 
 ## 7 · Usos
 
-- **Rotación:** Elena tenía 4 señales (compa-ratio 0,86, 22 meses sin revisión, clima de Mercados por debajo de la media, evaluación 5) y estaba en un rojo crítico. Era **prioridad 1** de la matriz *antes* de irse. *"El sistema lo habría avisado."*
-- **Encuesta:** las key people puntúan **2,6 en carga sostenible frente a 3,4** del resto (n = 5, en el límite del anonimato). Custodia no se puede mostrar sola (n = 3) y se agrega a Mercados.
+- **Rotación:** Elena tenía 4 señales (compa-ratio 0,86, 22 meses sin revisión, clima de Custodia por debajo de la media, evaluación 5) y estaba en un rojo crítico. Era **prioridad 1** de la matriz *antes* de irse. *"El sistema lo habría avisado."*
+- **Encuesta:** las key people puntúan **2,6 en carga sostenible frente a 3,3** del resto (n = 5, en el límite del anonimato). Custodia es el área con peor clima (3,2 frente a 3,7 de media). People (n = 1) no se muestra sola y se agrega a Corporativo.
 - **Revisión salarial:** para una key person con compa-ratio bajo, **bono de retención ligado a formar y validar a su backup**, no una subida que premie ser imprescindible.
+
+## 8 · Plan AI first: el mismo mapa, otra pregunta
+
+- **Madurez IA por área** (hoja `madurez-ia`): Ingeniería 2,6 y Producto 2,4 frente a Compliance 1,2 y CX 1,0 (media 0-4 de uso diario, automatización y criterio). *"La formación en IA no es igual para todos: empieza donde la madurez es baja y el impacto alto."*
+- **Escenario "se va Lucía"** (`npm run demo -- baja E022`): el reporting AML (CMP-04) pasa de cobertura 1 a 0. Como su `impacto_ia` es alto, la propuesta **no** es formar a alguien en SQL para seguir haciendo el informe a mano: es **rediseñar el reporting con IA y recualificar a Marta** (con interés declarado en automatización), con apoyo temporal mientras tanto. *"Formar a alguien en un proceso que va a desaparecer es invertir en el pasado."*
+- Contraste: en custodia (impacto bajo) la propuesta sigue siendo un backup. **La regla decide cuál de las dos**, no la IA.
+- Cautela: la vista de `impacto_ia` solo la ven dirección y People. No es una lista de despidos: recualificación antes que reducción.
 
 ## Preguntas probables
 
@@ -53,5 +61,5 @@
 |---|---|
 | ¿Y si las skills están mal? | Solo cuentan las validadas por el manager. Revisión semestral. Es el límite número 1 del sistema. |
 | ¿La IA decide algo? | No. Captura y redacta. El riesgo es una regla y las acciones las aprueba People. |
-| ¿Por qué no un modelo de predicción de fuga? | Por ética, por el AI Act y por los datos: con 46 personas no hay muestra. Las señales llevan a una conversación, no a una etiqueta. |
+| ¿Por qué no un modelo de predicción de fuga? | Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta. |
 | ¿Escala? | Las definiciones sí. Sheets llega hasta ~200 personas; después, base de datos o HRIS. |

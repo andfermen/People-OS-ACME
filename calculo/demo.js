@@ -20,6 +20,8 @@ const MODELO = 'claude-sonnet-5-5';
 const f = n => path.join(EST, n);
 const hoy = () => new Date().toISOString().slice(0, 10);
 const icono = { verde: '🟢', ambar: '🟡', rojo: '🔴' };
+// Destinatario de los emails: variable EMAIL_DEMO (la dirección real nunca se escribe en el repo)
+const PARA = process.env.EMAIL_DEMO || 'direccion@acme.example';
 
 // ---------- CSV ----------
 const esc = v => (v == null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
@@ -90,6 +92,8 @@ function contexto(r, cambios, evento) {
   const implicadas = new Set(afectadas.flatMap(x => x.skills.filter(s => s.semaforo !== 'verde').flatMap(s => s.personas)));
   const formaciones = new Set(afectadas.flatMap(x => x.skills.flatMap(s => s.formacion || [])));
   const datos = estado();
+  // Si alguna función se rediseña con IA, la recualificación sale de las formaciones de IA del catálogo
+  if (afectadas.some(x => x.respuesta === 'redisenar')) datos.catalogo.filter(c => c.skill.startsWith('ia-')).forEach(c => formaciones.add(c.id));
   return {
     evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people,
     senales: r.senales_rotacion.filter(s => implicadas.has(s.id)),
@@ -102,7 +106,13 @@ function propuestaPorReglas(ctx) {
   for (const fn of ctx.funciones_afectadas) for (const s of fn.skills.filter(x => x.semaforo !== 'verde')) {
     const cand = (s.candidatos || []).find(c => !c.es_key_person);
     const form = ctx.catalogo.find(c => c.skill === s.skill);
-    if (cand && s.cobertura > 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'backup', accion: `Plan de backup: ${cand.nombre} en ${s.skill} (${s.nivel_minimo - 1} → ${s.nivel_minimo})`, empleado_id: cand.id, skill_id: s.skill, formacion_id: form?.id || '', por_que: `Cobertura ${s.cobertura}. ${cand.nombre} está a un nivel${cand.con_interes ? ' y tiene interés declarado' : ''}.`, riesgo_si_no: `La función ${fn.nombre} depende de ${s.cobertura} persona.` });
+    if (fn.respuesta === 'redisenar') {
+      // Lente AI first: no se forma a nadie en el proceso actual; se rediseña y se recualifica
+      const formIa = ctx.catalogo.find(c => c.skill === 'ia-automatizacion' && c.de === 1);
+      acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'rediseno', accion: `Rediseñar ${fn.nombre} con IA y automatización${cand ? ` y recualificar a ${cand.nombre}` : ''}`, empleado_id: cand?.id || '', skill_id: 'ia-automatizacion', formacion_id: formIa?.id || '', por_que: `Cobertura ${s.cobertura} en ${s.skill} e impacto IA alto: formar un backup en el proceso actual es invertir en un proceso que va a cambiar.${cand?.con_interes ? ` ${cand.nombre} tiene interés declarado.` : ''}`, riesgo_si_no: `${fn.nombre} sigue dependiendo de ${s.cobertura} persona(s) y de un proceso manual.` });
+      if (s.cobertura === 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'redistribuir', accion: `Cubrir ${fn.nombre} con apoyo temporal mientras dura el rediseño`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: 'Nadie cubre la skill hoy.', riesgo_si_no: 'La próxima entrega queda sin responsable.' });
+    }
+    else if (cand && s.cobertura > 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'backup', accion: `Plan de backup: ${cand.nombre} en ${s.skill} (${s.nivel_minimo - 1} → ${s.nivel_minimo})`, empleado_id: cand.id, skill_id: s.skill, formacion_id: form?.id || '', por_que: `Cobertura ${s.cobertura}. ${cand.nombre} está a un nivel${cand.con_interes ? ' y tiene interés declarado' : ''}.`, riesgo_si_no: `La función ${fn.nombre} depende de ${s.cobertura} persona.` });
     else acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'contratar', accion: `Abrir vacante con ${s.skill} nivel ${s.nivel_minimo}`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: `Cobertura ${s.cobertura} y ningún candidato interno llega a tiempo.`, riesgo_si_no: `${fn.nombre} queda sin nadie que pueda sostenerla.` });
     if (s.cobertura === 1) {
       const kp = s.personas[0];
@@ -145,7 +155,7 @@ function avisar(evento, cambios, prop) {
     por_que: a.por_que, riesgo_si_no: a.riesgo_si_no, decision: 'pendiente', decidido_por: '', fecha_decision: '',
   }));
   anadir('alertas.csv', filas);
-  const email = [`Para: direccion@acme.example`, `Asunto: [People OS] ${evento} · ${cambios.filter(c => c.cambio === 'empeora').length} función(es) empeoran`, '',
+  const email = [`Para: ${PARA}`, `Asunto: [Acme People OS] ${evento} · ${cambios.filter(c => c.cambio === 'empeora').length} función(es) empeoran`, '',
     prop.resumen_direccion, '', 'Acciones propuestas (pendientes de aprobación por People):',
     ...filas.map(a => `- ${a.alerta_id} [${a.prioridad}] ${a.accion}`), '', 'Mapa actualizado: hoja "cobertura".'].join('\n');
   const archivo = `email-${Date.now()}.txt`;
@@ -201,7 +211,7 @@ function validar(empleado, skill, nivel, manager) {
   const mejoran = cambios.filter(c => c.cambio === 'mejora');
   if (mejoran.length) {
     const archivo = `email-${Date.now()}.txt`;
-    fs.writeFileSync(f(archivo), [`Para: direccion@acme.example`, `Asunto: [People OS] Riesgo reducido`, '', ...mejoran.map(c => `- ${c.id} ${c.nombre}: ${c.de} → ${c.a}`)].join('\n') + '\n');
+    fs.writeFileSync(f(archivo), [`Para: ${PARA}`, `Asunto: [Acme People OS] Riesgo reducido`, '', ...mejoran.map(c => `- ${c.id} ${c.nombre}: ${c.de} → ${c.a}`)].join('\n') + '\n');
     console.log(`\nEmail de cierre en salidas/demo/${archivo}`);
   }
 }

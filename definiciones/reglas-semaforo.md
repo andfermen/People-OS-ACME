@@ -59,3 +59,25 @@ Para cada skill en rojo o ámbar, son candidatos las personas activas con `nivel
 ## 6. Comparación con la foto anterior
 
 En cada recálculo se guarda una foto en `historico-semaforo` (fecha, función, semáforo, cobertura). Una función **empeora** si su semáforo baja (verde → ámbar → rojo) o si, estando en ámbar o rojo, baja su cobertura (rojo con 1 → rojo con 0). Si sigue en verde aunque pierda cobertura, no cuenta como empeora. Solo las funciones que empeoran generan una alerta.
+
+## 7. Respuesta: cubrir o rediseñar (lente AI first)
+
+Acme está en un plan *AI first*. Cada función tiene un `impacto_ia` ✏️ (alto · medio · bajo) en `funciones.yaml`: cuánto va a transformar la IA esa función.
+
+| Caso | Respuesta | Qué propone |
+|---|---|---|
+| Función en **rojo** con `impacto_ia = alto` | **Rediseñar** | Rediseñar la función con IA y automatización y **recualificar** a un candidato (formaciones `ia-*` del catálogo). Si nadie la cubre hoy, apoyo temporal mientras dura el rediseño. |
+| Cualquier otro caso | **Cubrir** | Lo de siempre: backup, movilidad, contratar, retención (§5). |
+
+Por qué: formar a alguien en un proceso que va a desaparecer es invertir en el pasado. La regla la aplica el cálculo, no la IA: la IA redacta la propuesta dentro de la respuesta que le llega.
+
+Cautelas de gobierno:
+- `impacto_ia` describe **funciones**, no personas. El mapa no señala a nadie para salir: **recualificación antes que reducción**.
+- La vista de `impacto_ia` solo la ven dirección y People. Las decisiones de estructura son de dirección, con el criterio documentado.
+
+## 8. Madurez IA por área
+
+Media del nivel validado de las tres skills de IA (`ia-uso-diario`, `ia-automatizacion`, `ia-criterio`; sin la skill = 0) por área, y un índice que es la media de las tres. Sirve como línea base del plan AI first y para dirigir la formación.
+
+- Un área con menos de 5 personas se agrupa en su división. Si aun así no llega a 5, no se publica: no se puede deducir el nivel de nadie.
+- Las skills de IA todavía **no son requisito** de ninguna función: no cambian el semáforo.

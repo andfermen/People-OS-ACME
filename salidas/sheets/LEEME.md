@@ -6,13 +6,13 @@ Estos CSV se generan con `npm run sheets` (o `npm run sheets -- --fecha 2026-09-
 
 1. Con la **cuenta Google de la demo**, crea un Sheet nuevo llamado `People OS · Acme`.
 2. Por cada CSV de esta carpeta: **Archivo → Importar → Subir** → elige el CSV → *Insertar hojas nuevas*. El nombre de la hoja debe ser el del archivo sin `.csv` (por ejemplo, `cobertura`). Hojas:
-   `empleados`, `skills-empleados`, `bandas-salariales`, `planes-backup`, `encuesta-clima-agregada`, `funciones`, `catalogo-formacion`, `cobertura`, `key-people`, `senales-rotacion-PEOPLE`, `historico-semaforo`, `alertas`.
+   `empleados`, `skills-empleados`, `bandas-salariales`, `planes-backup`, `encuesta-clima-agregada`, `funciones`, `catalogo-formacion`, `cobertura`, `key-people`, `senales-rotacion-PEOPLE`, `historico-semaforo`, `alertas`, `madurez-ia`.
 3. **Mapa de calor** (hoja `cobertura`): selecciona la columna `semaforo` → *Formato → Formato condicional* → *El texto es exactamente*:
    - `rojo` → fondo rojo claro `#F4C7C3`
    - `ambar` → fondo amarillo `#FCE8B2`
    - `verde` → fondo verde claro `#B7E1CD`
 
-   Aplica el mismo formato a toda la fila con la fórmula personalizada `=$E2="rojo"` (y lo mismo para ambar y verde) sobre el rango `A2:M`.
+   Aplica el mismo formato a toda la fila con la fórmula personalizada `=$E2="rojo"` (y lo mismo para ambar y verde) sobre el rango `A2:O`.
 4. **Hoja `alertas`**: en la columna `decision`, *Datos → Validación de datos → Desplegable* con `pendiente`, `aprobada`, `descartada`.
 5. **Privacidad**: haz clic derecho en la pestaña `senales-rotacion-PEOPLE` → *Proteger hoja* → solo tú puedes editarla. En la demo, comenta que en producción esta hoja vive en un archivo aparte al que solo accede People.
 6. Inmoviliza la fila 1 de cada hoja (*Ver → Inmovilizar → 1 fila*).
