@@ -12,7 +12,7 @@
 | 5 | Demo: baja | 4 | Formulario W1 con E007 → el Sheet cambia → 2 emails (dirección y People) | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
 | 7 | Usos | 4 | Rotación, encuesta y revisión salarial | Ver abajo |
-| 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/escalado.md` | Ver abajo |
+| 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
 | 9 | Cierre | 1 | — | "Esta prueba la he construido como trabajaría el departamento: una persona + IA." |
 
 ## 4 · El mapa (estado inicial)

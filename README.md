@@ -7,7 +7,7 @@ Sistema para que **una sola persona** gestione el 360º de RRHH de una compañí
 - Definiciones y reglas (qué se hace): [`definiciones/`](definiciones/), [`prompts/`](prompts/)
 - Datos ficticios: [`datos/`](datos/)
 - Flujos (quién lo ejecuta): [`flujos/`](flujos/)
-- Documentación y decisiones: [`docs/`](docs/)
+- Documentación y decisiones: [`docs/`](docs/) · cómo lideraría People en el plan AI first: [`docs/plan-ai-first-people.md`](docs/plan-ai-first-people.md)
 
 > Todos los datos (personas, skills, salarios, encuestas) son ficticios.
 

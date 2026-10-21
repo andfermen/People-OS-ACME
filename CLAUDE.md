@@ -209,7 +209,7 @@ La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a
 - [x] **Mié mediodía** · Test n8n vs Make → **n8n** (D-04).
 - [x] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador (generado y probado: `flujos/n8n/`, D-16; falta montarlo en n8n y ensayar). Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
-- [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. `plan-ai-first-people.md`. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
+- [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. ~~`plan-ai-first-people.md`~~ ✓. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
 - [ ] **Vie** · Presentación.
 
 ## 11. Guion (borrador, 20-25 min)
