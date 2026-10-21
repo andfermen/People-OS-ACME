@@ -46,7 +46,7 @@ Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que And
 - Cada comando `npm run …` que citan el guion y los LEEME existe en `package.json`.
 - Los nombres de nodos que cita `flujos/n8n/LEEME.md` existen en los JSON de `flujos/n8n/`.
 - `docs/decisiones.md`: numeración seguida (D-01, D-02…) sin saltos ni repetidas.
-- El guion describe el flujo real: baja por el formulario de W1, aprobación con los botones del email de People (W2), reinicio con W0.
+- El guion describe el flujo real: escenario 1 (formulario de baja, botones *Aprobar* del email de People, formulario de reinicio) y escenario 2 (formulario de skill: de ámbar a verde).
 
 **7 · Lo prometido y no construido**
 Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si lo que describe ya está hecho del todo) y las secciones que dicen "opcional", "diseñado" o "extensión". Lista lo que el CEO podría pedir ver y no existe (por ejemplo, el informe mensual o el paso de ámbar a verde en n8n) como 🟡, con la frase corta para responder en directo.
@@ -75,6 +75,6 @@ Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si l
 - verificar: N/N · probar-n8n: N/N · GitHub al día · …
 
 ## Qué no he podido comprobar
-- El Sheet real (estado inicial: Elena activa, `alertas` vacía) → reiniciar con W0 antes del ensayo.
+- El Sheet real (estado inicial: Elena activa, `alertas` vacía) → reiniciar con el formulario de reinicio del escenario 1 antes del ensayo.
 - n8n real (credenciales, workflows activos) y la llegada de los emails.
 ```

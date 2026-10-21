@@ -1,6 +1,6 @@
 # Guion de la demo (borrador, 20-25 min)
 
-> Antes de empezar: `npm run verificar` y `npm run probar-n8n` → todo en ✅. Reinicia con el formulario de **W0**. Ten abiertos el Sheet (hoja `cobertura`), el formulario de **W1**, el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
+> Antes de empezar: `npm run verificar` y `npm run probar-n8n` → todo en ✅. Reinicia con el **formulario reiniciar** (escenario 1). Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** y el **formulario skill**, el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
 > **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-002` (opción B) → `npm run demo -- aprobar ALR-003` (backup de Javier) → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
@@ -9,7 +9,7 @@
 | 2 | La pregunta | 2 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
 | 3 | Arquitectura | 4 | Diagrama de `docs/arquitectura.md`; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
 | 4 | El mapa | 4 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
-| 5 | Demo: baja | 4 | Formulario W1 con E007 → el Sheet cambia → 2 emails (dirección y People) | Ver abajo |
+| 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → 2 emails (dirección y People) | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
 | 7 | Usos | 4 | Rotación, encuesta y revisión salarial | Ver abajo |
 | 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
@@ -27,7 +27,7 @@
 
 ## 5 · Demo: "se va la responsable de custodia"
 
-1. Formulario de W1 → `E007`. El flujo marca a Elena como `baja` en `empleados` (enseñarlo en el Sheet).
+1. Escenario 1 · **formulario baja** → `E007`. El flujo marca a Elena como `baja` en `empleados` (enseñarlo en el Sheet).
 2. El flujo recalcula (unos segundos). Resultado esperado (comprobado con `npm run cobertura -- --baja E007`):
    - **CUS-01** *Gestión de claves*: 🟢 → 🔴 (cobertura 2 → 1). Marcos Fuentes pasa a ser **key person**.
    - **CUS-02** *Prueba de reservas*: 🔴 → 🔴 (cobertura 1 → 0).
@@ -43,7 +43,7 @@
 1. En el email de People: **Aprobar ALR-002** (opción B, mover a Marcos). Se abre una página de confirmación. En `alertas`, ALR-002 `aprobada` y ALR-001 pasa sola a `descartada`. Marcos pasa a responsable de custodia, el equipo depende de él y se abre su plan de conciliación on-chain. El mapa no cambia de color: *"Promover a alguien no crea skills nuevas."*
 2. **Aprobar ALR-003** (plan de backup de Javier) → fila nueva en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡** (lo dicen la página y un email).
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
-4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email de cierre a dirección. *"Completar un curso no es tener la skill: la valida una persona."* (Solo en la demo local: `npm run demo -- validar …`; no está en n8n.)
+4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Escenario 2 · **formulario skill**: `E009`, `gestion-claves`, `3`, `E008`. Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email *Riesgo reducido*. *"Completar un curso no es tener la skill: la valida una persona."*
 
 ## 7 · Usos
 

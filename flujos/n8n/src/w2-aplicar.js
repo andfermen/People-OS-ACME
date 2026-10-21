@@ -1,4 +1,4 @@
-// W2 · nodo "Aplicar decisión": pasos 7-8. Aprueba la alerta (y descarta las otras opciones del mismo grupo),
+// Escenario 1 (rama aprobar) · nodo "Aplicar decisión": pasos 7-8. Aprueba la alerta (y descarta las otras opciones del mismo grupo),
 // aplica el cambio (plan de backup o movilidad), recalcula y prepara la página de respuesta, las escrituras y el email.
 const cfg = $('Configuración').first().json;
 const T = tablas($('Leer Sheet').first().json);
@@ -8,7 +8,7 @@ const hoy = hoyISO();
 const pagina = (titulo, cuerpo = '') => html(`<h2>${titulo}</h2>${cuerpo}<p><a href="https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit">Abrir el Sheet</a></p>`);
 const salida = (htmlPagina, peticiones = [], email = null) => [{ json: { html: htmlPagina, peticiones, email } }];
 
-const alertaId = String(($('Webhook').first().json.query || {}).alerta || '').trim().toUpperCase();
+const alertaId = String((cfg.query || {}).alerta || '').trim().toUpperCase();
 const alertas = T['alertas'].filas;
 const a = alertas.find(x => x.alerta_id === alertaId);
 if (!a) return salida(pagina(`No existe la alerta ${esc(alertaId)}`));

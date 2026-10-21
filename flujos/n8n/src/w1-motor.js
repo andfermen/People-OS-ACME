@@ -1,13 +1,13 @@
-// W1 · nodo "Motor": pasos 1-4. Aplica la baja en memoria, recalcula, compara con la última foto y prepara la petición a Claude.
+// Escenario 1 (rama baja) · nodo "Motor": pasos 1-4. Aplica la baja en memoria, recalcula, compara con la última foto y prepara la petición a Claude.
 const cfg = $('Configuración').first().json;
 const T = tablas($('Leer Sheet').first().json);
 const defs = JSON.parse($('Leer definiciones').first().json.definiciones);
 const base = datosDesde(T, defs);
 
-const id = String($('Formulario').first().json.empleado_id || '').trim().toUpperCase();
+const id = String(cfg.empleado_id || '').trim().toUpperCase();
 const e = base.empleados.find(x => x.id === id);
 if (!e) throw new Error(`No existe ${id} en la hoja empleados`);
-if (e.estado !== 'activo') throw new Error(`${e.nombre} ya figura como ${e.estado}. Para repetir la demo, usa el workflow "Reiniciar demo".`);
+if (e.estado !== 'activo') throw new Error(`${e.nombre} ya figura como ${e.estado}. Para repetir la demo, usa el formulario "Reiniciar demo".`);
 const evento = `Baja de ${e.nombre} (${e.rol})`;
 
 const vac = vacante(base, id); // el perfil del puesto se calcula con la persona aún dentro

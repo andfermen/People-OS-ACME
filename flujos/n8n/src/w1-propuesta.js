@@ -1,4 +1,4 @@
-// W1 · nodo "Propuesta final": paso 5. Usa la respuesta de Claude; si falla o no es JSON válido, la propuesta por reglas.
+// Escenario 1 (rama baja) · nodo "Propuesta final": paso 5. Usa la respuesta de Claude; si falla o no es JSON válido, la propuesta por reglas.
 const m = $('Motor').first().json;
 const res = $input.first().json;
 let prop, fuente = 'Claude';

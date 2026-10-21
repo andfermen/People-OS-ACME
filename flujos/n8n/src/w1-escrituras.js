@@ -1,4 +1,4 @@
-// W1 · nodo "Preparar escrituras": paso 6 en el Sheet. Baja + mapa (batchUpdate), foto del histórico y alertas (append).
+// Escenario 1 (rama baja) · nodo "Preparar escrituras": paso 6 en el Sheet. Baja + mapa (batchUpdate), foto del histórico y alertas (append).
 const cfg = $('Configuración').first().json;
 const m = $('Motor').first().json;
 let prop = null;

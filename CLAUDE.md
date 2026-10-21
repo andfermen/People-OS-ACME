@@ -79,7 +79,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── cifras.js                 # `npm run cifras`: cifras que citan guion y plan (las usa el auditor)
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
-│   └── exportar-n8n.js           # `npm run n8n`: genera los workflows W0-W2 y salidas/n8n/definiciones.json (D-16)
+│   └── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
@@ -94,7 +94,8 @@ Principios de diseño (argumentos para el CEO):
 └── flujos/
     └── n8n/
         ├── LEEME.md              # Montaje y ensayo del flujo principal
-        ├── W0-reiniciar-demo.json, W1-baja-recalcular-avisar.json, W2-aprobar.json  # generados
+        ├── E1-baja-de-elena.json         # Escenario 1: baja + aprobar desde el email + reiniciar (generado)
+        ├── E2-actualizacion-de-skill.json  # Escenario 2: el manager valida una skill, ámbar → verde (generado)
         ├── src/                  # Código de los nodos + probar.js (`npm run probar-n8n`)
         └── test-captura-skills.json  # Prueba de captura (D-04)
 ```
@@ -122,7 +123,7 @@ Segundo disparador: el mismo flujo, programado mensualmente, genera el **informe
 
 Hojas necesarias en el Sheet: `empleados`, `skills-empleados`, `funciones`, `cobertura` (calculada), `historico-semaforo`, `alertas` (con columna `decision`: pendiente/aprobada/descartada), `catalogo-formacion`.
 
-### Opcional (si sobra tiempo) · Nueva skill adquirida
+### Escenario 2 de n8n · Nueva skill adquirida (D-18)
 Cierra la historia de la demo: rojo → ámbar → **verde**. Misma lógica del flujo principal, otro disparador.
 1. El backup en desarrollo completa la formación (cambio en hoja `formacion` o texto libre del empleado).
 2. El sistema **propone** el nuevo nivel (si es texto libre: `prompts/normalizar-skills.md`). Nunca sube el nivel automáticamente: completar un curso no equivale a tener la skill.

@@ -22,7 +22,7 @@ People (o dirección) pregunta en lenguaje natural y el asistente responde **ley
 
 - **No calcula el riesgo:** pregunta al motor y cita lo que devuelve. Si no hay dato, lo dice.
 - **Quién ve qué:** a dirección, sin señales de rotación ni salarios; a People, también eso, marcado como confidencial. Un manager no puede preguntar por la "probabilidad de fuga" de nadie.
-- **No escribe nada:** para cambiar algo (registrar una baja, aprobar) remite a W1 o a los botones del email.
+- **No escribe nada:** para cambiar algo (registrar una baja, aprobar) remite a los formularios de los escenarios 1 y 2 o a los botones del email.
 
 ## Esfuerzo y riesgo
 

@@ -1,5 +1,5 @@
-// W0 · nodo "Reiniciar": deja el Sheet como al principio de la demo para poder ensayar las veces que haga falta.
-// Restaura empleados y planes-backup desde los CSV del repo, vacía alertas y deja el mapa y el histórico en la foto inicial.
+// Escenario 1 (rama reiniciar) · nodo "Reiniciar": deja el Sheet como al principio de la demo para poder ensayar las veces que haga falta.
+// Restaura empleados, skills-empleados y planes-backup desde los CSV del repo, vacía alertas y deja el mapa y el histórico en la foto inicial.
 const cfg = $('Configuración').first().json;
 const T = tablas($('Leer Sheet').first().json);
 const defs = JSON.parse($('Leer definiciones').first().json.definiciones);
@@ -20,8 +20,9 @@ function csv(texto) {
 }
 const emp = csv($('Leer empleados (repo)').first().json.csv);
 const pla = csv($('Leer planes (repo)').first().json.csv);
+const ski = csv($('Leer skills (repo)').first().json.csv);
 
-const datos = { ...datosDesde(T, defs), empleados: emp.objetos, planes: pla.objetos };
+const datos = { ...datosDesde(T, defs), empleados: emp.objetos, skills: ski.objetos, planes: pla.objetos };
 const r = calcular(datos);
 const mapa = escriturasMapa(T, r, datos, 'inicial');
 const n = h => T[h].filas.length ? T[h].filas[T[h].filas.length - 1]._fila - 1 : 0; // filas ocupadas (sin cabecera)
@@ -29,6 +30,7 @@ const n = h => T[h].filas.length ? T[h].filas[T[h].filas.length - 1]._fila - 1 :
 const data = [
   bloque('empleados', emp.cab.length, emp.filas, n('empleados')),
   bloque('planes-backup', pla.cab.length, pla.filas, n('planes-backup')),
+  bloque('skills-empleados', ski.cab.length, ski.filas, n('skills-empleados')),
   bloque('alertas', COLS.alertas.length, [], n('alertas')),
   bloque('historico-semaforo', COLS.historico.length, mapa.historico, n('historico-semaforo')),
   ...mapa.data,

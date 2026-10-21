@@ -1,4 +1,4 @@
-// W1 · nodo "Emails": paso 6. Dos emails: dirección (sin datos individuales) y People (confidencial, con los enlaces para aprobar).
+// Escenario 1 (rama baja) · nodo "Emails": paso 6. Dos emails: dirección (sin datos individuales) y People (confidencial, con los enlaces para aprobar).
 const cfg = $('Configuración').first().json;
 const m = $('Motor').first().json;
 let prop = null;
