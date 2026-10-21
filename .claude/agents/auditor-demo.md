@@ -30,7 +30,7 @@ Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que And
 
 **3 · GitHub al día** (n8n lee de ahí las definiciones y el prompt)
 - `git fetch` y `git status -sb`: si la rama va por delante o por detrás de `origin/main` → 🔴.
-- `curl -s https://raw.githubusercontent.com/andfermen/People-OS-ACME/main/salidas/n8n/definiciones.json | diff --strip-trailing-cr - salidas/n8n/definiciones.json`. Si difieren → 🔴. GitHub tarda hasta 5 minutos en servir un push reciente: si acaba de subirse, dilo en lugar de alarmar.
+- `curl -s https://raw.githubusercontent.com/andfermen/People-OS-ACME/main/salidas/n8n/definiciones.json | diff --strip-trailing-cr - salidas/n8n/definiciones.json`. Haz lo mismo con `prompts/proponer-acciones.md`. Si difieren → 🔴. GitHub tarda hasta 5 minutos en servir un push reciente: si acaba de subirse, dilo en lugar de alarmar.
 
 **4 · Cifras de los documentos**
 - `npm run cifras` y compara con lo que dicen `docs/guion-demo.md`, `docs/plan-ai-first-people.md`, `definiciones/empresa.md` y `README.md`: mapa inicial y tras la baja, CUS-03, encaje de Marcos, compa-ratio, encuesta, madurez IA, personas por área, uso de IA, automatización, impacto IA. En los documentos los decimales van con coma (3,2) y en la salida pueden ir con punto: no es un error.
@@ -42,14 +42,14 @@ Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que And
 - Ninguna "probabilidad de fuga" ni puntuación de personas en textos para managers o dirección.
 
 **6 · Coherencia entre documentos y código**
-- Cada archivo que lista `CLAUDE.md` §4 existe (usa Glob). Lo que falte es 🟡.
+- Cada archivo que lista `CLAUDE.md` §4 existe (usa Glob). Lo que falte es 🟡. Nota: `agentes/auditor-demo.md` es la ficha descriptiva del agente, no una copia de `.claude/agents/auditor-demo.md`: no es un duplicado.
 - Cada comando `npm run …` que citan el guion y los LEEME existe en `package.json`.
 - Los nombres de nodos que cita `flujos/n8n/LEEME.md` existen en los JSON de `flujos/n8n/`.
 - `docs/decisiones.md`: numeración seguida (D-01, D-02…) sin saltos ni repetidas.
 - El guion describe el flujo real: baja por el formulario de W1, aprobación con los botones del email de People (W2), reinicio con W0.
 
 **7 · Lo prometido y no construido**
-Repasa el plan de `CLAUDE.md` §10 y las secciones que dicen "opcional", "diseñado" o "extensión". Lista lo que el CEO podría pedir ver y no existe (por ejemplo, el informe mensual o el paso de ámbar a verde en n8n) como 🟡, con la frase corta para responder en directo.
+Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si lo que describe ya está hecho del todo) y las secciones que dicen "opcional", "diseñado" o "extensión". Lista lo que el CEO podría pedir ver y no existe (por ejemplo, el informe mensual o el paso de ámbar a verde en n8n) como 🟡, con la frase corta para responder en directo.
 
 ## Lo que NUNCA haces
 
