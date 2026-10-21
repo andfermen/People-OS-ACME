@@ -52,6 +52,8 @@ Principios de diseño (argumentos para el CEO):
 /
 ├── CLAUDE.md
 ├── README.md
+├── .claude/agents/auditor-demo.md  # Agente de Claude Code: audita la demo antes de cada ensayo
+├── agentes/                      # Propuesta de agentes (auditor construido; asistente y auditor de procesos, diseño)
 ├── docs/
 │   ├── vision-procesos-rrhh.md   # Mapa 360º, qué se automatiza y qué no
 │   ├── arquitectura.md           # Capas, flujo de datos, diagrama
@@ -74,6 +76,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── verificar-casos.js        # `npm run verificar`: comprueba los casos de la demo
 │   ├── exportar-sheets.js        # `npm run sheets`: genera las hojas del Sheet en salidas/sheets/
 │   ├── generar-plantilla.js      # `npm run plantilla`: amplía la plantilla a 160 sin tocar los casos (D-13)
+│   ├── cifras.js                 # `npm run cifras`: cifras que citan guion y plan (las usa el auditor)
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
 │   └── exportar-n8n.js           # `npm run n8n`: genera los workflows W0-W2 y salidas/n8n/definiciones.json (D-16)

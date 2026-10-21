@@ -9,7 +9,8 @@
     "demo": "node calculo/demo.js",
     "plantilla": "node calculo/generar-plantilla.js",
     "n8n": "node calculo/exportar-n8n.js",
-    "probar-n8n": "node flujos/n8n/src/probar.js"
+    "probar-n8n": "node flujos/n8n/src/probar.js",
+    "cifras": "node calculo/cifras.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
