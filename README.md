@@ -6,6 +6,8 @@ Prueba técnica. Acme es una fintech cripto regulada y ficticia (MiCA, sujeto ob
 
 **Lo que hace, en una línea:** se va la responsable de custodia → el sistema recalcula el riesgo, propone cómo cubrir el puesto y a quién retener → People aprueba desde el email → el mapa vuelve a cambiar → tres meses después, un agente avisa al manager, este valida una skill y el riesgo baja → cada mes, otro agente vigila que nada se degrade en silencio.
 
+**Pruébalo sin instalar nada.** Basta con el enlace del panel (en el mensaje de la prueba): una página que sirve el propio n8n, con el mapa en vivo, los pasos a seguir, las decisiones con su botón *Aprobar*, la bandeja con los emails que genera el sistema y un botón para reiniciar la demo. Detrás no hay nada simulado: son los cuatro escenarios de n8n trabajando sobre el Sheet (D-22).
+
 ---
 
 ## 1. El problema y el criterio
@@ -88,7 +90,7 @@ Los dos agentes ⏱ actúan solos en lo operativo (vigilar, recordar, escalar, i
 
 ## 4. La demo
 
-Tres escenarios en n8n, con datos de 160 personas y 24 funciones. Cómo está montado: [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md).
+Cuatro escenarios en n8n, con datos de 160 personas y 24 funciones: los tres de la historia y el **panel con reinicio**, que es la entrada para quien la prueba (escenario 0). Cómo está montado: [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md).
 
 **En vídeo (unos 8 min):** [`video/reproductor.html`](video/reproductor.html) recorre la historia completa con los resultados reales del motor, y deja ver por debajo los datos, las reglas y los agentes de cada paso. Guion de locución: [`video/LEEME.md`](video/LEEME.md).
 
@@ -115,6 +117,7 @@ Registro completo con alternativas y porqués: [`docs/decisiones.md`](docs/decis
 - **Dos opciones, no una recomendación** (D-15): cubrir un puesto es una decisión de People y dirección. El sistema pone el coste de cada opción encima de la mesa.
 - **Agentes que actúan solos, con reglas** (D-21): el seguimiento de planes y el centinela arrancan con el calendario, no con un clic. Deciden cuándo actuar y qué detectar con reglas que se prueban (`npm run probar-n8n`); no suben niveles ni cierran planes. Alternativa aplazada: un asistente conversacional con *tool use*, más vistoso pero no determinista.
 - **Demo local como plan B** (D-12): `npm run demo` recorre el ciclo entero sin n8n ni red, agentes incluidos.
+- **Se prueba sin instalar nada** (D-22): el panel enseña lo que ya está en el Sheet y la bandeja recoge cada email, así que la demo no depende de un buzón ni de que alguien monte nada. El reinicio carga los CSV iniciales desde GitHub.
 - **Un vídeo que no puede contradecir a la demo** (D-20): las cifras del reproductor las genera el motor (`npm run video`), no se escriben a mano.
 
 ## 6. Cómo se amplía al 360º
@@ -164,7 +167,7 @@ npm run demo -- centinela +84                 # el centinela y su informe para d
 npm run video       # regenera los datos del reproductor del vídeo
 ```
 
-Para montarlo en n8n (tres escenarios, tres credenciales): [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md). Los flujos están en [`flujos/n8n/`](flujos/n8n/).
+Para montarlo en n8n (cuatro escenarios, tres credenciales, una vez): [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md). Los flujos están en [`flujos/n8n/`](flujos/n8n/).
 
 ## Mapa del repo
 
@@ -173,7 +176,7 @@ Para montarlo en n8n (tres escenarios, tres credenciales): [`flujos/n8n/LEEME.md
 | `definiciones/` | Qué se hace: funciones, reglas (semáforo, señales, agentes), taxonomía, catálogo, contexto de Acme |
 | `prompts/` | Lo que se le pide a Claude: normalizar skills, proponer acciones, informe a dirección |
 | `calculo/` | Motor de cálculo de referencia, reglas de los agentes, verificación y demo local |
-| `flujos/n8n/` | Los tres escenarios exportados y su código fuente |
+| `flujos/n8n/` | Los cuatro escenarios exportados (incluido el panel) y su código fuente |
 | `datos/`, `salidas/` | Datos ficticios de origen y hojas calculadas (lo que carga el Sheet) |
 | `agentes/` | Diseño de los agentes: los que actúan solos, los propuestos y el auditor de la demo |
 | `docs/` | Arquitectura, decisiones, escalado, guion de la demo, usos del mapa, plan AI first |

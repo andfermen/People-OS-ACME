@@ -41,7 +41,7 @@ En la demo detecta que *Prueba de reservas* sigue sin nadie, que la conversació
 
 ## Cómo se prueba
 
-- **En n8n:** formulario **Ejecutar un agente ahora** → `centinela`, con o sin fecha.
+- **En n8n:** formulario **Ejecutar un agente ahora** → `centinela`, cuándo = `hoy` o `+14 semanas`. El informe aparece en la bandeja del panel.
 - **En local:** `npm run demo -- centinela +84` (deja el informe en `salidas/demo/`).
 - **Muestra del email:** [`salidas/n8n/muestra-email-centinela.html`](../salidas/n8n/muestra-email-centinela.html).
 

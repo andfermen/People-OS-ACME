@@ -6351,7 +6351,7 @@ window.DEMO = {
  },
  "n8n": {
   "e1": {
-   "nodos": 28,
+   "nodos": 29,
    "bloques": [
     {
      "titulo": "1 · Entradas",
@@ -6472,6 +6472,10 @@ window.DEMO = {
        "tipo": "googleSheets"
       },
       {
+       "nombre": "Guardar en la bandeja",
+       "tipo": "googleSheets"
+      },
+      {
        "nombre": "Vaciar key-people",
        "tipo": "googleSheets"
       },
@@ -6495,7 +6499,7 @@ window.DEMO = {
    }
   },
   "e2": {
-   "nodos": 20,
+   "nodos": 21,
    "bloques": [
     {
      "titulo": "Escenario 2 · Actualización de skill",
@@ -6569,6 +6573,10 @@ window.DEMO = {
        "tipo": "googleSheets"
       },
       {
+       "nombre": "Guardar en la bandeja",
+       "tipo": "googleSheets"
+      },
+      {
        "nombre": "Vaciar key-people",
        "tipo": "googleSheets"
       },
@@ -6595,7 +6603,7 @@ window.DEMO = {
    }
   },
   "e3": {
-   "nodos": 29,
+   "nodos": 30,
    "bloques": [
     {
      "titulo": "1 · Disparo: nadie pulsa nada",
@@ -6720,6 +6728,10 @@ window.DEMO = {
        "tipo": "googleSheets"
       },
       {
+       "nombre": "Guardar en la bandeja",
+       "tipo": "googleSheets"
+      },
+      {
        "nombre": "Vaciar key-people",
        "tipo": "googleSheets"
       },
@@ -6736,9 +6748,10 @@ window.DEMO = {
    ],
    "formulario": {
     "titulo": "Acme · Ejecutar un agente ahora",
-    "descripcion": "Para la demo: lanza un agente sin esperar a su día. La fecha simula el paso del tiempo (por ejemplo, 12 semanas después de aprobar el plan de Javier). Vacía = hoy.",
+    "descripcion": "Para la demo: lanza un agente sin esperar a su día. «Cuándo» simula el paso del tiempo: +12 semanas es cuando el plan de Javier llega a su fecha.",
     "campos": [
      "agente",
+     "cuando",
      "fecha"
     ]
    }

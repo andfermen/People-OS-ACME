@@ -5,6 +5,7 @@ const COLS = {
   cobertura: ['funcion_id', 'area', 'nombre', 'criticidad', 'semaforo', 'icono', 'prioridad', 'cobertura', 'objetivo', 'skill_mas_debil', 'cubren', 'backup_en_desarrollo', 'candidatos_con_interes', 'impacto_ia', 'respuesta'],
   keyPeople: ['empleado_id', 'nombre', 'area', 'rol', 'oculta', 'funciones', 'skills'],
   historico: ['fecha', 'funcion_id', 'semaforo', 'cobertura', 'prioridad', 'evento'],
+  bandeja: ['fecha', 'asunto', 'html'], // copia de cada email que envía el sistema: el panel la enseña sin depender de un buzón (D-22)
   alertas: ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad', 'cambio', 'tipo_accion', 'accion', 'empleado_id', 'skill_id', 'formacion_id', 'por_que', 'riesgo_si_no', 'decision', 'decidido_por', 'fecha_decision', 'grupo'],
 };
 const ICONO = { verde: '🟢', ambar: '🟡', rojo: '🔴' };

@@ -46,4 +46,4 @@ Recalcula el mapa, guarda la foto en `historico-semaforo` y detecta:
 
 ## Para la demo
 
-El formulario **Ejecutar un agente ahora** del escenario 3 lanza cualquiera de los dos con una **fecha simulada** (por ejemplo, 12 semanas después de aprobar el plan de Javier). Sin fecha, usa hoy.
+El formulario **Ejecutar un agente ahora** del escenario 3 lanza cualquiera de los dos con el tiempo simulado: **cuándo** = `hoy`, `+12`, `+13` o `+14 semanas` (+12 semanas es cuando el plan de Javier llega a su fecha), o una fecha exacta.

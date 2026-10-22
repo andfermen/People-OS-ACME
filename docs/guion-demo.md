@@ -1,7 +1,7 @@
 # Guion de la demo en directo (25 min)
 
 > **Para qué:** enseñar la demo en n8n en una sesión con el CEO, por ejemplo después de que haya visto el vídeo. El vídeo tiene su propio guion, más corto: `video/LEEME.md`.
-> **Antes de empezar:** `npm run verificar` y `npm run probar-n8n` → todo en ✅. Pide a Claude Code **"reinicia la demo"**. Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** (escenario 1), el formulario **Ejecutar un agente ahora** (escenario 3), el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
+> **Antes de empezar:** `npm run verificar` y `npm run probar-n8n` → todo en ✅. Abre el **panel** (escenario 0) y pulsa **Reiniciar la demo**. Ten abiertos el panel, el Sheet (hoja `cobertura`) y este guion: desde el panel se abren los formularios y se ven los emails en la bandeja. Montaje: `flujos/n8n/LEEME.md`.
 > **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `… baja E007` → `… aprobar ALR-002` (opción B) → `… aprobar ALR-003` (backup de Javier) → `… seguimiento +84` (el agente avisa a Marcos) → `… validar E009 gestion-claves 3 E008` → `… centinela +84` (informe para dirección). **Plan C:** el vídeo (`video/reproductor.html`).
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
@@ -50,10 +50,10 @@
 
 Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos agentes que arrancan con el calendario."* Reglas: `definiciones/reglas-agentes.md` (D-21).
 
-1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar un agente ahora** → `seguimiento`, fecha = hoy + 12 semanas. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
+1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar un agente ahora** → `seguimiento`, cuándo = `+12 semanas`. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
 2. En el aviso a Marcos → **Validar a Javier**: el formulario del escenario 2 llega rellenado (`E009`, `gestion-claves`, `3`, `E008`). Enviar → email *Riesgo reducido*: **CUS-01 pasa de 🟡 a 🟢**. *"Completar un curso no es tener la skill: el agente pregunta, la valida una persona."*
-3. *(Si hay tiempo)* Mismo formulario con hoy + 13 y + 14 semanas: el agente recuerda a Sergio y luego escala a People (alerta `ALR-005`). *"El agente no cierra ni cambia el plan. Su trabajo es que nada se quede olvidado."*
-4. **Centinela.** En n8n arranca el día 1 de cada mes. En la demo: `centinela`, misma fecha. Email *Revisión … · informe para dirección*: arriba, el informe listo para reenviar (CUS-02 sigue sin nadie, la conversación de permanencia con Marcos sin decidir, validaciones de skills de más de 6 meses); abajo, solo People, las señales de rotación. *"A dirección le llega lo organizativo; lo personal se queda en People."*
+3. *(Si hay tiempo)* Mismo formulario con `+13` y `+14 semanas`: el agente recuerda a Sergio y luego escala a People (alerta `ALR-005`). *"El agente no cierra ni cambia el plan. Su trabajo es que nada se quede olvidado."*
+4. **Centinela.** En n8n arranca el día 1 de cada mes. En la demo: `centinela`, `+14 semanas`. Email *Revisión … · informe para dirección*: arriba, el informe listo para reenviar (CUS-02 sigue sin nadie, la conversación de permanencia con Marcos sin decidir, validaciones de skills de más de 6 meses); abajo, solo People, las señales de rotación. *"A dirección le llega lo organizativo; lo personal se queda en People."*
 
 ## 8 · Usos
 

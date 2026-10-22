@@ -1,5 +1,5 @@
-// Genera los tres workflows de n8n de la demo y las definiciones en JSON que leen en tiempo de ejecución.
-// Uso: npm run n8n  → flujos/n8n/E1-baja-de-elena.json, flujos/n8n/E2-actualizacion-de-skill.json, flujos/n8n/E3-agentes-autonomos.json
+// Genera los cuatro workflows de n8n de la demo y las definiciones en JSON que leen en tiempo de ejecución.
+// Uso: npm run n8n  → flujos/n8n/E0-panel-y-reinicio.json, flujos/n8n/E1-baja-de-elena.json, flujos/n8n/E2-actualizacion-de-skill.json, flujos/n8n/E3-agentes-autonomos.json
 //                    + salidas/n8n/definiciones.json (hay que hacer push: n8n lo lee de GitHub)
 //
 // Escenario 1 · Baja de Elena: dos entradas (formulario de baja y botón Aprobar del email) que comparten la lectura;
@@ -18,7 +18,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { cargar } = require('./cobertura');
-const { LECTURAS, ESCRITURAS } = require('../flujos/n8n/src/comun');
+const { LECTURAS, ESCRITURAS, HOJAS_INICIALES } = require('../flujos/n8n/src/comun');
 
 const RAIZ = path.join(__dirname, '..');
 const SRC = path.join(RAIZ, 'flujos', 'n8n', 'src');
@@ -74,9 +74,11 @@ const escribirHoja = (wf, name, ruta, pos) => {
 const code = (wf, name, fuente, pos) => nodo(wf, name, 'n8n-nodes-base.code', 2, { jsCode: fuente.endsWith('.js') ? codigo(fuente) : fuente }, pos);
 const gmail = (wf, name, pos) => nodo(wf, name, 'n8n-nodes-base.gmail', 2.1, {
   operation: 'send', sendTo: '={{ $json.para }}', subject: '={{ $json.asunto }}', emailType: 'html', message: '={{ $json.html }}', options: { appendAttribution: false },
-}, pos);
+}, pos, { onError: 'continueRegularOutput' }); // si Gmail falla, el flujo sigue: la copia ya está en la bandeja (D-22)
+const ENVIADO = 'Recibido. El sistema está trabajando: vuelve a la pestaña del panel y pulsa Actualizar en unos segundos.';
 const formulario = (wf, name, titulo, descripcion, campos, pos) => nodo(wf, name, 'n8n-nodes-base.formTrigger', 2.2, {
-  formTitle: titulo, formDescription: descripcion, formFields: { values: campos }, options: {},
+  formTitle: titulo, formDescription: descripcion, formFields: { values: campos },
+  options: { respondWithOptions: { values: { respondWith: 'text', formSubmittedText: ENVIADO } } },
 }, pos, { webhookId: uid(wf + name) });
 const nota = (wf, texto, pos, ancho, alto, color = 7) => nodo(wf, `Nota · ${texto.split('\n')[0]}`, 'n8n-nodes-base.stickyNote', 1, { content: texto, width: ancho, height: alto, color }, pos);
 const desvio = (wf, name, campo, valores, pos) => nodo(wf, name, 'n8n-nodes-base.switch', 3.2, { rules: { values: valores.map(v => ({
@@ -91,10 +93,16 @@ const workflow = (name, nodes, connections) => ({ name, nodes, connections, sett
 const guardar = (archivo, wf) => { fs.writeFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), JSON.stringify(wf, null, 2) + '\n'); console.log(`flujos/n8n/${archivo} (${wf.nodes.filter(n => !n.type.endsWith('stickyNote')).length} nodos)`); };
 
 // Bloque de escritura común: reparte las filas por hoja; key-people se vacía y se reescribe
-const REPARTIR = fuentes => `// Filas a escribir, vengan de la rama que vengan\nlet o = null;\nfor (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }\nreturn (o ? o.filas : []).map(json => ({ json }));`;
+const REPARTIR = fuentes => `// Filas a escribir, vengan de la rama que vengan, más una copia de cada email en la bandeja (el panel la enseña)
+let o = null;
+for (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }
+if (!o) return [];
+const correos = o.emails || (o.email ? [o.email] : []);
+const ahora = new Date().toLocaleString('sv-SE', { timeZone: 'Europe/Madrid' }).slice(0, 16);
+return [...o.filas, ...correos.map(e => ({ _hoja: 'bandeja', fecha: ahora, asunto: e.asunto, html: e.html }))].map(json => ({ json }));`;
 const EMAIL = fuentes => `let o = null;\nfor (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }\nreturn o && o.email ? [{ json: o.email }] : [];`;
 function bloqueEscritura(wf, rutas, x, y) {
-  const nombres = { empleados: 'Actualizar empleados', 'skills-empleados': 'Actualizar skills', 'skills-empleados (nueva)': 'Añadir skill nueva', 'planes-backup': 'Guardar planes', alertas: 'Guardar alertas', cobertura: 'Guardar cobertura', 'historico-semaforo': 'Añadir al histórico', 'key-people': 'Vaciar key-people' };
+  const nombres = { empleados: 'Actualizar empleados', 'skills-empleados': 'Actualizar skills', 'skills-empleados (nueva)': 'Añadir skill nueva', 'planes-backup': 'Guardar planes', alertas: 'Guardar alertas', cobertura: 'Guardar cobertura', 'historico-semaforo': 'Añadir al histórico', 'key-people': 'Vaciar key-people', bandeja: 'Guardar en la bandeja' };
   const nodes = [desvio(wf, '¿A qué hoja?', '={{ $json._hoja }}', rutas, [x, y])];
   const salidas = [];
   rutas.forEach((r, i) => {
@@ -114,7 +122,7 @@ function bloqueEscritura(wf, rutas, x, y) {
   const wf = 'E1';
   const accion = "={{ $json.query && $json.query.alerta ? 'aprobar' : 'baja' }}";
   const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura'];
-  const esc = bloqueEscritura(wf, ['empleados', 'alertas', 'planes-backup', 'cobertura', 'historico-semaforo', 'key-people'], 2700, 400);
+  const esc = bloqueEscritura(wf, ['empleados', 'alertas', 'planes-backup', 'cobertura', 'historico-semaforo', 'bandeja', 'key-people'], 2700, 400);
   const nodes = [
     nota(wf, '## 1 · Entradas\nFormulario de baja (E007) o botón Aprobar del email de People', [-40, 120], 260, 520, 4),
     nota(wf, '## 2 · Lee el Sheet\nDefiniciones y prompt (repo); plantilla, skills, planes, alertas y mapa actual (Sheet)', [260, 220], 1660, 300, 7),
@@ -162,7 +170,7 @@ function bloqueEscritura(wf, rutas, x, y) {
 {
   const wf = 'E2';
   const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'cobertura'];
-  const esc = bloqueEscritura(wf, ['skills-empleados', 'skills-empleados (nueva)', 'planes-backup', 'cobertura', 'historico-semaforo', 'key-people'], 1740, 400);
+  const esc = bloqueEscritura(wf, ['skills-empleados', 'skills-empleados (nueva)', 'planes-backup', 'cobertura', 'historico-semaforo', 'bandeja', 'key-people'], 1740, 400);
   const nodes = [
     nota(wf, '## Escenario 2 · Actualización de skill\n"Tres meses después": el manager valida el nivel que ha alcanzado Javier. Completar un curso no sube el nivel; lo valida una persona.', [-40, 60], 1700, 200, 4),
     formulario(wf, 'Formulario skill', 'Acme · Validar una skill', 'El manager confirma el nivel que ha alcanzado una persona de su equipo (por ejemplo, Javier tras su formación). Completar un curso no sube el nivel: lo valida el manager.', [
@@ -193,7 +201,7 @@ function bloqueEscritura(wf, rutas, x, y) {
 {
   const wf = 'E3';
   const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura', 'historico-semaforo'];
-  const esc = bloqueEscritura(wf, ['planes-backup', 'alertas', 'cobertura', 'historico-semaforo', 'key-people'], 2560, 420);
+  const esc = bloqueEscritura(wf, ['planes-backup', 'alertas', 'cobertura', 'historico-semaforo', 'bandeja', 'key-people'], 2560, 420);
   const programado = (name, intervalo, pos) => nodo(wf, name, 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [intervalo] } }, pos);
   const agente = (name, valor, pos) => nodo(wf, name, 'n8n-nodes-base.set', 3.4, {
     assignments: { assignments: [{ id: uid(wf + name), name: 'agente', value: valor, type: 'string' }] }, includeOtherFields: true, options: {},
@@ -208,9 +216,10 @@ function bloqueEscritura(wf, rutas, x, y) {
     agente('Agente: seguimiento', 'seguimiento', [220, 200]),
     programado('Día 1 de cada mes 8:00', { field: 'months', monthsInterval: 1, triggerAtDayOfMonth: 1, triggerAtHour: 8 }, [0, 380]),
     agente('Agente: centinela', 'centinela', [220, 380]),
-    formulario(wf, 'Ejecutar un agente ahora', 'Acme · Ejecutar un agente ahora', 'Para la demo: lanza un agente sin esperar a su día. La fecha simula el paso del tiempo (por ejemplo, 12 semanas después de aprobar el plan de Javier). Vacía = hoy.', [
+    formulario(wf, 'Ejecutar un agente ahora', 'Acme · Ejecutar un agente ahora', 'Para la demo: lanza un agente sin esperar a su día. «Cuándo» simula el paso del tiempo: +12 semanas es cuando el plan de Javier llega a su fecha.', [
       { fieldLabel: 'agente', fieldType: 'dropdown', fieldOptions: { values: ['seguimiento', 'centinela'].map(option => ({ option })) }, requiredField: true },
-      { fieldLabel: 'fecha', placeholder: 'AAAA-MM-DD (vacío = hoy)', requiredField: false },
+      { fieldLabel: 'cuando', fieldType: 'dropdown', fieldOptions: { values: ['hoy', '+12 semanas', '+13 semanas', '+14 semanas'].map(option => ({ option })) }, requiredField: true },
+      { fieldLabel: 'fecha', placeholder: 'Opcional: una fecha exacta AAAA-MM-DD', requiredField: false },
     ], [0, 560]),
     configuracion(wf, [520, 370], [['url_formulario_skill', 'PEGAR_PRODUCTION_URL_DEL_FORMULARIO_SKILL_DEL_ESCENARIO_2']]),
     leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [700, 370]),
@@ -242,5 +251,59 @@ function bloqueEscritura(wf, rutas, x, y) {
     'Emails': { main: [[a('Enviar email')]] },
   };
   guardar('E3-agentes-autonomos.json', workflow('Acme People OS · Escenario 3 · Agentes autónomos', nodes, connections));
+}
+// ---------- Escenario 0 · Panel y reinicio: la demo sin depender de nadie (D-22) ----------
+// Panel: página de entrada (mapa en vivo, qué hacer ahora, decisiones con su botón Aprobar, bandeja de People).
+// Reinicio: baja de GitHub los CSV iniciales, vacía las hojas y las vuelve a escribir, en cadena, y vuelve al panel.
+{
+  const wf = 'E0';
+  const lecturas = ['empleados', 'planes-backup', 'alertas', 'cobertura', 'key-people', 'bandeja'];
+  const webhook = (name, ruta, pos) => nodo(wf, name, 'n8n-nodes-base.webhook', 2, { httpMethod: 'GET', path: ruta, responseMode: 'responseNode', options: {} }, pos, { webhookId: uid(wf + ruta) });
+  const accion = (name, valor, pos) => nodo(wf, name, 'n8n-nodes-base.set', 3.4, {
+    assignments: { assignments: [{ id: uid(wf + name), name: 'accion', value: valor, type: 'string' }] }, includeOtherFields: true, options: {},
+  }, pos);
+  const responder = (name, pos) => nodo(wf, name, 'n8n-nodes-base.respondToWebhook', 1.1, {
+    respondWith: 'text', responseBody: '={{ $json.html }}', options: { responseHeaders: { entries: [{ name: 'Content-Type', value: 'text/html; charset=utf-8' }] } },
+  }, pos);
+  const vaciar = h => nodo(wf, `Vaciar ${h}`, 'n8n-nodes-base.googleSheets', 4.5, { operation: 'clear', documentId: doc, sheetName: hojaRl(h), clear: 'wholeSheet', keepFirstRow: true }, [0, 0], { executeOnce: true });
+  const anadir = h => nodo(wf, `Escribir ${h}`, 'n8n-nodes-base.googleSheets', 4.5, {
+    operation: 'append', documentId: doc, sheetName: hojaRl(h), columns: { mappingMode: 'autoMapInputData', value: {}, schema: [] }, options: opcionesEscritura,
+  }, [0, 0]);
+  const vaciadas = [...HOJAS_INICIALES, 'alertas', 'bandeja'];
+  // Cadena del reinicio: CSV de GitHub → filas → vaciar cada hoja → escribir cada hoja → página → responder
+  const cadenaReinicio = [
+    ...HOJAS_INICIALES.map(h => leerTexto(wf, `CSV ${h}`, `salidas/sheets/${h}.csv`, 'csv', [0, 0])),
+    code(wf, 'Filas iniciales', 'e0-reinicio.js', [0, 0]),
+    ...vaciadas.map(vaciar),
+    ...HOJAS_INICIALES.flatMap(h => [code(wf, `Solo ${h}`, `return $('Filas iniciales').all().filter(i => i.json._hoja === '${h}');`, [0, 0]), anadir(h)]),
+    code(wf, 'Página reiniciada', 'e0-reiniciada.js', [0, 0]),
+    responder('Responder reinicio', [0, 0]),
+  ];
+  // Posiciones: la cadena del reinicio en filas de 8 nodos, debajo del panel
+  cadenaReinicio.forEach((n, i) => { n.position = [1500 + (i % 8) * 200, 520 + Math.floor(i / 8) * 160]; });
+  const nodes = [
+    nota(wf, '## Escenario 0 · Panel y reinicio\nLa página de entrada para quien prueba la demo: no instala nada. El panel lee el Sheet en cada visita; Reiniciar lo deja como al principio sin Claude Code.', [-40, 60], 1460, 200, 4),
+    nota(wf, '## Reinicio\nCSV iniciales de GitHub → vaciar las hojas → escribirlas de nuevo, una detrás de otra → volver al panel', [1480, 420], 1640, 760, 5),
+    webhook('Abrir el panel', 'acme-panel', [0, 300]),
+    accion('Acción: panel', 'panel', [220, 300]),
+    webhook('Reiniciar la demo', 'acme-reiniciar', [0, 520]),
+    accion('Acción: reiniciar', 'reiniciar', [220, 520]),
+    configuracion(wf, [440, 400], [['url_form_baja', 'PEGAR_PRODUCTION_URL_DEL_FORMULARIO_BAJA_E1'], ['url_form_skill', 'PEGAR_PRODUCTION_URL_DEL_FORMULARIO_SKILL_E2'],
+      ['url_form_agentes', 'PEGAR_PRODUCTION_URL_DEL_FORMULARIO_AGENTES_E3'], ['url_video', 'PEGAR_URL_DEL_VIDEO_OPCIONAL']]),
+    desvio(wf, '¿Qué se ha pedido?', `={{ ${cfg}.accion }}`, ['panel', 'reiniciar'], [640, 400]),
+    ...lecturas.map((h, i) => leerHoja(wf, LECTURAS[h], h, [860 + i * 170, 260])),
+    code(wf, 'Panel', 'e0-panel.js', [1880, 260]),
+    responder('Responder panel', [2080, 260]),
+    ...cadenaReinicio,
+  ];
+  const connections = {
+    'Abrir el panel': { main: [[a('Acción: panel')]] }, 'Reiniciar la demo': { main: [[a('Acción: reiniciar')]] },
+    'Acción: panel': { main: [[a('Configuración')]] }, 'Acción: reiniciar': { main: [[a('Configuración')]] },
+    'Configuración': { main: [[a('¿Qué se ha pedido?')]] },
+    '¿Qué se ha pedido?': { main: [[a(LECTURAS[lecturas[0]])], [a(cadenaReinicio[0].name)]] },
+    ...cadena([...lecturas.map(h => LECTURAS[h]), 'Panel', 'Responder panel']),
+    ...cadena(cadenaReinicio.map(n => n.name)),
+  };
+  guardar('E0-panel-y-reinicio.json', workflow('Acme People OS · Escenario 0 · Panel y reinicio', nodes, connections));
 }
 console.log('salidas/n8n/definiciones.json');

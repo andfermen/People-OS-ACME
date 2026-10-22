@@ -41,7 +41,7 @@ En la demo: Javier llega a las 12 semanas de mentoring → el agente avisa a Mar
 
 ## Cómo se prueba
 
-- **En n8n:** formulario **Ejecutar un agente ahora** → `seguimiento` con una fecha simulada (por ejemplo, hoy + 12 semanas).
+- **En n8n:** formulario **Ejecutar un agente ahora** → `seguimiento`, cuándo = `+12 semanas`. O desde el panel de la demo (escenario 0), que guía los pasos.
 - **En local:** `npm run demo -- seguimiento +84`.
 - **Muestra del email:** [`salidas/n8n/muestra-email-seguimiento.html`](../salidas/n8n/muestra-email-seguimiento.html).
 

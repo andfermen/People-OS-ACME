@@ -81,7 +81,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
 │   ├── agentes.js                # Agentes autónomos: seguimiento de planes y centinela (D-21)
-│   ├── exportar-n8n.js           # `npm run n8n`: genera los 3 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19, D-21)
+│   ├── exportar-n8n.js           # `npm run n8n`: genera los 4 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19, D-21)
 │   └── exportar-video.js         # `npm run video`: datos del reproductor del vídeo desde el motor (D-20)
 ├── video/                        # Reproductor de la demo para grabar el vídeo + guion de locución (D-20)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
@@ -98,6 +98,7 @@ Principios de diseño (argumentos para el CEO):
 └── flujos/
     └── n8n/
         ├── LEEME.md              # Montaje y ensayo del flujo principal
+        ├── E0-panel-y-reinicio.json  # Escenario 0: panel para quien prueba la demo + reinicio desde GitHub (generado, D-22)
         ├── E1-baja-de-elena.json         # Escenario 1: baja + aprobar desde el email (generado)
         ├── E2-actualizacion-de-skill.json  # Escenario 2: el manager valida una skill, ámbar → verde (generado)
         ├── E3-agentes-autonomos.json  # Escenario 3: seguimiento de planes (lunes) y centinela (mensual) (generado, D-21)

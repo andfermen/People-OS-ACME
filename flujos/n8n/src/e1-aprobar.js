@@ -5,7 +5,10 @@ const T = tablas();
 const defs = JSON.parse($('Leer definiciones').first().json.definiciones);
 const base = datosDesde(T, defs);
 const hoy = hoyISO();
-const pagina = (titulo, cuerpo = '') => html(`<h2>${titulo}</h2>${cuerpo}<p><a href="https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit">Abrir el Sheet</a></p>`);
+// El panel (escenario 0) vive en la misma instancia: su URL sale de la de este webhook (…/webhook/acme-aprobar → …/webhook/acme-panel)
+const panel = /acme-aprobar/.test(cfg.webhookUrl || '') ? String(cfg.webhookUrl).replace(/acme-aprobar.*$/, 'acme-panel') : '';
+const boton = (url, texto) => `<a href="${url}" style="background:#3b5bdb;color:#fff;padding:8px 14px;border-radius:6px;text-decoration:none;margin-right:8px">${texto}</a>`;
+const pagina = (titulo, cuerpo = '') => html(`<h2>${titulo}</h2>${cuerpo}<p style="margin-top:18px">${panel ? boton(panel, '← Volver al panel') : ''}<a href="https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit">Abrir el Sheet</a></p>`);
 const salida = (htmlPagina, filas = [], email = null) => [{ json: { html: htmlPagina, filas, email } }];
 
 const alertaId = String((cfg.query || {}).alerta || '').trim().toUpperCase();

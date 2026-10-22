@@ -51,3 +51,4 @@ escribir('senales-rotacion-PEOPLE', ['empleado_id', 'nombre', 'compa_ratio', 'pr
 escribir('historico-semaforo', COLS.historico, filasHistorico(r, fecha, 'inicial'));
 
 escribir('alertas', COLS.alertas, []);
+escribir('bandeja', COLS.bandeja, []);

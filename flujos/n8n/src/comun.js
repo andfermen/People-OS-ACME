@@ -2,7 +2,8 @@
 // exportar-n8n.js las concatena con el motor (cobertura.js), la propuesta (propuesta.js) y las filas (hojas.js).
 
 // Nodo de lectura de cada hoja. bandas y encuesta no cambian en la demo: vienen de definiciones.json (repo).
-const LECTURAS = { empleados: 'Leer empleados', 'skills-empleados': 'Leer skills', 'planes-backup': 'Leer planes', alertas: 'Leer alertas', cobertura: 'Leer cobertura', 'historico-semaforo': 'Leer histórico' };
+const LECTURAS = { empleados: 'Leer empleados', 'skills-empleados': 'Leer skills', 'planes-backup': 'Leer planes', alertas: 'Leer alertas', cobertura: 'Leer cobertura', 'historico-semaforo': 'Leer histórico',
+  'key-people': 'Leer key-people', bandeja: 'Leer bandeja' };
 // Cómo se escribe cada hoja con el nodo nativo: actualizar por clave, añadir o actualizar por clave, añadir, o vaciar y volver a escribir
 const ESCRITURAS = {
   empleados: { op: 'update', clave: 'id' },
@@ -13,10 +14,18 @@ const ESCRITURAS = {
   cobertura: { op: 'appendOrUpdate', clave: 'funcion_id' },
   'historico-semaforo': { op: 'append' },
   'key-people': { op: 'reemplazar' },
+  bandeja: { op: 'append' },
 };
 const hoyISO = () => new Date().toISOString().slice(0, 10);
-// Fecha de trabajo de los agentes: la del formulario "Ejecutar un agente ahora" (para simular "12 semanas después") o hoy
-const fechaDe = cfg => (fechaValida(String(cfg.fecha || '').trim()) ? String(cfg.fecha).trim() : hoyISO());
+// Hojas que el reinicio (escenario 0) vuelve a cargar desde salidas/sheets/; alertas y bandeja se vacían sin más
+const HOJAS_INICIALES = ['empleados', 'skills-empleados', 'planes-backup', 'cobertura', 'key-people', 'historico-semaforo'];
+// Fecha de trabajo de los agentes: la del formulario "Ejecutar un agente ahora" ("+12 semanas" o una fecha exacta) o hoy
+function fechaDe(cfg) {
+  const f = String(cfg.fecha || '').trim();
+  if (fechaValida(f)) return f;
+  const s = String(cfg.cuando || '').match(/\+\s*(\d+)\s*semana/);
+  return s ? sumarDias(hoyISO(), +s[1] * 7) : hoyISO();
+}
 
 // Salida de los nodos de lectura → { hoja: { filas: [{ ...columnas, _fila }] } }. _fila es la fila real (row_number).
 function tablas() {
@@ -69,4 +78,4 @@ function listaCambios(cambios) {
   return `<ul>${cambios.map(c => `<li><b>${esc(c.id)}</b> ${esc(c.nombre)}: ${ICONO[c.de]} → ${ICONO[c.a]} (cobertura ${c.cobertura_antes} → ${c.cobertura_despues})</li>`).join('')}</ul>`;
 }
 
-module.exports = { LECTURAS, ESCRITURAS };
+module.exports = { LECTURAS, ESCRITURAS, HOJAS_INICIALES };
