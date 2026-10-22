@@ -6,7 +6,7 @@
 
 Prueba técnica para un proceso de selección. El reto: **diseñar e implementar un sistema RRHH de una compañía apoyándose en IA y automatización.**
 
-- Empresa: **Acme**, ficticia, inspirada en Bit2Me (fintech cripto española, regulada). Estructura y áreas basadas en información pública de Bit2Me; nombre, personas y datos inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** En todo el repo la empresa se llama Acme; Bit2Me solo se menciona como referencia de inspiración en `empresa.md` y README.
+- Empresa: **Acme**, ficticia, inspirada en una fintech cripto española regulada. Estructura y áreas basadas en información pública de esa empresa; nombre, personas y datos inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** En todo el repo la empresa se llama Acme. **La empresa real de referencia no se nombra en ningún archivo del repo** (es público).
 - Contexto clave del CEO: la compañía (~160 personas) está en un **plan "AI first"**: objetivos de adopción, herramientas, formación y rediseño/reducción de equipos. **El rol al que opta Andrea es liderar People en esa transformación.** Por tanto la prueba no es solo "un sistema de RRHH": es la evidencia de cómo lideraría People en un plan AI first. El mapa de skills es el instrumento de ese plan (ver §6 "Lente AI first" y `docs/plan-ai-first-people.md`).
 - Argumento meta: esta prueba se ha construido como trabajaría el departamento, **una persona + IA** (Claude Code, orquestador, API de Claude).
 - Presentación: **en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
@@ -63,7 +63,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── escalado.md               # Cómo se añade un proceso nuevo
 │   └── guion-demo.md
 ├── definiciones/
-│   ├── empresa.md                # Acme: áreas, tamaño, contexto (ficticio, inspirado en Bit2Me)
+│   ├── empresa.md                # Acme: áreas, tamaño, contexto (ficticio, inspirado en una fintech cripto española regulada)
 │   ├── taxonomia-skills.yaml     # Skills hard/soft y descripción de niveles 1-4
 │   ├── funciones.yaml            # Funciones por área, criticidad, skills requeridas, cobertura objetivo
 │   ├── reglas-semaforo.md        # Cálculo de cobertura, semáforo y key people
@@ -209,7 +209,7 @@ La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a
 
 - [x] **Mar** · Repo + este archivo. Cuenta Google para la demo.
 - [x] **Mié AM** · `empresa.md`, taxonomía, funciones, reglas, datos ficticios con los casos de §6, prompts.
-- [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la referencia a Bit2Me (D-13, D-14).
+- [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la empresa de referencia (D-13, D-14).
 - [x] **Mié mediodía** · Test n8n vs Make → **n8n** (D-04).
 - [x] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
 - [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador (generado y probado: `flujos/n8n/`, D-16; falta montarlo en n8n y ensayar). Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).

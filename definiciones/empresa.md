@@ -1,6 +1,6 @@
 # Acme · Contexto de la empresa (ficticio)
 
-> **Acme es una empresa inventada**, inspirada en Bit2Me (fintech cripto española, regulada). La estructura y las áreas se basan en información pública de Bit2Me; el nombre, las personas, las cifras y todos los datos son ficticios. No describen a ninguna empresa ni a ninguna persona real.
+> **Acme es una empresa inventada**, inspirada en una fintech cripto española regulada. La estructura y las áreas se basan en información pública de esa empresa; el nombre, las personas, las cifras y todos los datos son ficticios. No describen a ninguna empresa ni a ninguna persona real.
 
 ## Qué hace
 

@@ -77,9 +77,9 @@ Formato: qué se decide, alternativas consideradas y por qué.
 - **Alternativas:** plan B solo con capturas y vídeo.
 - **Por qué:** si el orquestador falla en directo, el proceso se sigue viendo funcionar de verdad. Con `ANTHROPIC_API_KEY` redacta Claude; sin ella, una propuesta por reglas, para que la demo no dependa de la red ni de la API.
 
-## D-13 · Acme inspirada en Bit2Me, a escala real (~160 personas)
+## D-13 · Acme inspirada en una fintech real, a escala real (~160 personas)
 
-- **Qué:** Acme sigue siendo ficticia (D-05), pero su estructura se inspira en Bit2Me y la plantilla pasa de 46 a 160 personas. Las 46 hechas a mano se conservan; las otras 114 se generan con `npm run plantilla` (semilla fija), con topes de nivel en las skills de los casos de la demo.
+- **Qué:** Acme sigue siendo ficticia (D-05), pero su estructura se inspira en una fintech cripto española regulada (no se nombra en el repo, que es público) y la plantilla pasa de 46 a 160 personas. Las 46 hechas a mano se conservan; las otras 114 se generan con `npm run plantilla` (semilla fija), con topes de nivel en las skills de los casos de la demo.
 - **Alternativas:** quedarse en 46 personas; generar las 160 desde cero.
 - **Por qué:** el CEO tiene que reconocer la escala de su compañía, y con 160 el umbral de anonimato (n ≥ 5) es realista: Custodia o Seguridad ya se pueden mostrar solas. Conservar las 46 y poner topes mantiene intactos los casos de la demo: el mapa de riesgo sale igual (mismos colores, mismas 5 key people), y `npm run verificar` lo comprueba. Además refuerza el mensaje: más personas no significa más cobertura.
 
