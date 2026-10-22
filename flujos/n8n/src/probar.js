@@ -1,7 +1,8 @@
-// Banco de pruebas de los dos escenarios de n8n sin n8n: ejecuta el código de los nodos tal cual está en los JSON generados
+// Banco de pruebas de los tres escenarios de n8n sin n8n: ejecuta el código de los nodos tal cual está en los JSON generados
 // contra un Sheet simulado (los CSV de salidas/sheets/) e imita los nodos nativos de Google Sheets (leer filas;
 // actualizar, añadir o reescribir por clave según ESCRITURAS de comun.js).
-// Recorre la demo dos veces: E1 baja de Elena → aprobar opción B → aprobar backup de Javier → E2 Marcos valida a Javier.
+// Recorre la demo dos veces: E1 baja de Elena → aprobar opción B → aprobar backup de Javier → E3 seguimiento (+12 semanas)
+// → E2 Marcos valida a Javier → E3 seguimiento recuerda y escala → E3 centinela.
 // Uso: npm run probar-n8n   (después de npm run n8n)
 
 const fs = require('fs');
@@ -9,7 +10,7 @@ const path = require('path');
 const { LECTURAS, ESCRITURAS } = require('./comun');
 const RAIZ = path.join(__dirname, '..', '..', '..');
 const wf = n => JSON.parse(fs.readFileSync(path.join(RAIZ, 'flujos', 'n8n', n), 'utf8'));
-const E1 = wf('E1-baja-de-elena.json'), E2 = wf('E2-actualizacion-de-skill.json');
+const E1 = wf('E1-baja-de-elena.json'), E2 = wf('E2-actualizacion-de-skill.json'), E3 = wf('E3-agentes-autonomos.json');
 const HOJAS = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura', 'key-people', 'historico-semaforo'];
 
 // ---------- Sheet simulado: { hoja: { cab, filas: [ {col: valor} ] } } ----------
@@ -59,15 +60,16 @@ function ejecutar(w, nombre, salidas) {
   return salidas[nombre];
 }
 // Bloque de escritura: Repartir → ¿A qué hoja? → nodos de Sheets (key-people se vacía antes) · Email
-function escribirTodo(w, salidas) {
+function escribirTodo(w, salidas, email = 'Email') {
   const filas = ejecutar(w, 'Repartir', salidas);
   const kp = ejecutar(w, 'Filas key-people', salidas);
   if (kp.length) sheet['key-people'].filas = []; // Vaciar key-people (solo si hay filas nuevas)
   filas.forEach(escribir);
-  return ejecutar(w, 'Email', salidas)[0];
+  const e = ejecutar(w, email, salidas);
+  return email === 'Email' ? e[0] : e;
 }
 
-const config = { sheet_id: 'TEST', email_demo: 'demo@acme.example', url_aprobar: 'https://n8n.test/webhook/acme-aprobar', modelo: 'claude-sonnet-5-5' };
+const config = { sheet_id: 'TEST', email_demo: 'demo@acme.example', url_aprobar: 'https://n8n.test/webhook/acme-aprobar', url_formulario_skill: 'https://n8n.test/form/skill', modelo: 'claude-sonnet-5-5' };
 const exprAccion = E1.nodes.find(n => n.name === 'Configuración').parameters.assignments.assignments.find(x => x.name === 'accion').value.replace(/^=\{\{|\}\}$/g, '');
 const accionDe = entrada => new Function('$json', `return (${exprAccion});`)(entrada);
 const comunes = (entrada = {}) => ({
@@ -99,6 +101,22 @@ function validar(empleado_id, skill_id, nivel, validado_por) {
   ejecutar(E2, 'Validar skill', s);
   return escribirTodo(E2, s);
 }
+// Escenario 3: se lanza como el formulario "Ejecutar un agente ahora" (agente + fecha simulada)
+const enDias = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
+function seguimiento(fecha) {
+  const s = comunes({ agente: 'seguimiento', fecha });
+  const o = ejecutar(E3, 'Seguimiento', s)[0];
+  return { o, emails: escribirTodo(E3, s, 'Emails') };
+}
+function centinela(fecha) {
+  const s = comunes({ agente: 'centinela', fecha });
+  ejecutar(E3, 'Centinela', s);
+  s.__entrada = [{ error: { message: 'simulado: sin API key' } }];
+  const o = ejecutar(E3, 'Informe final', s)[0];
+  delete s.__entrada;
+  return { o, emails: escribirTodo(E3, s, 'Emails') };
+}
+const plan = id => objetos('planes-backup').find(p => p.plan_id === id);
 
 for (const vuelta of [1, 2]) {
   reiniciar();
@@ -131,16 +149,54 @@ for (const vuelta of [1, 2]) {
   const R = aprobar('ALR-002');
   caso(`${v} E1 repetir un clic: "ya está aprobada", no escribe ni envía nada`, R.o.html.includes('ya está aprobada') && !R.o.filas.length && !R.email);
 
+  // E3 · seguimiento de planes "12 semanas después": nadie pulsa nada y el agente avisa a los managers
+  const s1 = seguimiento(enDias(84));
+  caso(`${v} E3 seguimiento (+12 semanas): avisa a Marcos por Javier (PB-004, formulario rellenado) y al CEO por Marcos (PB-003); lo anota en planes-backup`,
+    s1.o.acciones.map(x => `${x.plan_id}:${x.tipo}:${x.manager.id}`).sort().join() === 'PB-003:aviso:E001,PB-004:aviso:E008'
+    && s1.emails.some(e => e.asunto.includes('Para Marcos Fuentes Rey') && e.html.includes('form/skill?empleado_id=E009&amp;skill_id=gestion-claves&amp;nivel=3&amp;validado_por=E008') === false && e.html.includes('empleado_id=E009&skill_id=gestion-claves&nivel=3&validado_por=E008'))
+    && plan('PB-004').avisos === '1' && plan('PB-003').avisos === '1');
+  caso(`${v} E3 seguimiento el mismo día otra vez: no repite avisos`, !seguimiento(enDias(84)).o.acciones.length);
+
   const e2 = validar('E009', 'gestion-claves', '3', 'E008');
   const javier = objetos('skills-empleados').find(x => x.empleado_id === 'E009' && x.skill_id === 'gestion-claves');
   caso(`${v} E2 Marcos valida a Javier en gestión de claves 3: plan completado y CUS-01 pasa de ámbar a verde`,
     javier.nivel_validado === '3' && javier.validado_por === 'E008' && objetos('planes-backup').some(p => p.empleado_id === 'E009' && p.estado === 'completado')
     && fn('CUS-01').semaforo === 'verde' && e2.asunto.includes('Riesgo reducido'));
+
+  const s2 = seguimiento(enDias(91));
+  caso(`${v} E3 seguimiento (+13 semanas): Javier ya validado no vuelve a salir; a Marcos (PB-003) se le recuerda`,
+    s2.o.acciones.map(x => `${x.plan_id}:${x.tipo}`).join() === 'PB-003:recordatorio' && s2.emails[0].asunto.includes('Recordatorio'));
+  const s3 = seguimiento(enDias(98));
+  const esc3 = objetos('alertas').find(x => x.grupo === 'SEG-PB-003');
+  caso(`${v} E3 seguimiento (+14 semanas): tras 2 avisos escala a People con una alerta pendiente; después ya no insiste`,
+    s3.o.acciones.map(x => `${x.plan_id}:${x.tipo}`).join() === 'PB-003:escalar' && esc3 && esc3.decision === 'pendiente' && esc3.tipo_accion === 'seguimiento'
+    && s3.emails[0].asunto.startsWith('[Acme People OS] People') && !seguimiento(enDias(112)).o.acciones.length);
+
+  // E3 · centinela: revisión mensual programada
+  const c = centinela(enDias(98));
+  const html = c.emails[0].html, corte = html.indexOf('Solo People');
+  caso(`${v} E3 centinela: recalcula y guarda la foto; informe para dirección por reglas (CUS-02 P1 sin cobertura, ALR-004 pendiente, validaciones caducadas)`,
+    objetos('historico-semaforo').some(x => x.evento.startsWith('Revisión programada (centinela)') && x.fecha === enDias(98)) && c.o.fuente.startsWith('reglas')
+    && /CUS-02[^<]*<\/b>[^<]*P1, cobertura 0/.test(html.slice(0, corte)) && html.slice(0, corte).includes('Desbloquear ALR-004') && html.slice(0, corte).includes('revaliden'));
+  if (vuelta === 1) {
+    fs.writeFileSync(path.join(RAIZ, 'salidas', 'n8n', 'muestra-email-centinela.html'), html);
+    fs.writeFileSync(path.join(RAIZ, 'salidas', 'n8n', 'muestra-email-seguimiento.html'), s1.emails.find(e => e.asunto.includes('Para Marcos')).html);
+  }
+  caso(`${v} E3 centinela: la parte para dirección no lleva señales ni salarios; la de People sí`,
+    corte > 0 && !/compa-ratio|probabilidad|evaluación \d/.test(html.slice(0, corte)) && /probabilidad/.test(html.slice(corte)));
 }
+// Si el manager ya no está (Elena se va y nadie asume el puesto), el agente no le escribe: escala directamente a People
+reiniciar();
+baja('E007'); aprobar('ALR-003');
+const sm = seguimiento(enDias(84));
+caso('E3 seguimiento sin manager activo: no avisa a quien se ha ido; escala a People con el motivo',
+  sm.o.acciones.length === 1 && sm.o.acciones[0].tipo === 'escalar' && sm.o.acciones[0].sin_manager
+  && !sm.emails.some(e => e.asunto.includes('Elena')) && objetos('alertas').find(x => x.grupo.startsWith('SEG-')).por_que.includes('no tiene un manager activo'));
+
 let error = '';
 try { validar('E009', 'no-existe', '3', 'E008'); } catch (e) { error = e.message; }
 caso('E2 entrada inválida: una skill que no está en la taxonomía da un error claro', error.includes('taxonomía'));
 caso('E1 alerta inexistente: lo dice y no escribe nada', aprobar('ALR-999').o.html.includes('No existe'));
 
-console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nLos dos escenarios de n8n hacen la demo completa, dos veces seguidas · muestra del email en salidas/n8n/');
+console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nLos tres escenarios de n8n hacen la demo completa, dos veces seguidas · muestras de los emails en salidas/n8n/');
 process.exit(fallos ? 1 : 0);

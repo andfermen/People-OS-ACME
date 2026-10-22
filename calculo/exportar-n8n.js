@@ -1,10 +1,13 @@
-// Genera los dos workflows de n8n de la demo y las definiciones en JSON que leen en tiempo de ejecución.
-// Uso: npm run n8n  → flujos/n8n/E1-baja-de-elena.json, flujos/n8n/E2-actualizacion-de-skill.json
+// Genera los tres workflows de n8n de la demo y las definiciones en JSON que leen en tiempo de ejecución.
+// Uso: npm run n8n  → flujos/n8n/E1-baja-de-elena.json, flujos/n8n/E2-actualizacion-de-skill.json, flujos/n8n/E3-agentes-autonomos.json
 //                    + salidas/n8n/definiciones.json (hay que hacer push: n8n lo lee de GitHub)
 //
 // Escenario 1 · Baja de Elena: dos entradas (formulario de baja y botón Aprobar del email) que comparten la lectura;
 //   un desvío las manda a su rama y las dos acaban en la misma escritura y el mismo email.
 // Escenario 2 · Actualización de skill: el manager valida un nivel nuevo → recálculo → email de cierre.
+// Escenario 3 · Agentes autónomos (D-21): sin que nadie pulse nada. Cada lunes, el seguimiento de planes avisa, recuerda y escala;
+//   el día 1 de cada mes, el centinela recalcula, detecta lo que se degrada y envía el informe para dirección.
+//   Un formulario permite lanzarlos a mano con una fecha simulada ("12 semanas después").
 // El Sheet se lee y escribe con nodos nativos de Google Sheets (la credencial de Google de n8n cloud no se puede usar
 // en nodos HTTP). El reinicio de la demo no está en n8n: lo hace Claude Code (flujos/n8n/LEEME.md).
 //
@@ -28,13 +31,14 @@ const d = cargar();
 fs.mkdirSync(path.join(RAIZ, 'salidas', 'n8n'), { recursive: true });
 fs.writeFileSync(path.join(RAIZ, 'salidas', 'n8n', 'definiciones.json'),
   JSON.stringify({ funciones: d.funciones, taxonomia: d.taxonomia, areas: d.areas, catalogo: d.catalogo, bandas: d.bandas, encuesta: d.encuesta,
-    prompt_propuesta: leer(path.join(RAIZ, 'prompts', 'proponer-acciones.md')) }, null, 1) + '\n');
+    prompt_propuesta: leer(path.join(RAIZ, 'prompts', 'proponer-acciones.md')), prompt_informe: leer(path.join(RAIZ, 'prompts', 'informe-direccion.md')) }, null, 1) + '\n');
 
 // ---------- Biblioteca común de los nodos de código ----------
 const cob = leer(path.join(__dirname, 'cobertura.js'));
 const motor = cob.slice(cob.indexOf('const UMBRALES'), cob.indexOf('// ---------- Lectura')) + cob.slice(cob.indexOf('// ---------- Cálculo'), cob.indexOf('module.exports'));
 const LIB = ['// ===== Generado por calculo/exportar-n8n.js. No editar aquí: editar calculo/ y flujos/n8n/src/ =====',
-  motor, sinModulo(leer(path.join(__dirname, 'propuesta.js'))), sinModulo(leer(path.join(__dirname, 'hojas.js'))), sinModulo(leer(path.join(SRC, 'comun.js')))].join('\n');
+  motor, sinModulo(leer(path.join(__dirname, 'propuesta.js'))), sinModulo(leer(path.join(__dirname, 'hojas.js'))), sinModulo(leer(path.join(__dirname, 'agentes.js'))),
+  sinModulo(leer(path.join(SRC, 'comun.js')))].join('\n');
 const codigo = archivo => `${LIB}\n// ===== Nodo =====\n${leer(path.join(SRC, archivo))}`;
 
 // ---------- Nodos ----------
@@ -184,5 +188,59 @@ function bloqueEscritura(wf, rutas, x, y) {
     'Email': { main: [[a('Enviar email')]] },
   };
   guardar('E2-actualizacion-de-skill.json', workflow('Acme People OS · Escenario 2 · Actualización de skill', nodes, connections));
+}
+// ---------- Escenario 3 · Agentes autónomos (seguimiento de planes y centinela) ----------
+{
+  const wf = 'E3';
+  const lecturas = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura', 'historico-semaforo'];
+  const esc = bloqueEscritura(wf, ['planes-backup', 'alertas', 'cobertura', 'historico-semaforo', 'key-people'], 2560, 420);
+  const programado = (name, intervalo, pos) => nodo(wf, name, 'n8n-nodes-base.scheduleTrigger', 1.2, { rule: { interval: [intervalo] } }, pos);
+  const agente = (name, valor, pos) => nodo(wf, name, 'n8n-nodes-base.set', 3.4, {
+    assignments: { assignments: [{ id: uid(wf + name), name: 'agente', value: valor, type: 'string' }] }, includeOtherFields: true, options: {},
+  }, pos);
+  const EMAILS = fuentes => `let o = null;\nfor (const n of ${JSON.stringify(fuentes)}) { try { o = $(n).first().json; break; } catch (e) { /* esa rama no se ha ejecutado */ } }\nreturn (o && o.emails ? o.emails : []).map(json => ({ json }));`;
+  const nodes = [
+    nota(wf, '## 1 · Disparo: nadie pulsa nada\nCada lunes, el seguimiento de planes. El día 1 de cada mes, el centinela. El formulario es para la demo: lanza uno con una fecha simulada.', [-60, 60], 520, 640, 4),
+    nota(wf, '## 2 · Lee el Sheet\nDefiniciones y prompt (repo); plantilla, skills, planes, alertas, mapa e histórico (Sheet)', [480, 220], 1460, 300, 7),
+    nota(wf, '## 3 · Los agentes deciden cuándo actuar (reglas)\nArriba, seguimiento: avisa, recuerda, escala. Abajo, centinela: detecta y Claude redacta el informe.', [1960, 40], 540, 760, 6),
+    nota(wf, '## 4 · Escribe en el Sheet y avisa\nEstado de los planes, alertas para People, foto del mapa; emails a managers y a People', [2520, 40], 1200, 800, 5),
+    programado('Cada lunes 8:00', { field: 'weeks', weeksInterval: 1, triggerAtDay: [1], triggerAtHour: 8 }, [0, 200]),
+    agente('Agente: seguimiento', 'seguimiento', [220, 200]),
+    programado('Día 1 de cada mes 8:00', { field: 'months', monthsInterval: 1, triggerAtDayOfMonth: 1, triggerAtHour: 8 }, [0, 380]),
+    agente('Agente: centinela', 'centinela', [220, 380]),
+    formulario(wf, 'Ejecutar un agente ahora', 'Acme · Ejecutar un agente ahora', 'Para la demo: lanza un agente sin esperar a su día. La fecha simula el paso del tiempo (por ejemplo, 12 semanas después de aprobar el plan de Javier). Vacía = hoy.', [
+      { fieldLabel: 'agente', fieldType: 'dropdown', fieldOptions: { values: ['seguimiento', 'centinela'].map(option => ({ option })) }, requiredField: true },
+      { fieldLabel: 'fecha', placeholder: 'AAAA-MM-DD (vacío = hoy)', requiredField: false },
+    ], [0, 560]),
+    configuracion(wf, [520, 370], [['url_formulario_skill', 'PEGAR_PRODUCTION_URL_DEL_FORMULARIO_SKILL_DEL_ESCENARIO_2']]),
+    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [700, 370]),
+    ...lecturas.map((h, i) => leerHoja(wf, LECTURAS[h], h, [880 + i * 170, 370])),
+    desvio(wf, '¿Qué agente?', `={{ ${cfg}.agente }}`, ['seguimiento', 'centinela'], [1800, 370]),
+    code(wf, 'Seguimiento', 'e3-seguimiento.js', [2020, 200]),
+    code(wf, 'Centinela', 'e3-centinela.js', [2020, 560]),
+    nodo(wf, 'Claude redacta el informe', 'n8n-nodes-base.httpRequest', 4.2, {
+      method: 'POST', url: 'https://api.anthropic.com/v1/messages', authentication: 'genericCredentialType', genericAuthType: 'httpHeaderAuth',
+      sendHeaders: true, headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }, { name: 'content-type', value: 'application/json' }] },
+      sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.body) }}', options: { timeout: 120000 },
+    }, [2200, 560], { onError: 'continueRegularOutput' }),
+    code(wf, 'Informe final', 'e3-informe.js', [2380, 560]),
+    code(wf, 'Repartir', REPARTIR(['Seguimiento', 'Informe final']), [2560, 300]),
+    ...esc.nodes.map(n => (n.name === '¿A qué hoja?' ? { ...n, position: [2740, 420] } : { ...n, position: [n.position[0] + 180, n.position[1]] })),
+    code(wf, 'Emails', EMAILS(['Seguimiento', 'Informe final']), [2560, 740]),
+    gmail(wf, 'Enviar email', [2760, 740]),
+  ];
+  const connections = {
+    'Cada lunes 8:00': { main: [[a('Agente: seguimiento')]] }, 'Día 1 de cada mes 8:00': { main: [[a('Agente: centinela')]] },
+    'Agente: seguimiento': { main: [[a('Configuración')]] }, 'Agente: centinela': { main: [[a('Configuración')]] }, 'Ejecutar un agente ahora': { main: [[a('Configuración')]] },
+    ...cadena(['Configuración', 'Leer definiciones', ...lecturas.map(h => LECTURAS[h]), '¿Qué agente?']),
+    '¿Qué agente?': { main: [[a('Seguimiento')], [a('Centinela')]] },
+    ...cadena(['Centinela', 'Claude redacta el informe', 'Informe final']),
+    'Seguimiento': { main: [[a('Repartir'), a('Emails')]] },
+    'Informe final': { main: [[a('Repartir'), a('Emails')]] },
+    'Repartir': { main: [[a('¿A qué hoja?')]] },
+    ...esc.connections,
+    'Emails': { main: [[a('Enviar email')]] },
+  };
+  guardar('E3-agentes-autonomos.json', workflow('Acme People OS · Escenario 3 · Agentes autónomos', nodes, connections));
 }
 console.log('salidas/n8n/definiciones.json');

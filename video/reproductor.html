@@ -284,7 +284,9 @@ const pb = (m, id) => D.planes[m].find(p => p.empleado_id === id && p.origen.sta
 const forma = id => D.nombres.formacion[id];
 
 // ---------- Pasos ----------
-const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida', 'Recalcular el riesgo', 'Propuesta y decisión humana', 'Tres meses después', 'Arquitectura y escalabilidad'];
+const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida', 'Recalcular el riesgo', 'Propuesta y decisión humana', 'Tres meses después', 'Agentes que trabajan solos', 'Arquitectura y escalabilidad'];
+const AG = D.agentes, U = AG.umbrales;
+const accionPlan = (sem, plan) => AG.seguimiento[sem].find(x => x.plan_id === plan);
 
 const PASOS = [
 // 1 · Arquitectura
@@ -296,8 +298,9 @@ const PASOS = [
       <p><span class="mono">funciones.yaml</span> criticidad, cobertura objetivo, impacto IA · <span class="mono">reglas-semaforo.md</span> · <span class="mono">taxonomia-skills.yaml</span> (${P.skills} skills) · <span class="mono">catalogo-formacion.yaml</span> · <span class="mono">prompts/</span></p></div>
     <div class="capa aparece d1"><div class="k">HRIS · sistema de registro</div><h4>Google Sheets</h4><ul><li>${P.personas} personas</li><li>${P.skills_validadas} skills validadas por manager</li><li>Planes de backup, alertas, histórico</li></ul><p class="nota">En producción: Factorial, Bizneo u otro. Solo cambian los nodos que leen y escriben.</p></div>
     <div class="flecha">⇄</div>
-    <div class="capa orq aparece d2"><div class="k">Orquestación · quién lo ejecuta</div><h4>n8n · ${D.n8n.e1.nodos + D.n8n.e2.nodos} nodos en 2 escenarios</h4>
-      <div class="agentes"><div class="agente"><b>Riesgo</b><small>cobertura, semáforo, key people</small></div><div class="agente"><b>Movilidad</b><small>vacante, candidatos, coste</small></div><div class="agente"><b>Propuesta · Claude</b><small>redacta opciones; no decide</small></div><div class="agente"><b>Skills</b><small>validación del manager</small></div></div>
+    <div class="capa orq aparece d2"><div class="k">Orquestación · quién lo ejecuta</div><h4>n8n · ${D.n8n.e1.nodos + D.n8n.e2.nodos + D.n8n.e3.nodos} nodos en 3 escenarios</h4>
+      <div class="agentes"><div class="agente"><b>Riesgo</b><small>cobertura, semáforo, key people</small></div><div class="agente"><b>Movilidad</b><small>vacante, candidatos, coste</small></div><div class="agente"><b>Propuesta · Claude</b><small>redacta opciones; no decide</small></div><div class="agente"><b>Skills</b><small>validación del manager</small></div>
+        <div class="agente" style="border-style:dashed"><b>Seguimiento ⏱</b><small>avisa, recuerda, escala · cada lunes</small></div><div class="agente" style="border-style:dashed"><b>Centinela ⏱</b><small>vigila e informa · cada mes</small></div></div>
       <p class="nota">El nodo de código ejecuta el motor del repo (<span class="mono">calculo/</span>), el mismo que verifica <span class="mono">npm run verificar</span>.</p></div>
     <div class="flecha">⇄</div>
     <div class="capa humano aparece d3"><div class="k">Decisión · siempre humana</div><h4>People y managers</h4><ul><li>People aprueba desde el email</li><li>El manager valida skills</li><li>Cada decisión queda registrada</li></ul></div>
@@ -426,9 +429,23 @@ const PASOS = [
     resultado: `Mapa: ${D.mapas.alr003.cuenta.rojo} · ${D.mapas.alr003.cuenta.ambar} · ${D.mapas.alr003.cuenta.verde}. Javier aún no cuenta como cobertura: está aprendiendo.` }) },
 
 // 6 · Tres meses después
+{ e: 5, chip: ['real', 'Resultado real del agente de seguimiento'],
+  t: 'Nadie pulsa nada: el agente avisa al manager',
+  s: `Semana 12. Es lunes y el plan de Javier ha llegado a su fecha. El agente de seguimiento escribe a su manager con el formulario ya rellenado.`,
+  html: () => { const x = accionPlan(12, pb('alr003', 'E009').plan_id), f = forma(x.formacion_id);
+    return `<div class="fila" style="gap:18px;align-items:flex-start"><div class="mail aparece" style="flex:1.4;height:auto"><div class="hd"><b>Para ${esc(x.manager.nombre)} (manager) · ¿Ha alcanzado ${esc(x.empleado.nombre)} el nivel ${x.nivel_objetivo}?</b><small>De: Acme People OS · ${esc(AG.semanas[12])} · enviado por el agente, sin intervención de People</small></div>
+      <div style="padding:16px 20px;font-size:14px;line-height:1.6">Hola, ${esc(corto(x.manager.nombre))}. El plan <b>${x.plan_id}</b> de tu equipo ha llegado a su fecha de revisión.<ul style="margin:8px 0 8px 20px"><li>Persona: <b>${esc(x.empleado.nombre)}</b></li><li>${esc(sk(x.skill_id))}: nivel validado hoy ${x.nivel_actual}, objetivo ${x.nivel_objetivo}</li><li>${x.formacion_id} · ${esc(f.nombre)} (${f.semanas} semanas)</li><li>Función que protege: ${x.funcion_id}</li></ul>
+      <span class="aprobar" style="font-size:13px;padding:6px 12px">Validar a ${esc(x.empleado.nombre)}</span><p style="margin-top:10px;font-style:italic;color:var(--texto-2)">Completar la formación no sube el nivel: lo confirmas tú. Si aún no lo tiene, te lo recordaré en ${U.diasEntreAvisos} días.</p></div></div>
+      <div class="col aparece d2" style="flex:1"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">Ese lunes, el agente</div>${AG.seguimiento[12].map(a => `✉ ${a.plan_id} · aviso a <b>${esc(a.manager.nombre)}</b> por ${esc(a.empleado.nombre)}`).join('<br>')}<br><span class="nota">y lo anota en planes-backup (avisos, último aviso)</span></div>
+      <div class="card aparece d3" style="font-size:14.5px;line-height:1.5">Nadie tiene que acordarse de perseguir a nadie. <b>El agente actúa; el nivel lo decide el manager.</b></div></div></div>`; },
+  panel: () => panel({ datos: ['<code>planes-backup</code>: planes activos, avisos, último aviso', 'Catálogo: semanas de cada formación'],
+    reglas: ['Revisión = fecha objetivo, o inicio + semanas de la formación', `Recordatorio cada ${U.diasEntreAvisos} días; tras ${U.avisosAntesDeEscalar} avisos, escala a People`],
+    agentes: ['Escenario 3 de n8n · disparo <b>Cada lunes 8:00</b> → nodo <code>Seguimiento</code>'],
+    resultado: `${AG.seguimiento[12].length} avisos, 0 clics de People. El enlace abre el formulario del escenario 2 rellenado.` }) },
+
 { e: 5, chip: ['visual', 'Representación del formulario de n8n'],
-  t: 'Tres meses después: el manager valida',
-  s: 'Javier ha completado el mentoring. Completar un curso no sube el nivel: lo valida una persona.',
+  t: 'El manager valida desde el aviso',
+  s: 'Marcos abre el enlace: el formulario llega rellenado. Completar un curso no sube el nivel: lo valida una persona.',
   html: () => formulario(D.n8n.e2.formulario, 'Formulario skill', { empleado_id: D.javier.id, skill_id: 'gestion-claves', nivel: '3', validado_por: 'E008' },
     { empleado_id: D.javier.nombre, skill_id: sk('gestion-claves'), nivel: 'avanzado', validado_por: marcos.nombre }),
   panel: () => panel({ datos: ['Entrada: persona, skill, nivel y quién valida'], reglas: ['Solo cuentan niveles <b>validados</b> por el manager, nunca los declarados'],
@@ -447,8 +464,40 @@ const PASOS = [
     agentes: ['Agente de Skills → agente de Riesgo', 'Email de cierre a People: <i>Riesgo reducido</i>'],
     resultado: `Mapa final: ${D.mapas.validar.cuenta.rojo} · ${D.mapas.validar.cuenta.ambar} · ${D.mapas.validar.cuenta.verde}. Key people: ${D.mapas.validar.key_people.length}.` }) },
 
-// 7 · Arquitectura y escalabilidad
-{ e: 6, chip: ['real', 'Archivo real del repo'],
+// 7 · Agentes que trabajan solos
+{ e: 6, chip: ['real', 'Resultado real del agente de seguimiento'],
+  t: 'Si nadie responde, el agente insiste y escala',
+  s: 'Javier ya está validado. El plan de Marcos no: el agente recuerda a su manager y, tras dos avisos, se lo pasa a People.',
+  html: () => { const planes = AG.seguimiento[12].map(a => a.plan_id);
+    // Javier se valida en la semana 12, justo después del aviso: ahí se marca; después el plan ya no está en seguimiento
+    const validado = id => D.planes.validar.find(q => q.plan_id === id)?.estado === 'completado';
+    const celda = (sem, id) => { const x = accionPlan(sem, id);
+      if (!x) return '<span class="nota">—</span>';
+      if (x.tipo === 'escalar') return `<span style="color:var(--rojo);font-weight:700">⚠ Escala a People · ${AG.escalado.alerta_id}</span>`;
+      return `✉ ${x.tipo === 'aviso' ? 'Aviso' : 'Recordatorio'} a ${esc(corto(x.manager.nombre))}${sem === 12 && validado(id) ? ' → <span style="color:var(--verde);font-weight:700">✓ validado, plan cerrado</span>' : ''}`; };
+    return `<div class="card aparece"><table><tr><th>Plan</th>${[12, 13, 14].map(s => `<th>Semana ${s} · ${esc(AG.semanas[s])}</th>`).join('')}</tr>
+      ${planes.map(id => { const a = accionPlan(12, id); return `<tr><td><b>${id}</b><br><span class="nota">${esc(a.empleado.nombre)} · ${esc(a.skill_id)} ${a.nivel_actual} → ${a.nivel_objetivo}</span></td>${[12, 13, 14].map(s => `<td style="font-size:14px">${celda(s, id)}</td>`).join('')}</tr>`; }).join('')}</table></div>
+      <div class="fila" style="margin-top:16px"><div class="card aparece d2" style="flex:1.3;font-size:14px;line-height:1.55"><div class="etq">Alerta ${AG.escalado.alerta_id} · hoja alertas · pendiente</div><b>${esc(AG.escalado.accion)}</b><br>${esc(AG.escalado.por_que)}<br><span style="color:var(--rojo)">${esc(AG.escalado.riesgo_si_no)}</span></div>
+      <div class="card aparece d3" style="flex:1;font-size:14.5px;line-height:1.5">El agente <b>no cierra ni cambia el plan</b>: eso lo decide People con el manager. Su trabajo es que nada se quede olvidado.</div></div>`; },
+  panel: () => panel({ reglas: [`Recordatorio a los ${U.diasEntreAvisos} días`, `Tras ${U.avisosAntesDeEscalar} avisos sin validar → alerta para People`, 'Un plan ya escalado no se vuelve a avisar', 'Un plan validado sale solo del seguimiento'],
+    agentes: ['Seguimiento (escenario 3) → alerta con <code>grupo = SEG-…</code>'], resultado: `Semana 13: ${AG.seguimiento[13].length} recordatorio. Semana 14: ${AG.seguimiento[14].length} escalado (${AG.escalado.alerta_id}).` }) },
+
+{ e: 6, chip: ['real', 'Resultado real del centinela · texto por reglas'],
+  t: 'El centinela: el informe de cada mes, sin pedirlo',
+  s: 'El día 1 de cada mes recalcula el mapa, mira qué se degrada y qué está pendiente, y deja el informe para dirección listo para reenviar.',
+  html: () => { const c = AG.centinela, cus02 = c.fragiles.find(f => f.id === 'CUS-02');
+    return `<div class="fila" style="gap:18px;height:100%"><div class="card aparece" style="flex:1.6;font-size:13px;line-height:1.45;column-count:2;column-gap:26px;overflow:hidden" id="informe"><div class="etq" style="column-span:all;margin-bottom:6px">Informe para dirección · ${esc(c.fecha)}</div>${AG.informe_html}</div>
+      <div class="col" style="flex:1"><div class="card aparece d1"><div class="etq">Lo que ha detectado solo</div><div class="kpi" style="flex-wrap:wrap;margin-top:8px">
+        <div class="r"><b>${cus02 ? cus02.dias : '–'}</b><small>días CUS-02 en rojo</small></div><div class="a"><b>${c.pendientes.length}</b><small>decisión sin tomar</small></div><div><b>${c.caducadas.length}</b><small>validaciones de +${U.mesesValidacion} meses</small></div></div></div>
+      ${c.pendientes.map(a => `<div class="card aparece d2" style="font-size:14px;line-height:1.5"><b>${a.alerta_id}</b> ${esc(a.accion)}: <span style="color:var(--rojo)">${a.dias} días sin decidir</span>.</div>`).join('')}
+      <div class="card aparece d3" style="font-size:14px;line-height:1.5">A dirección solo le llega lo organizativo. Las señales de rotación (${c.senales} key person) van en un bloque aparte, <b>solo para People</b>.</div></div></div>`; },
+  panel: () => panel({ datos: ['Todas las hojas + <code>historico-semaforo</code> (desde cuándo está frágil cada función)'],
+    reglas: ['Validación caducada: más de 6 meses en una skill que sostiene una función al límite', `Decisión pendiente: más de ${U.diasDecisionPendiente} días`, 'Informe: secciones de <code>prompts/informe-direccion.md</code>'],
+    agentes: ['Escenario 3 · disparo <b>Día 1 de cada mes</b> → <code>Centinela</code> → <code>Claude redacta el informe</code>'],
+    resultado: 'Texto de esta pantalla: informe por reglas (sin API). En n8n lo redacta Claude con los mismos datos; si falla, sale este.' }) },
+
+// 8 · Arquitectura y escalabilidad
+{ e: 7, chip: ['real', 'Archivo real del repo'],
   t: 'Cambiar una regla es editar un archivo',
   s: 'Las reglas no están dentro del flujo. n8n las lee de GitHub en cada ejecución.',
   html: () => `<div class="fila" style="gap:22px;align-items:flex-start"><pre class="yaml aparece" style="flex:1.2"># definiciones/funciones.yaml\n${esc(D.definiciones.cus01).replace(/^(\s*-?\s*)([a-z_]+):/gm, '$1<span class="k">$2</span>:').replace(/(nivel: )(\d)/g, '$1<span class="v">$2</span>')}</pre>
@@ -457,7 +506,7 @@ const PASOS = [
       <div class="card aparece d3" style="font-size:14.5px;line-height:1.55">El motor es una sola versión de la lógica, probada antes de cada ensayo: <span class="mono">npm run verificar</span>, <span class="mono">npm run probar-n8n</span>.</div></div></div>`,
   panel: () => panel({ datos: ['<code>definiciones/</code> y <code>prompts/</code> en GitHub'], reglas: ['<code>reglas-semaforo.md</code>: fuente única de las reglas'], agentes: ['Nodo <code>Leer definiciones</code> (HTTP a GitHub)'], resultado: 'Si mañana el orquestador no es n8n, definiciones y motor sirven igual.' }) },
 
-{ e: 6, chip: ['diseno', 'Estado según el README · construido y diseñado'],
+{ e: 7, chip: ['diseno', 'Estado según el README · construido y diseñado'],
   t: 'Mismo patrón para el resto de People',
   s: 'Cada proceso nuevo se construye con las mismas piezas, sobre un único registro de personas.',
   html: () => { const pr = [['Skills y cobertura', 'c', 'Construido'], ['Movilidad interna', 'c', 'Construido'], ['Formación dirigida al riesgo', 'c', 'Construido'], ['Rotación no deseada', 'c', 'Construido · solo People'], ['Compensación', 'd', 'Diseñado'], ['Clima', 'd', 'Diseñado'], ['Onboarding / offboarding', 'd', 'Diseñado'], ['Selección', 'f', 'Fuera de alcance'], ['Desempeño', 'f', 'Fuera de alcance'], ['Administración y nómina', 'f', 'No se reinventa']];
@@ -466,7 +515,7 @@ const PASOS = [
     <div class="card aparece d3" style="margin-top:18px;font-size:14.5px;line-height:1.5">Ejemplo: en <b>offboarding</b>, la baja ya dispara el recálculo que acabamos de ver. Onboarding es el camino inverso: alta → plan por rol → la persona entra en el mapa desde el día 1. Receta en <span class="mono">docs/escalado.md</span>.</div>`; },
   panel: () => panel({ reglas: ['Lo que decide riesgos o prioridades: regla explícita', 'Lo que es texto: IA con revisión humana', 'Lo que afecta a una persona: decide una persona'], resultado: 'Solo "Construido" funciona hoy de extremo a extremo. El resto está diseñado, no implementado.' }) },
 
-{ e: 6, chip: ['visual', 'Cierre'],
+{ e: 7, chip: ['visual', 'Cierre'],
   t: '', s: '',
   html: () => `<div class="cierre"><div><blockquote class="aparece">People OS no solo automatiza procesos: ayuda a <span>desarrollar, compartir y preservar</span> las capacidades que necesita el negocio.</blockquote><p class="aparece d2">Construido como trabajaría el departamento: una persona + IA · ${P.personas} personas · ${P.funciones} funciones · todo en un repo</p></div></div>`,
   panel: null },

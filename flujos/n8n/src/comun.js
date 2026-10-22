@@ -2,7 +2,7 @@
 // exportar-n8n.js las concatena con el motor (cobertura.js), la propuesta (propuesta.js) y las filas (hojas.js).
 
 // Nodo de lectura de cada hoja. bandas y encuesta no cambian en la demo: vienen de definiciones.json (repo).
-const LECTURAS = { empleados: 'Leer empleados', 'skills-empleados': 'Leer skills', 'planes-backup': 'Leer planes', alertas: 'Leer alertas', cobertura: 'Leer cobertura' };
+const LECTURAS = { empleados: 'Leer empleados', 'skills-empleados': 'Leer skills', 'planes-backup': 'Leer planes', alertas: 'Leer alertas', cobertura: 'Leer cobertura', 'historico-semaforo': 'Leer histórico' };
 // Cómo se escribe cada hoja con el nodo nativo: actualizar por clave, añadir o actualizar por clave, añadir, o vaciar y volver a escribir
 const ESCRITURAS = {
   empleados: { op: 'update', clave: 'id' },
@@ -15,6 +15,8 @@ const ESCRITURAS = {
   'key-people': { op: 'reemplazar' },
 };
 const hoyISO = () => new Date().toISOString().slice(0, 10);
+// Fecha de trabajo de los agentes: la del formulario "Ejecutar un agente ahora" (para simular "12 semanas después") o hoy
+const fechaDe = cfg => (fechaValida(String(cfg.fecha || '').trim()) ? String(cfg.fecha).trim() : hoyISO());
 
 // Salida de los nodos de lectura → { hoja: { filas: [{ ...columnas, _fila }] } }. _fila es la fila real (row_number).
 function tablas() {
@@ -51,12 +53,12 @@ const fila = (hoja, obj, columnas = Object.keys(obj).filter(k => !k.startsWith('
 const filasDe = (hoja, cols, arrays) => arrays.map(a => fila(hoja, Object.fromEntries(cols.map((c, i) => [c, a[i]]))));
 
 // Mapa tras un recálculo: cobertura (por funcion_id), key-people (se vacía y se reescribe) y foto en el histórico
-function filasMapa(r, datos, evento) {
+function filasMapa(r, datos, evento, fecha = hoyISO()) {
   const nombre = id => datos.empleados.find(e => e.id === id)?.nombre || id;
   return [
     ...filasDe('cobertura', COLS.cobertura, filasCobertura(r, nombre)),
     ...filasDe('key-people', COLS.keyPeople, filasKeyPeople(r)),
-    ...filasDe('historico-semaforo', COLS.historico, filasHistorico(r, hoyISO(), evento)),
+    ...filasDe('historico-semaforo', COLS.historico, filasHistorico(r, fecha, evento)),
   ];
 }
 

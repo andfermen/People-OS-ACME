@@ -5535,7 +5535,9 @@ window.DEMO = {
     "fecha_inicio": "2026-06-15",
     "fecha_objetivo": "2027-03-31",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-002",
@@ -5547,7 +5549,9 @@ window.DEMO = {
     "fecha_inicio": "2026-09-01",
     "fecha_objetivo": "2027-06-30",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-003",
@@ -5559,7 +5563,9 @@ window.DEMO = {
     "fecha_inicio": "2026-10-22",
     "fecha_objetivo": "",
     "estado": "activo",
-    "origen": "ALR-002"
+    "origen": "ALR-002",
+    "avisos": "",
+    "ultimo_aviso": ""
    }
   ],
   "alr003": [
@@ -5573,7 +5579,9 @@ window.DEMO = {
     "fecha_inicio": "2026-06-15",
     "fecha_objetivo": "2027-03-31",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-002",
@@ -5585,7 +5593,9 @@ window.DEMO = {
     "fecha_inicio": "2026-09-01",
     "fecha_objetivo": "2027-06-30",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-003",
@@ -5597,7 +5607,9 @@ window.DEMO = {
     "fecha_inicio": "2026-10-22",
     "fecha_objetivo": "",
     "estado": "activo",
-    "origen": "ALR-002"
+    "origen": "ALR-002",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-004",
@@ -5609,7 +5621,9 @@ window.DEMO = {
     "fecha_inicio": "2026-10-22",
     "fecha_objetivo": "",
     "estado": "activo",
-    "origen": "ALR-003"
+    "origen": "ALR-003",
+    "avisos": "",
+    "ultimo_aviso": ""
    }
   ],
   "validar": [
@@ -5623,7 +5637,9 @@ window.DEMO = {
     "fecha_inicio": "2026-06-15",
     "fecha_objetivo": "2027-03-31",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-002",
@@ -5635,7 +5651,9 @@ window.DEMO = {
     "fecha_inicio": "2026-09-01",
     "fecha_objetivo": "2027-06-30",
     "estado": "activo",
-    "origen": "revisión semestral"
+    "origen": "revisión semestral",
+    "avisos": "",
+    "ultimo_aviso": ""
    },
    {
     "plan_id": "PB-003",
@@ -5647,7 +5665,9 @@ window.DEMO = {
     "fecha_inicio": "2026-10-22",
     "fecha_objetivo": "",
     "estado": "activo",
-    "origen": "ALR-002"
+    "origen": "ALR-002",
+    "avisos": "1",
+    "ultimo_aviso": "2027-01-14"
    },
    {
     "plan_id": "PB-004",
@@ -5659,7 +5679,9 @@ window.DEMO = {
     "fecha_inicio": "2026-10-22",
     "fecha_objetivo": "",
     "estado": "completado",
-    "origen": "ALR-003"
+    "origen": "ALR-003",
+    "avisos": "1",
+    "ultimo_aviso": "2027-01-14"
    }
   ]
  },
@@ -5725,6 +5747,450 @@ window.DEMO = {
    "cobertura": 0
   }
  ],
+ "agentes": {
+  "umbrales": {
+   "diasEntreAvisos": 7,
+   "avisosAntesDeEscalar": 2,
+   "mesesValidacion": 6,
+   "diasDecisionPendiente": 7
+  },
+  "hoy": "2026-10-22",
+  "semanas": {
+   "12": "2027-01-14",
+   "13": "2027-01-21",
+   "14": "2027-01-28"
+  },
+  "seguimiento": {
+   "12": [
+    {
+     "tipo": "aviso",
+     "sin_manager": false,
+     "plan_id": "PB-003",
+     "funcion_id": "CUS-02",
+     "skill_id": "conciliacion-onchain",
+     "nivel_actual": 2,
+     "nivel_objetivo": 3,
+     "formacion_id": "FOR-04",
+     "empleado": {
+      "id": "E008",
+      "nombre": "Marcos Fuentes Rey"
+     },
+     "manager": {
+      "id": "E001",
+      "nombre": "Sergio Navarro Gil"
+     },
+     "fecha_revision": "2026-11-19",
+     "dias_desde_revision": 56,
+     "avisos": 1,
+     "motivo": "Sergio Navarro Gil ha recibido 0 avisos y no ha validado el nivel"
+    },
+    {
+     "tipo": "aviso",
+     "sin_manager": false,
+     "plan_id": "PB-004",
+     "funcion_id": "CUS-01",
+     "skill_id": "gestion-claves",
+     "nivel_actual": 2,
+     "nivel_objetivo": 3,
+     "formacion_id": "FOR-01",
+     "empleado": {
+      "id": "E009",
+      "nombre": "Javier Lozano Peña"
+     },
+     "manager": {
+      "id": "E008",
+      "nombre": "Marcos Fuentes Rey"
+     },
+     "fecha_revision": "2027-01-14",
+     "dias_desde_revision": 0,
+     "avisos": 1,
+     "motivo": "Marcos Fuentes Rey ha recibido 0 avisos y no ha validado el nivel"
+    }
+   ],
+   "13": [
+    {
+     "tipo": "recordatorio",
+     "sin_manager": false,
+     "plan_id": "PB-003",
+     "funcion_id": "CUS-02",
+     "skill_id": "conciliacion-onchain",
+     "nivel_actual": 2,
+     "nivel_objetivo": 3,
+     "formacion_id": "FOR-04",
+     "empleado": {
+      "id": "E008",
+      "nombre": "Marcos Fuentes Rey"
+     },
+     "manager": {
+      "id": "E001",
+      "nombre": "Sergio Navarro Gil"
+     },
+     "fecha_revision": "2026-11-19",
+     "dias_desde_revision": 63,
+     "avisos": 2,
+     "motivo": "Sergio Navarro Gil ha recibido 1 avisos y no ha validado el nivel"
+    }
+   ],
+   "14": [
+    {
+     "tipo": "escalar",
+     "sin_manager": false,
+     "plan_id": "PB-003",
+     "funcion_id": "CUS-02",
+     "skill_id": "conciliacion-onchain",
+     "nivel_actual": 2,
+     "nivel_objetivo": 3,
+     "formacion_id": "FOR-04",
+     "empleado": {
+      "id": "E008",
+      "nombre": "Marcos Fuentes Rey"
+     },
+     "manager": {
+      "id": "E001",
+      "nombre": "Sergio Navarro Gil"
+     },
+     "fecha_revision": "2026-11-19",
+     "dias_desde_revision": 70,
+     "avisos": 3,
+     "motivo": "Sergio Navarro Gil ha recibido 2 avisos y no ha validado el nivel"
+    }
+   ]
+  },
+  "escalado": {
+   "alerta_id": "ALR-005",
+   "fecha": "2027-01-28",
+   "evento": "Seguimiento de planes · PB-003",
+   "funcion_id": "CUS-02",
+   "prioridad": "",
+   "cambio": "",
+   "tipo_accion": "seguimiento",
+   "accion": "Revisar el plan PB-003: Marcos Fuentes Rey en conciliacion-onchain (2 → 3)",
+   "empleado_id": "E008",
+   "skill_id": "conciliacion-onchain",
+   "formacion_id": "FOR-04",
+   "por_que": "La revisión era el 2026-11-19. Sergio Navarro Gil ha recibido 2 avisos y no ha validado el nivel.",
+   "riesgo_si_no": "CUS-02 sigue dependiendo de un backup que nadie confirma.",
+   "decision": "pendiente",
+   "decidido_por": "",
+   "fecha_decision": "",
+   "grupo": "SEG-PB-003"
+  },
+  "centinela": {
+   "fecha": "2027-01-28",
+   "cuenta": {
+    "rojo": 4,
+    "ambar": 3,
+    "verde": 17
+   },
+   "cambios": [],
+   "fragiles": [
+    {
+     "id": "CUS-02",
+     "nombre": "Prueba de reservas y conciliación on-chain",
+     "area": "Custodia",
+     "semaforo": "rojo",
+     "prioridad": "P1",
+     "cobertura": 0,
+     "objetivo": 2,
+     "desde": "2026-10-22",
+     "dias": 98,
+     "cubren": []
+    },
+    {
+     "id": "CMP-03",
+     "nombre": "Comunicación de operaciones sospechosas",
+     "area": "Compliance AML/KYC",
+     "semaforo": "ambar",
+     "prioridad": "P2",
+     "cobertura": 1,
+     "objetivo": 2,
+     "desde": "2026-10-22",
+     "dias": 98,
+     "cubren": [
+      "Carmen Vega Herrera"
+     ]
+    },
+    {
+     "id": "CMP-04",
+     "nombre": "Reporting regulatorio AML",
+     "area": "Compliance AML/KYC",
+     "semaforo": "rojo",
+     "prioridad": "P2",
+     "cobertura": 1,
+     "objetivo": 2,
+     "desde": "2026-10-22",
+     "dias": 98,
+     "cubren": [
+      "Lucía Benítez Mora"
+     ]
+    },
+    {
+     "id": "SEG-01",
+     "nombre": "Detección y respuesta a incidentes",
+     "area": "Seguridad",
+     "semaforo": "ambar",
+     "prioridad": "P2",
+     "cobertura": 2,
+     "objetivo": 3,
+     "desde": "2026-10-22",
+     "dias": 98,
+     "cubren": [
+      "Fernando Aguilar Cortés",
+      "Eva Ruiz Montero"
+     ]
+    },
+    {
+     "id": "SEG-02",
+     "nombre": "Seguridad de aplicaciones",
+     "area": "Seguridad",
+     "semaforo": "rojo",
+     "prioridad": "P2",
+     "cobertura": 1,
+     "objetivo": 2,
+     "desde": "2026-10-22",
+     "dias": 98,
+     "cubren": [
+      "Fernando Aguilar Cortés"
+     ]
+    }
+   ],
+   "key_people": [
+    {
+     "nombre": "Carmen Vega Herrera",
+     "rol": "Directora de compliance (MLRO)",
+     "oculta": false,
+     "funciones": [
+      "CMP-03"
+     ],
+     "seguimiento": false
+    },
+    {
+     "nombre": "Lucía Benítez Mora",
+     "rol": "Analista de datos",
+     "oculta": true,
+     "funciones": [
+      "CMP-04"
+     ],
+     "seguimiento": true
+    },
+    {
+     "nombre": "Fernando Aguilar Cortés",
+     "rol": "CISO",
+     "oculta": false,
+     "funciones": [
+      "SEG-02"
+     ],
+     "seguimiento": false
+    },
+    {
+     "nombre": "Inés Robles Gómez",
+     "rol": "Responsable de contabilidad",
+     "oculta": false,
+     "funciones": [
+      "FIN-01"
+     ],
+     "seguimiento": false
+    }
+   ],
+   "caducadas": [
+    {
+     "funcion_id": "TRD-02",
+     "skill": "market-making",
+     "empleado": "Laura Ortega Ruiz",
+     "validado_por": "E001",
+     "fecha": "2026-04-10",
+     "meses": 9
+    },
+    {
+     "funcion_id": "TRD-02",
+     "skill": "market-making",
+     "empleado": "Andrés Molina Vidal",
+     "validado_por": "E002",
+     "fecha": "2026-04-12",
+     "meses": 9
+    },
+    {
+     "funcion_id": "TRD-03",
+     "skill": "gestion-riesgo-mercado",
+     "empleado": "Laura Ortega Ruiz",
+     "validado_por": "E001",
+     "fecha": "2026-04-10",
+     "meses": 9
+    },
+    {
+     "funcion_id": "TRD-03",
+     "skill": "gestion-riesgo-mercado",
+     "empleado": "Hugo Romero Cano",
+     "validado_por": "E002",
+     "fecha": "2026-04-12",
+     "meses": 9
+    },
+    {
+     "funcion_id": "CUS-01",
+     "skill": "gestion-claves",
+     "empleado": "Marcos Fuentes Rey",
+     "validado_por": "E007",
+     "fecha": "2026-04-22",
+     "meses": 9
+    },
+    {
+     "funcion_id": "CMP-03",
+     "skill": "normativa-pbc",
+     "empleado": "Carmen Vega Herrera",
+     "validado_por": "E001",
+     "fecha": "2026-05-05",
+     "meses": 8
+    },
+    {
+     "funcion_id": "CMP-04",
+     "skill": "sql-analitica",
+     "empleado": "Lucía Benítez Mora",
+     "validado_por": "E020",
+     "fecha": "2026-06-30",
+     "meses": 6
+    },
+    {
+     "funcion_id": "SEG-01",
+     "skill": "respuesta-incidentes",
+     "empleado": "Fernando Aguilar Cortés",
+     "validado_por": "E001",
+     "fecha": "2026-06-10",
+     "meses": 7
+    },
+    {
+     "funcion_id": "SEG-01",
+     "skill": "respuesta-incidentes",
+     "empleado": "Eva Ruiz Montero",
+     "validado_por": "E033",
+     "fecha": "2026-06-12",
+     "meses": 7
+    },
+    {
+     "funcion_id": "SEG-02",
+     "skill": "seguridad-aplicaciones",
+     "empleado": "Fernando Aguilar Cortés",
+     "validado_por": "E001",
+     "fecha": "2026-06-10",
+     "meses": 7
+    },
+    {
+     "funcion_id": "ING-03",
+     "skill": "nodos-blockchain",
+     "empleado": "Iván Sanz Domínguez",
+     "validado_por": "E025",
+     "fecha": "2026-06-06",
+     "meses": 7
+    },
+    {
+     "funcion_id": "ING-03",
+     "skill": "nodos-blockchain",
+     "empleado": "Rocío Marín Pardo",
+     "validado_por": "E025",
+     "fecha": "2026-06-06",
+     "meses": 7
+    },
+    {
+     "funcion_id": "PRD-01",
+     "skill": "gestion-producto",
+     "empleado": "Daniel Vidal Ferrer",
+     "validado_por": "E001",
+     "fecha": "2026-05-20",
+     "meses": 8
+    },
+    {
+     "funcion_id": "PRD-01",
+     "skill": "gestion-producto",
+     "empleado": "Cristina Moreno Arias",
+     "validado_por": "E020",
+     "fecha": "2026-05-22",
+     "meses": 8
+    },
+    {
+     "funcion_id": "CX-02",
+     "skill": "atencion-cliente-tecnica",
+     "empleado": "Patricia Molina Herrera",
+     "validado_por": "E001",
+     "fecha": "2026-06-15",
+     "meses": 7
+    },
+    {
+     "funcion_id": "CX-02",
+     "skill": "atencion-cliente-tecnica",
+     "empleado": "Luis Cano Esteban",
+     "validado_por": "E036",
+     "fecha": "2026-06-17",
+     "meses": 7
+    },
+    {
+     "funcion_id": "FIN-01",
+     "skill": "contabilidad-cripto",
+     "empleado": "Inés Robles Gómez",
+     "validado_por": "E041",
+     "fecha": "2026-07-03",
+     "meses": 6
+    },
+    {
+     "funcion_id": "FIN-02",
+     "skill": "tesoreria",
+     "empleado": "Ricardo Blanco Sanz",
+     "validado_por": "E001",
+     "fecha": "2026-07-01",
+     "meses": 6
+    },
+    {
+     "funcion_id": "FIN-02",
+     "skill": "tesoreria",
+     "empleado": "Inés Robles Gómez",
+     "validado_por": "E041",
+     "fecha": "2026-07-03",
+     "meses": 6
+    }
+   ],
+   "planes": [
+    {
+     "plan_id": "PB-001",
+     "empleado": "Diego Ramos Iglesias",
+     "skill": "normativa-pbc",
+     "funcion_id": "CMP-03",
+     "formacion_id": "FOR-06",
+     "fecha_revision": "2027-03-31",
+     "estado": "en curso",
+     "avisos": 0
+    },
+    {
+     "plan_id": "PB-002",
+     "empleado": "Víctor Salas Prieto",
+     "skill": "contabilidad-cripto",
+     "funcion_id": "FIN-01",
+     "formacion_id": "FOR-09",
+     "fecha_revision": "2027-06-30",
+     "estado": "en curso",
+     "avisos": 0
+    },
+    {
+     "plan_id": "PB-003",
+     "empleado": "Marcos Fuentes Rey",
+     "skill": "conciliacion-onchain",
+     "funcion_id": "CUS-02",
+     "formacion_id": "FOR-04",
+     "fecha_revision": "2026-11-19",
+     "estado": "toca validar",
+     "avisos": 3
+    }
+   ],
+   "pendientes": [
+    {
+     "alerta_id": "ALR-004",
+     "accion": "Conversación de permanencia con Marcos Fuentes Rey",
+     "prioridad": "P1",
+     "fecha": "2026-10-22",
+     "dias": 98
+    }
+   ],
+   "senales": 1
+  },
+  "informe_html": "<h4>En una frase</h4>\n<p>4 funciones en rojo, 3 en ámbar y 17 en verde; 1 de prioridad 1.</p>\n<h4>Dónde somos frágiles</h4>\n<ul>\n<li><b>CUS-02 Prueba de reservas y conciliación on-chain</b> (Custodia): P1, cobertura 0 de 2, 98 días en rojo. Hoy no la cubre nadie</li>\n<li><b>CMP-03 Comunicación de operaciones sospechosas</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en ambar. Depende de: Carmen Vega Herrera</li>\n<li><b>CMP-04 Reporting regulatorio AML</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Lucía Benítez Mora</li>\n<li><b>SEG-01 Detección y respuesta a incidentes</b> (Seguridad): P2, cobertura 2 de 3, 98 días en ambar. Depende de: Fernando Aguilar Cortés, Eva Ruiz Montero</li>\n<li><b>SEG-02 Seguridad de aplicaciones</b> (Seguridad): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Fernando Aguilar Cortés</li>\n</ul>\n<h4>Qué ha cambiado</h4>\n<p>Nada desde el último recálculo.</p>\n<h4>Dependencia de personas</h4>\n<ul>\n<li>Carmen Vega Herrera (Directora de compliance (MLRO)): CMP-03</li>\n<li>Lucía Benítez Mora (Analista de datos): CMP-04 · <b>oculta</b> · en seguimiento por People</li>\n<li>Fernando Aguilar Cortés (CISO): SEG-02</li>\n<li>Inés Robles Gómez (Responsable de contabilidad): FIN-01</li>\n</ul>\n<h4>Qué estamos haciendo</h4>\n<ul>\n<li>Plan PB-001: Diego Ramos Iglesias en normativa-pbc (CMP-03), en curso, revisión 2027-03-31</li>\n<li>Plan PB-002: Víctor Salas Prieto en contabilidad-cripto (FIN-01), en curso, revisión 2027-06-30</li>\n<li>Plan PB-003: Marcos Fuentes Rey en conciliacion-onchain (CUS-02), toca validar, revisión 2026-11-19</li>\n</ul>\n<h4>Qué necesitamos de dirección</h4>\n<ul>\n<li>Decidir cómo cubrir <b>CUS-02</b>: hoy no la sabe hacer nadie (formar fuera, contratar o apoyo externo).</li>\n<li>Desbloquear ALR-004 (Conversación de permanencia con Marcos Fuentes Rey): 98 días sin decisión.</li>\n<li>Pedir a los managers que revaliden 19 skills con más de 6 meses: el mapa vale lo que valga la validación.</li>\n</ul>"
+ },
  "definiciones": {
   "cus01": "  - id: CUS-01\n    nombre: Gestión de claves y ceremonias de firma\n    area: Custodia\n    criticidad: critica\n    impacto_ia: bajo\n    skills_requeridas: [{ skill: gestion-claves, nivel: 3 }, { skill: operativa-wallets, nivel: 2 }]"
  },
@@ -6125,6 +6591,155 @@ window.DEMO = {
      "skill_id",
      "nivel",
      "validado_por"
+    ]
+   }
+  },
+  "e3": {
+   "nodos": 29,
+   "bloques": [
+    {
+     "titulo": "1 · Disparo: nadie pulsa nada",
+     "nodos": [
+      {
+       "nombre": "Cada lunes 8:00",
+       "tipo": "scheduleTrigger"
+      },
+      {
+       "nombre": "Día 1 de cada mes 8:00",
+       "tipo": "scheduleTrigger"
+      },
+      {
+       "nombre": "Ejecutar un agente ahora",
+       "tipo": "formTrigger"
+      },
+      {
+       "nombre": "Agente: seguimiento",
+       "tipo": "set"
+      },
+      {
+       "nombre": "Agente: centinela",
+       "tipo": "set"
+      }
+     ]
+    },
+    {
+     "titulo": "2 · Lee el Sheet",
+     "nodos": [
+      {
+       "nombre": "Configuración",
+       "tipo": "set"
+      },
+      {
+       "nombre": "Leer definiciones",
+       "tipo": "httpRequest"
+      },
+      {
+       "nombre": "Leer empleados",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Leer skills",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Leer planes",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Leer alertas",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Leer cobertura",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Leer histórico",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "¿Qué agente?",
+       "tipo": "switch"
+      }
+     ]
+    },
+    {
+     "titulo": "3 · Los agentes deciden cuándo actuar (reglas)",
+     "nodos": [
+      {
+       "nombre": "Seguimiento",
+       "tipo": "code"
+      },
+      {
+       "nombre": "Centinela",
+       "tipo": "code"
+      },
+      {
+       "nombre": "Claude redacta el informe",
+       "tipo": "httpRequest"
+      },
+      {
+       "nombre": "Informe final",
+       "tipo": "code"
+      }
+     ]
+    },
+    {
+     "titulo": "4 · Escribe en el Sheet y avisa",
+     "nodos": [
+      {
+       "nombre": "Repartir",
+       "tipo": "code"
+      },
+      {
+       "nombre": "Emails",
+       "tipo": "code"
+      },
+      {
+       "nombre": "¿A qué hoja?",
+       "tipo": "switch"
+      },
+      {
+       "nombre": "Enviar email",
+       "tipo": "gmail"
+      },
+      {
+       "nombre": "Guardar planes",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Guardar alertas",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Guardar cobertura",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Añadir al histórico",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Vaciar key-people",
+       "tipo": "googleSheets"
+      },
+      {
+       "nombre": "Filas key-people",
+       "tipo": "code"
+      },
+      {
+       "nombre": "Escribir key-people",
+       "tipo": "googleSheets"
+      }
+     ]
+    }
+   ],
+   "formulario": {
+    "titulo": "Acme · Ejecutar un agente ahora",
+    "descripcion": "Para la demo: lanza un agente sin esperar a su día. La fecha simula el paso del tiempo (por ejemplo, 12 semanas después de aprobar el plan de Javier). Vacía = hoy.",
+    "campos": [
+     "agente",
+     "fecha"
     ]
    }
   }

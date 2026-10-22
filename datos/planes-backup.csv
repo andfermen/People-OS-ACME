@@ -1,3 +1,3 @@
-plan_id,empleado_id,skill_id,nivel_objetivo,funcion_id,formacion_id,fecha_inicio,fecha_objetivo,estado,origen
-PB-001,E012,normativa-pbc,3,CMP-03,FOR-06,2026-06-15,2027-03-31,activo,revisión semestral
-PB-002,E043,contabilidad-cripto,3,FIN-01,FOR-09,2026-09-01,2027-06-30,activo,revisión semestral
+plan_id,empleado_id,skill_id,nivel_objetivo,funcion_id,formacion_id,fecha_inicio,fecha_objetivo,estado,origen,avisos,ultimo_aviso
+PB-001,E012,normativa-pbc,3,CMP-03,FOR-06,2026-06-15,2027-03-31,activo,revisión semestral,,
+PB-002,E043,contabilidad-cripto,3,FIN-01,FOR-09,2026-09-01,2027-06-30,activo,revisión semestral,,

@@ -42,9 +42,9 @@ flowchart LR
 | 7 Decisión | **Humano** | email de People (enlace) | `alertas.decision` (aprobada / descartada) |
 | 8 Ciclo | Orquestador (escenario 1) | `alertas` | `planes-backup`, `empleados` (si es movilidad) → recálculo |
 
-Cómo está montado en n8n (escenario 1 · baja de Elena; escenario 2 · actualización de skill): `flujos/n8n/LEEME.md`, D-16 y D-18.
+Cómo está montado en n8n (escenario 1 · baja de Elena; escenario 2 · actualización de skill; escenario 3 · agentes autónomos): `flujos/n8n/LEEME.md`, D-16, D-18 y D-21.
 
-Segundo disparador (diseñado, sin construir todavía): mensual → mismo cálculo → `prompts/informe-direccion.md` → email a dirección.
+Segundo disparador (escenario 3, D-21): el calendario. Cada lunes, el **seguimiento de planes** avisa, recuerda y escala; el día 1 de cada mes, el **centinela** recalcula, detecta degradaciones y envía el informe para dirección (`prompts/informe-direccion.md`). Reglas: `definiciones/reglas-agentes.md`.
 
 ## Dónde está la IA y dónde no
 

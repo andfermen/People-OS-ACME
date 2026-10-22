@@ -68,6 +68,7 @@ Principios de diseño (argumentos para el CEO):
 │   ├── funciones.yaml            # Funciones por área, criticidad, skills requeridas, cobertura objetivo
 │   ├── reglas-semaforo.md        # Cálculo de cobertura, semáforo y key people
 │   ├── reglas-senales-rotacion.md
+│   ├── reglas-agentes.md         # Cuándo actúan solos el seguimiento de planes y el centinela (D-21)
 │   ├── catalogo-formacion.yaml
 │   └── areas.yaml                # Área → división (agregación de encuestas)
 ├── calculo/
@@ -79,7 +80,8 @@ Principios de diseño (argumentos para el CEO):
 │   ├── cifras.js                 # `npm run cifras`: cifras que citan guion y plan (las usa el auditor)
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
-│   ├── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19)
+│   ├── agentes.js                # Agentes autónomos: seguimiento de planes y centinela (D-21)
+│   ├── exportar-n8n.js           # `npm run n8n`: genera los 3 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19, D-21)
 │   └── exportar-video.js         # `npm run video`: datos del reproductor del vídeo desde el motor (D-20)
 ├── video/                        # Reproductor de la demo para grabar el vídeo + guion de locución (D-20)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
@@ -98,6 +100,7 @@ Principios de diseño (argumentos para el CEO):
         ├── LEEME.md              # Montaje y ensayo del flujo principal
         ├── E1-baja-de-elena.json         # Escenario 1: baja + aprobar desde el email (generado)
         ├── E2-actualizacion-de-skill.json  # Escenario 2: el manager valida una skill, ámbar → verde (generado)
+        ├── E3-agentes-autonomos.json  # Escenario 3: seguimiento de planes (lunes) y centinela (mensual) (generado, D-21)
         ├── src/                  # Código de los nodos + probar.js (`npm run probar-n8n`)
         └── test-captura-skills.json  # Prueba de captura (D-04)
 ```
@@ -133,6 +136,12 @@ Cierra la historia de la demo: rojo → ámbar → **verde**. Misma lógica del 
 4. Vuelve al paso 2 del flujo principal → la función pasa a verde → email de cierre a dirección.
 
 Dato de demo necesario: la persona elegida como backup de custodia con nivel requerido −1, interés declarado y una formación del catálogo asociada. **En los datos:** Javier Lozano (E009), `gestion-claves` nivel 2 (requerido 3), interés declarado, formación `FOR-01` (mentoring, 12 semanas).
+
+### Escenario 3 de n8n · Agentes autónomos (D-21)
+Agentes que actúan **sin que nadie pulse nada**, con reglas en `definiciones/reglas-agentes.md` y lógica en `calculo/agentes.js`. Actúan solos en lo operativo y nunca deciden sobre una persona.
+- **Seguimiento de planes** (cada lunes): plan que llega a su fecha → email al manager con el formulario del escenario 2 rellenado → recordatorio a los 7 días → tras 2 avisos, alerta para People. Estado en `planes-backup` (`avisos`, `ultimo_aviso`).
+- **Centinela** (día 1 de cada mes): recalcula, detecta funciones frágiles y desde cuándo, validaciones de más de 6 meses y decisiones pendientes → informe para dirección (Claude, `prompts/informe-direccion.md`; por reglas si falla) + bloque solo People.
+- Formulario **Ejecutar un agente ahora** con fecha simulada para la demo.
 
 ### Captura (explicada, no construida)
 Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre qué hace → Claude normaliza contra `taxonomia-skills.yaml` (skill, nivel propuesto, evidencia) → el manager valida. El prompt `prompts/normalizar-skills.md` queda en el repo con 2-3 ejemplos de entrada/salida. Ejemplo en directo solo si sobra tiempo el jueves.

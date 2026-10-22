@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { cargar, calcular, comparar, vacante } = require('./cobertura');
+const { UMBRALES_AGENTES, sumarDias, seguimientoPlanes, vigilar, informePorReglas, mdAHtml } = require('./agentes');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -77,10 +78,31 @@ const alr003 = foto();
 const alertas003 = leerCsv('alertas.csv');
 const planes003 = leerCsv('planes-backup.csv');
 
-demo('validar', 'E009', 'gestion-claves', '3', 'E008');
+// Agentes autónomos (D-21): el tiempo se simula con la fecha. Semana 12: el seguimiento avisa a los managers.
+const hoy = new Date().toISOString().slice(0, 10);
+const semana = n => sumarDias(hoy, n * 7);
+const acciones = n => seguimientoPlanes(cargar(RAIZ, EST), semana(n)); // lo que hará el agente ese lunes (antes de ejecutarlo)
+const seg12 = acciones(12); demo('seguimiento', semana(12));
+
+demo('validar', 'E009', 'gestion-claves', '3', 'E008'); // Marcos valida a Javier desde el enlace del aviso
 const validar = foto();
 const planesFin = leerCsv('planes-backup.csv');
 const historico = leerCsv('historico-semaforo.csv');
+
+const seg13 = acciones(13); demo('seguimiento', semana(13));
+const seg14 = acciones(14); demo('seguimiento', semana(14));
+const escalado = leerCsv('alertas.csv').find(a => a.grupo.startsWith('SEG-'));
+
+// Centinela el mismo día: lo que detecta (antes de guardar su foto) y el informe por reglas
+const datosCen = cargar(RAIZ, EST);
+const rCen = calcular(datosCen);
+const hist = leerCsv('historico-semaforo.csv');
+const ultimo = hist[hist.length - 1].evento;
+const fotoAnt = { funciones: hist.filter(x => x.evento === ultimo).map(x => ({ id: x.funcion_id, semaforo: x.semaforo, cobertura: +x.cobertura })) };
+const cambiosCen = comparar(fotoAnt, rCen).map(c => ({ ...c, nombre: rCen.funciones.find(f => f.id === c.id).nombre }));
+const centinela = vigilar(datosCen, rCen, cambiosCen, hist, leerCsv('alertas.csv'), semana(14));
+const informe = informePorReglas(centinela);
+demo('centinela', semana(14));
 
 // ---------- Contexto para las escenas ----------
 const emp = id => datosIni.empleados.find(e => e.id === id);
@@ -127,12 +149,18 @@ const datos = {
   marcos002: { rol: marcos002.rol, dependen: dependenDeMarcos },
   planes: { alr002: planes002, alr003: planes003, validar: planesFin },
   historico: historico.filter(h => h.funcion_id === 'CUS-01' || h.funcion_id === 'CUS-02').map(h => ({ evento: h.evento, funcion_id: h.funcion_id, semaforo: h.semaforo, cobertura: +h.cobertura })),
+  agentes: {
+    umbrales: UMBRALES_AGENTES, hoy, semanas: { 12: semana(12), 13: semana(13), 14: semana(14) },
+    seguimiento: { 12: seg12, 13: seg13, 14: seg14 }, escalado,
+    centinela: { ...centinela, senales: centinela.senales.length }, // el vídeo no muestra señales individuales
+    informe_html: mdAHtml(informe),
+  },
   definiciones: { cus01: bloqueCus01 },
   nombres: {
     skills: Object.fromEntries(datosIni.taxonomia.skills.map(s => [s.id, s.nombre])),
     formacion: Object.fromEntries(datosIni.catalogo.map(f => [f.id, { nombre: f.nombre, tipo: f.tipo, semanas: f.semanas }])),
   },
-  n8n: { e1: bloquesN8n('E1-baja-de-elena.json'), e2: bloquesN8n('E2-actualizacion-de-skill.json') },
+  n8n: { e1: bloquesN8n('E1-baja-de-elena.json'), e2: bloquesN8n('E2-actualizacion-de-skill.json'), e3: bloquesN8n('E3-agentes-autonomos.json') },
 };
 
 fs.mkdirSync(path.dirname(SALIDA), { recursive: true });

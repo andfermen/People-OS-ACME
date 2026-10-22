@@ -1,10 +1,10 @@
-# Vídeo de la demo (6-8 min)
+# Vídeo de la demo (unos 8 min)
 
-`reproductor.html` es un reproductor de la demo para grabarlo en vídeo: 7 escenas, 16 pasos, 16:9. No sustituye a n8n: enseña **qué pasa** (el mapa, el email, las decisiones) y **por qué** (datos, reglas, agentes) sin saltar entre el Sheet, GitHub, n8n y Gmail (D-20).
+`reproductor.html` es un reproductor de la demo para grabarlo en vídeo: 8 escenas, 19 pasos, 16:9. No sustituye a n8n: enseña **qué pasa** (el mapa, el email, las decisiones) y **por qué** (datos, reglas, agentes) sin saltar entre el Sheet, GitHub, n8n y Gmail (D-20).
 
 ## De dónde salen los datos
 
-`npm run video` ejecuta el ciclo de la demo local (`calculo/demo.js`: baja de E007 → aprobar ALR-002 → aprobar ALR-003 → validar a Javier) con el **mismo motor** que usan n8n y `npm run verificar`, y guarda el resultado en `datos.js`. Ninguna cifra del reproductor está escrita a mano. También lee de los JSON de n8n los nodos del escenario 1 y los campos de los formularios.
+`npm run video` ejecuta el ciclo de la demo local (`calculo/demo.js`: baja de E007 → aprobar ALR-002 → aprobar ALR-003 → seguimiento a las 12 semanas → validar a Javier → seguimiento a las 13 y 14 semanas → centinela) con el **mismo motor** que usan n8n y `npm run verificar`, y guarda el resultado en `datos.js`. Ninguna cifra del reproductor está escrita a mano. También lee de los JSON de n8n los nodos del escenario 1 y los campos de los formularios.
 
 Cada pantalla lleva una etiqueta arriba a la derecha:
 
@@ -35,7 +35,7 @@ No hay narración sintética: la voz es la tuya.
 
 ## Guion de locución
 
-Tiempos orientativos: unos 7 minutos en total. El texto es una guía para decirlo con tus palabras.
+Tiempos orientativos: unos 8 minutos en total. El texto es una guía para decirlo con tus palabras.
 
 | Paso | Tiempo | Pantalla | Locución |
 |---|---|---|---|
@@ -56,9 +56,15 @@ Tiempos orientativos: unos 7 minutos en total. El texto es una guía para decirl
 | 10 | 4:40-5:00 | Aprobar ALR-002 | "People elige la B. La A se descarta sola. Marcos pasa a responsable y se abre su plan de formación. El mapa no cambia de color: promover a alguien no crea skills." |
 | 11 | 5:00-5:30 | Aprobar ALR-003 ⚙ | "Segunda decisión: plan de backup para Javier, que está a un nivel y tiene interés. Con un plan activo, gestión de claves pasa de rojo a ámbar. La prueba de reservas sigue en rojo: con cobertura cero, un plan no basta." |
 | **6 · Tres meses después** | | | |
-| 12 | 5:30-5:45 | Formulario de validación | "Tres meses después, Javier termina el mentoring. Completar un curso no sube el nivel: lo valida su manager." |
-| 13 | 5:45-6:15 | Vuelve a verde | "El plan se cierra, Javier ya cuenta como cobertura y la función vuelve a verde. Aquí está la historia completa de gestión de claves en el histórico. Y la prueba de reservas sigue en rojo: el sistema no se engaña." |
-| **7 · Arquitectura y escalabilidad** | | | |
-| 14 | 6:15-6:40 | funciones.yaml | "Las reglas no están dentro del flujo. Si dirección quiere tres personas en custodia, se cambia una línea de este archivo, y la siguiente ejecución ya lo aplica. El flujo no se toca." |
-| 15 | 6:40-7:05 | Resto de procesos | "El mismo patrón sirve para el resto de People: definiciones, disparo, regla, IA si hay texto, aviso y decisión humana registrada. Lo verde funciona hoy; lo demás está diseñado. La baja que acabamos de ver ya es el offboarding." |
-| 16 | 7:05-7:20 | Cierre | "People OS no solo automatiza procesos: ayuda a desarrollar, compartir y preservar las capacidades que necesita el negocio. Y está construido como trabajaría el departamento: una persona más IA." |
+| 12 | 5:30-5:55 | El agente avisa al manager ⚙ | "Pasan doce semanas. Nadie tiene que acordarse: es lunes y el agente de seguimiento ve que el plan de Javier ha llegado a su fecha. Escribe a Marcos, su manager, con el formulario de validación ya rellenado. Ese mismo lunes avisa también al CEO por el plan de Marcos." |
+| 13 | 5:55-6:05 | Formulario de validación | "Marcos abre el enlace. Completar un curso no sube el nivel: lo valida él." |
+| 14 | 6:05-6:30 | Vuelve a verde | "El plan se cierra, Javier ya cuenta como cobertura y la función vuelve a verde. Aquí está la historia completa de gestión de claves en el histórico. Y la prueba de reservas sigue en rojo: el sistema no se engaña." |
+| **7 · Agentes que trabajan solos** | | | |
+| 15 | 6:30-6:55 | Insiste y escala | "El plan de Marcos nadie lo valida. El agente recuerda a la semana siguiente y, tras dos avisos, abre una alerta para People. No cierra ni cambia el plan: eso lo decidimos nosotros. Su trabajo es que nada se quede olvidado." |
+| 16 | 6:55-7:30 | El centinela ⚙ | "Y el día 1 de cada mes, el centinela recalcula el mapa sin que nadie lo pida y deja el informe para dirección: la prueba de reservas lleva semanas sin nadie, la conversación de permanencia con Marcos sigue sin decidirse y hay validaciones de skills de hace más de seis meses: el mapa vale lo que valga la validación. A dirección solo le llega lo organizativo; lo personal se queda en People." |
+| **8 · Arquitectura y escalabilidad** | | | |
+| 17 | 7:30-7:50 | funciones.yaml | "Las reglas no están dentro del flujo. Si dirección quiere tres personas en custodia, se cambia una línea de este archivo, y la siguiente ejecución ya lo aplica. El flujo no se toca." |
+| 18 | 7:50-8:10 | Resto de procesos | "El mismo patrón sirve para el resto de People: definiciones, disparo, regla, IA si hay texto, aviso y decisión humana registrada. Lo verde funciona hoy; lo demás está diseñado. La baja que acabamos de ver ya es el offboarding." |
+| 19 | 8:10-8:25 | Cierre | "People OS no solo automatiza procesos: ayuda a desarrollar, compartir y preservar las capacidades que necesita el negocio. Y está construido como trabajaría el departamento: una persona más IA." |
+
+Si quieres quedarte en 8 minutos, el paso 15 se puede saltar: el paso 16 ya cuenta qué hacen los agentes solos.

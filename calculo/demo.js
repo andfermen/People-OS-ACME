@@ -6,6 +6,9 @@
 //   npm run demo -- baja E007                          -> pasos 1-6: recálculo, comparación, propuesta, alertas, email
 //   npm run demo -- aprobar ALR-002                    -> pasos 7-8: aprobación (opción de vacante, backup…) → recálculo
 //   npm run demo -- validar E009 gestion-claves 3 E008 -> opcional: el manager valida el nuevo nivel → recálculo
+//   npm run demo -- seguimiento [AAAA-MM-DD | +días]    -> agente de seguimiento de planes (D-21): avisa, recuerda, escala
+//   npm run demo -- centinela [AAAA-MM-DD | +días]      -> centinela de riesgo (D-21): revisión e informe para dirección
+// La fecha simula el paso del tiempo (por defecto, hoy).
 //
 // Con la variable ANTHROPIC_API_KEY, la propuesta la redacta Claude (prompts/proponer-acciones.md).
 // Sin ella, se usa una propuesta por reglas: la demo nunca se queda en blanco.
@@ -14,6 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { cargar, calcular, comparar, vacante, aplicarMovilidad } = require('./cobertura');
 const { contexto, propuestaPorReglas, mensajeClaude } = require('./propuesta');
+const { UMBRALES_AGENTES, fechaValida, sumarDias, seguimientoPlanes, vigilar, informePorReglas } = require('./agentes');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -42,8 +46,8 @@ const COLS_ALERTAS = ['alerta_id', 'fecha', 'evento', 'funcion_id', 'prioridad',
 const COLS_HIST = ['fecha', 'evento', 'funcion_id', 'semaforo', 'cobertura', 'prioridad'];
 const estado = () => cargar(RAIZ, EST);
 
-function foto(r, evento) {
-  anadir('historico-semaforo.csv', r.funciones.map(x => ({ fecha: hoy(), evento, funcion_id: x.id, semaforo: x.semaforo, cobertura: x.cobertura, prioridad: x.prioridad })));
+function foto(r, evento, fecha = hoy()) {
+  anadir('historico-semaforo.csv', r.funciones.map(x => ({ fecha, evento, funcion_id: x.id, semaforo: x.semaforo, cobertura: x.cobertura, prioridad: x.prioridad })));
 }
 function ultimaFoto() {
   const h = leer('historico-semaforo.csv').filas;
@@ -205,13 +209,56 @@ function validar(empleado, skill, nivel, manager) {
   }
 }
 
+// ---------- Agentes autónomos (D-21): en n8n los dispara el calendario; aquí, el comando ----------
+function seguimiento(fecha) {
+  const datos = estado();
+  const acciones = seguimientoPlanes(datos, fecha);
+  console.log(`[Seguimiento · ${fecha}] ${acciones.length ? `${acciones.length} plan(es) requieren acción` : 'Ningún plan requiere acción'}`);
+  const p = leer('planes-backup.csv');
+  const al = leer('alertas.csv');
+  for (const x of acciones) {
+    Object.assign(p.filas.find(f => f.plan_id === x.plan_id), { avisos: x.avisos, ultimo_aviso: fecha });
+    if (x.tipo === 'escalar') {
+      const id = `ALR-${String(al.filas.length + 1).padStart(3, '0')}`;
+      al.filas.push({ alerta_id: id, fecha, evento: `Seguimiento de planes · ${x.plan_id}`, funcion_id: x.funcion_id, prioridad: '', cambio: '', tipo_accion: 'seguimiento',
+        accion: `Revisar el plan ${x.plan_id}: ${x.empleado.nombre} en ${x.skill_id} (${x.nivel_actual} → ${x.nivel_objetivo})`, empleado_id: x.empleado.id, skill_id: x.skill_id, formacion_id: x.formacion_id,
+        por_que: `La revisión era el ${x.fecha_revision}. ${x.motivo}.`,
+        riesgo_si_no: `${x.funcion_id} sigue dependiendo de un backup que nadie confirma.`, decision: 'pendiente', decidido_por: '', fecha_decision: '', grupo: `SEG-${x.plan_id}` });
+      console.log(`  ⚠ ${x.plan_id}: ${x.motivo} → escala a People (${id})`);
+    } else console.log(`  ✉ ${x.plan_id}: ${x.tipo} a ${x.manager?.nombre} (manager) · ¿ha alcanzado ${x.empleado.nombre} ${x.skill_id} ${x.nivel_objetivo}? Revisión ${x.fecha_revision}`);
+  }
+  escribir('planes-backup.csv', p.cols, p.filas);
+  escribir('alertas.csv', al.cols, al.filas);
+  return acciones;
+}
+
+function centinela(fecha) {
+  const datos = estado();
+  const antes = ultimaFoto();
+  const r = calcular(datos);
+  const nombres = new Map(r.funciones.map(x => [x.id, x.nombre]));
+  const cambios = comparar(antes, r).map(c => ({ ...c, nombre: nombres.get(c.id) }));
+  const h = vigilar(datos, r, cambios, leer('historico-semaforo.csv').filas, leer('alertas.csv').filas, fecha);
+  foto(r, `Revisión programada (centinela) · ${fecha}`, fecha);
+  const md = informePorReglas(h);
+  fs.writeFileSync(f(`informe-direccion-${fecha}.md`), md + '\n');
+  console.log(`[Centinela · ${fecha}] Mapa ${h.cuenta.rojo}·${h.cuenta.ambar}·${h.cuenta.verde} · ${h.fragiles.length} P1/P2 · ${h.pendientes.length} decisión(es) pendiente(s) · ${h.caducadas.length} validación(es) de más de ${UMBRALES_AGENTES.mesesValidacion} meses`);
+  console.log(`Informe para dirección (por reglas) en salidas/demo/informe-direccion-${fecha}.md\n`);
+  console.log(md.split('\n').map(l => '   │ ' + l).join('\n'));
+  return h;
+}
+
 (async () => {
   const [cmd, ...a] = process.argv.slice(2);
+  // Fecha: AAAA-MM-DD, o +N días desde hoy (p. ej. +84 = 12 semanas después)
+  const fecha = fechaValida(a[0]) ? a[0] : /^\+\d+$/.test(a[0] || '') ? sumarDias(hoy(), +a[0].slice(1)) : hoy();
   if (cmd !== 'reset' && !fs.existsSync(f('alertas.csv'))) reset();
   if (cmd === 'reset') reset();
   else if (cmd === 'mapa') mapa();
   else if (cmd === 'baja') await baja(a[0]);
   else if (cmd === 'aprobar') aprobar(a[0]);
   else if (cmd === 'validar') validar(a[0], a[1], a[2], a[3]);
-  else console.log('Comandos: reset · mapa · baja <id> · aprobar <alerta_id> · validar <empleado> <skill> <nivel> <manager>');
+  else if (cmd === 'seguimiento') seguimiento(fecha);
+  else if (cmd === 'centinela') centinela(fecha);
+  else console.log('Comandos: reset · mapa · baja <id> · aprobar <alerta_id> · validar <empleado> <skill> <nivel> <manager> · seguimiento [fecha] · centinela [fecha]');
 })().catch(e => { console.error('Error:', e.message); process.exit(1); });
