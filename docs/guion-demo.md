@@ -1,19 +1,21 @@
-# Guion de la demo (borrador, 20-25 min)
+# Guion de la demo en directo (25 min)
 
-> Antes de empezar: `npm run verificar` y `npm run probar-n8n` → todo en ✅. Pide a Claude Code **"reinicia la demo"**. Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** (escenario 1) y el **formulario skill** (escenario 2), el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
-> **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `npm run demo -- baja E007` → `npm run demo -- aprobar ALR-002` (opción B) → `npm run demo -- aprobar ALR-003` (backup de Javier) → (opcional) `npm run demo -- validar E009 gestion-claves 3 E008`. Plan C: capturas y vídeo grabados el jueves.
+> **Para qué:** enseñar la demo en n8n en una sesión con el CEO, por ejemplo después de que haya visto el vídeo. El vídeo tiene su propio guion, más corto: `video/LEEME.md`.
+> **Antes de empezar:** `npm run verificar` y `npm run probar-n8n` → todo en ✅. Pide a Claude Code **"reinicia la demo"**. Ten abiertos el Sheet (hoja `cobertura`), el **formulario baja** (escenario 1), el formulario **Ejecutar un agente ahora** (escenario 3), el buzón (Gmail) y este guion. Montaje: `flujos/n8n/LEEME.md`.
+> **Plan B (D-12):** si el orquestador falla, sigue en la terminal con el mismo flujo: `npm run demo -- reset` → `… baja E007` → `… aprobar ALR-002` (opción B) → `… aprobar ALR-003` (backup de Javier) → `… seguimiento +84` (el agente avisa a Marcos) → `… validar E009 gestion-claves 3 E008` → `… centinela +84` (informe para dirección). **Plan C:** el vídeo (`video/reproductor.html`).
 
 | # | Bloque | Min | Qué enseñar | Frase clave |
 |---|---|---|---|---|
 | 1 | El problema | 2 | `docs/vision-procesos-rrhh.md`: qué se automatiza y qué no | "Automatizo lo calculable; la IA captura y redacta; yo decido y converso." |
-| 2 | La pregunta | 2 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
-| 3 | Arquitectura | 4 | Diagrama de `docs/arquitectura.md`; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
-| 4 | El mapa | 4 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
+| 2 | La pregunta | 1 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
+| 3 | Arquitectura | 3 | Diagrama del README; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
+| 4 | El mapa | 3 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
 | 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → email a People | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
-| 7 | Usos | 4 | Rotación, encuesta y revisión salarial | Ver abajo |
-| 8 | Plan AI first y escalado | 3 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
-| 9 | Cierre | 1 | — | "Esta prueba la he construido como trabajaría el departamento: una persona + IA." |
+| 7 | Agentes que trabajan solos | 4 | Escenario 3 · seguimiento (+12 semanas) → Marcos valida a Javier → CUS-01 a verde · centinela e informe | Ver abajo |
+| 8 | Usos | 3 | Rotación, encuesta y revisión salarial | Ver abajo |
+| 9 | Plan AI first y escalado | 2 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
+| 10 | Cierre | 1 | — | "Esta prueba la he construido como trabajaría el departamento: una persona + IA." |
 
 ## 4 · El mapa (estado inicial)
 
@@ -43,15 +45,23 @@
 1. En el email: **Aprobar ALR-002** (opción B, mover a Marcos). Se abre una página de confirmación. En `alertas`, ALR-002 `aprobada` y ALR-001 pasa sola a `descartada`. Marcos pasa a responsable de custodia, el equipo depende de él y se abre su plan de conciliación on-chain. El mapa no cambia de color: *"Promover a alguien no crea skills nuevas."*
 2. **Aprobar ALR-003** (plan de backup de Javier) → fila nueva en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡** (lo dicen la página y un email).
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
-4. **Opcional, "tres meses después":** Javier completa `FOR-01`. El sistema **propone** el nivel 3 y no lo sube solo. Marcos, su manager tras la baja, lo valida en `skills-empleados` (`nivel_validado = 3`, `validado_por = E008`). Escenario 2 · **formulario skill**: `E009`, `gestion-claves`, `3`, `E008`. Recálculo → **CUS-01 pasa de 🟡 a 🟢** → email *Riesgo reducido*. *"Completar un curso no es tener la skill: la valida una persona."*
 
-## 7 · Usos
+## 7 · Agentes que trabajan solos
+
+Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos agentes que arrancan con el calendario."* Reglas: `definiciones/reglas-agentes.md` (D-21).
+
+1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar un agente ahora** → `seguimiento`, fecha = hoy + 12 semanas. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
+2. En el aviso a Marcos → **Validar a Javier**: el formulario del escenario 2 llega rellenado (`E009`, `gestion-claves`, `3`, `E008`). Enviar → email *Riesgo reducido*: **CUS-01 pasa de 🟡 a 🟢**. *"Completar un curso no es tener la skill: el agente pregunta, la valida una persona."*
+3. *(Si hay tiempo)* Mismo formulario con hoy + 13 y + 14 semanas: el agente recuerda a Sergio y luego escala a People (alerta `ALR-005`). *"El agente no cierra ni cambia el plan. Su trabajo es que nada se quede olvidado."*
+4. **Centinela.** En n8n arranca el día 1 de cada mes. En la demo: `centinela`, misma fecha. Email *Revisión … · informe para dirección*: arriba, el informe listo para reenviar (CUS-02 sigue sin nadie, la conversación de permanencia con Marcos sin decidir, validaciones de skills de más de 6 meses); abajo, solo People, las señales de rotación. *"A dirección le llega lo organizativo; lo personal se queda en People."*
+
+## 8 · Usos
 
 - **Rotación:** Elena tenía 4 señales (compa-ratio 0,86, 22 meses sin revisión, clima de Custodia por debajo de la media, evaluación 5) y estaba en un rojo crítico. Era **prioridad 1** de la matriz *antes* de irse. *"El sistema lo habría avisado."*
 - **Encuesta:** las key people puntúan **2,6 en carga sostenible frente a 3,3** del resto (n = 5, en el límite del anonimato). Custodia es el área con peor clima (3,2 frente a 3,7 de media). People (n = 1) no se muestra sola y se agrega a Corporativo.
 - **Revisión salarial:** para una key person con compa-ratio bajo, **bono de retención ligado a formar y validar a su backup**, no una subida que premie ser imprescindible.
 
-## 8 · Plan AI first: el mismo mapa, otra pregunta
+## 9 · Plan AI first: el mismo mapa, otra pregunta
 
 - **Madurez IA por área** (hoja `madurez-ia`): Ingeniería 2,6 y Producto 2,4 frente a Compliance 1,2 y CX 1,0 (media 0-4 de uso diario, automatización y criterio). *"La formación en IA no es igual para todos: empieza donde la madurez es baja y el impacto alto."*
 - **Escenario "se va Lucía"** (`npm run demo -- baja E022`): el reporting AML (CMP-04) pasa de cobertura 1 a 0. Como su `impacto_ia` es alto, la propuesta **no** es formar a alguien en SQL para seguir haciendo el informe a mano: es **rediseñar el reporting con IA y recualificar a Marta** (con interés declarado en automatización), con apoyo temporal mientras tanto. *"Formar a alguien en un proceso que va a desaparecer es invertir en el pasado."*
@@ -62,7 +72,10 @@
 
 | Pregunta | Respuesta corta |
 |---|---|
-| ¿Y si las skills están mal? | Solo cuentan las validadas por el manager. Revisión semestral. Es el límite número 1 del sistema. |
+| ¿Y si las skills están mal? | Solo cuentan las validadas por el manager. Revisión semestral, y el centinela marca cada mes las validaciones de más de 6 meses. Es el límite número 1 del sistema. |
 | ¿La IA decide algo? | No. Captura y redacta. El riesgo es una regla y las acciones las aprueba People. |
+| ¿Qué hace el sistema solo? | Vigilar, recordar, escalar e informar: el seguimiento de planes y el centinela. Deciden **cuándo** actuar con reglas; no suben niveles ni cierran planes. |
+| ¿Y si el manager no responde? | El agente le recuerda a los 7 días y, tras 2 avisos, abre una alerta para People. Si el manager ya no está, escala directamente. |
+| ¿Por qué no un agente conversacional? | Está diseñado (`agentes/asistente-people.md`), pero no es determinista y toca datos personales. Primero, agentes cuyas decisiones se pueden probar. |
 | ¿Por qué no un modelo de predicción de fuga? | Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta. |
 | ¿Escala? | Las definiciones sí. Sheets llega hasta ~200 personas; después, base de datos o HRIS. |
