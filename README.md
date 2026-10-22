@@ -69,7 +69,7 @@ flowchart TB
 
 ## 3. Los agentes
 
-Pocos agentes, cada uno con una tarea concreta, encadenados. Una salida de uno es la entrada del siguiente.
+Pocos agentes, cada uno con una tarea concreta, encadenados. Una salida de uno es la entrada del siguiente. Fichas de cada uno: [`agentes/`](agentes/README.md).
 
 | Agente | Qué hace | Áreas que toca | Estado |
 |---|---|---|---|
@@ -77,8 +77,8 @@ Pocos agentes, cada uno con una tarea concreta, encadenados. Una salida de uno e
 | **Movilidad** | Ante una vacante, calcula el perfil del puesto, busca candidatos internos, sus brechas, la formación que las cierra y el **coste organizativo** de moverlos (por ejemplo, que ya sean key person) | Talento, compensación | Funciona |
 | **Propuesta** (Claude) | Redacta para People las opciones (buscar fuera o mover dentro), los planes de backup y las conversaciones de permanencia, con el porqué y el riesgo de no hacerlo. Si no hay IA, propuesta por reglas | Transversal | Funciona |
 | **Skills** | El manager valida el nivel alcanzado → actualiza el HRIS, cierra el plan de backup y recalcula. Completar un curso no sube el nivel: lo valida una persona | Desarrollo | Funciona |
-| **Seguimiento de planes** ⏱ | **Sin que nadie lo pida**, cada lunes: cuando un plan de backup llega a su fecha, escribe al manager con el formulario de validación rellenado; si no valida, le recuerda; tras 2 avisos, abre una alerta para People | Desarrollo | Funciona |
-| **Centinela** ⏱ | **Sin que nadie lo pida**, cada mes: recalcula el mapa, detecta lo que se degrada (funciones frágiles y desde cuándo, validaciones de más de 6 meses, decisiones pendientes) y envía el informe para dirección, que redacta Claude | Organización, dirección | Funciona |
+| [**Seguimiento de planes**](agentes/seguimiento-planes.md) ⏱ | **Sin que nadie lo pida**, cada lunes: cuando un plan de backup llega a su fecha, escribe al manager con el formulario de validación rellenado; si no valida, le recuerda; tras 2 avisos, abre una alerta para People | Desarrollo | Funciona |
+| [**Centinela**](agentes/centinela.md) ⏱ | **Sin que nadie lo pida**, cada mes: recalcula el mapa, detecta lo que se degrada (funciones frágiles y desde cuándo, validaciones de más de 6 meses, decisiones pendientes) y envía el informe para dirección, que redacta Claude | Organización, dirección | Funciona |
 | **Captura** | Texto libre del empleado → skills normalizadas contra la taxonomía → el manager valida | Desarrollo | Diseñado (`prompts/normalizar-skills.md`), probado en n8n, no en la demo |
 | **Asistente de People** | Preguntas en lenguaje natural sobre el mapa: "¿quién puede cubrir a Elena?" | Transversal | Propuesta (`agentes/`) |
 

@@ -53,7 +53,7 @@ Principios de diseño (argumentos para el CEO):
 ├── CLAUDE.md
 ├── README.md
 ├── .claude/agents/auditor-demo.md  # Agente de Claude Code: audita la demo antes de cada ensayo
-├── agentes/                      # Propuesta de agentes (auditor construido; asistente y auditor de procesos, diseño)
+├── agentes/                      # Fichas de los agentes (seguimiento y centinela, construidos; auditor de la demo; asistente y auditor de procesos, diseño)
 ├── docs/
 │   ├── vision-procesos-rrhh.md   # Mapa 360º, qué se automatiza y qué no
 │   ├── arquitectura.md           # Capas, flujo de datos, diagrama
