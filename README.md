@@ -11,4 +11,4 @@ Sistema para gestionar el 360º de RRHH de una compañía con ayuda de la IA y l
 
 > Todos los datos (personas, skills, salarios, encuestas) son ficticios.
 
-Contexto completo del proyecto: [CLAUDE.md](CLAUDE.md).
+
