@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>People OS · Demo</title>
+<!-- Reproductor del vídeo (D-20). Los datos salen de video/datos.js, que genera `npm run video` con el motor real. -->
+<script src="datos.js"></script>
+<style>
+:root {
+  --fondo: #eef1f5; --superficie: #ffffff; --superficie-2: #f6f8fa; --borde: #dde3ea; --texto: #18212b; --texto-2: #5b6876; --texto-3: #8a96a3;
+  --acento: #3b5bdb; --acento-suave: #e8edff;
+  --verde: #2f9e6a; --verde-suave: #e3f5ec; --ambar: #d69520; --ambar-suave: #fdf3dc; --rojo: #d6453d; --rojo-suave: #fde7e5;
+  --real: #2f9e6a; --visual: #7b61d1; --diseno: #8a96a3;
+  --radio: 10px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: #1b2129; overflow: hidden; }
+body { font-family: Inter, "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--texto); }
+
+/* Escenario 16:9 fijo, escalado a la ventana */
+#stage { position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; background: var(--fondo); display: grid; grid-template-rows: 56px 1fr 60px; grid-template-columns: 236px 1fr; transform-origin: center; overflow: hidden; }
+
+header { grid-column: 1 / -1; display: flex; align-items: center; gap: 18px; padding: 0 22px; background: var(--superficie); border-bottom: 1px solid var(--borde); }
+.logo { font-weight: 800; font-size: 19px; letter-spacing: -.3px; }
+.logo span { color: var(--acento); }
+.migas { color: var(--texto-2); font-size: 14px; }
+.migas b { color: var(--texto); font-weight: 600; }
+.demo-badge { margin-left: auto; font-size: 12px; color: #8a5a00; background: var(--ambar-suave); border: 1px solid #f1d9a6; padding: 5px 10px; border-radius: 99px; }
+
+nav { background: var(--superficie); border-right: 1px solid var(--borde); padding: 18px 12px; display: flex; flex-direction: column; gap: 4px; }
+nav h6 { font-size: 11px; letter-spacing: .08em; color: var(--texto-3); text-transform: uppercase; margin: 4px 10px 8px; }
+.esc { display: flex; gap: 10px; align-items: center; padding: 9px 10px; border-radius: 8px; font-size: 14px; color: var(--texto-2); cursor: pointer; }
+.esc .n { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; background: var(--superficie-2); border: 1px solid var(--borde); flex: none; }
+.esc.hecha .n { background: var(--verde-suave); border-color: #bfe5d1; color: var(--verde); }
+.esc.activa { background: var(--acento-suave); color: var(--texto); font-weight: 600; }
+.esc.activa .n { background: var(--acento); border-color: var(--acento); color: #fff; }
+.nav-pie { margin-top: auto; font-size: 11.5px; color: var(--texto-3); padding: 10px; line-height: 1.5; border-top: 1px solid var(--borde); }
+
+main { padding: 26px 32px 18px; display: flex; flex-direction: column; gap: 16px; min-width: 0; overflow: hidden; }
+.cab { display: flex; align-items: flex-start; gap: 16px; }
+.cab h1 { font-size: 28px; letter-spacing: -.5px; line-height: 1.2; }
+.cab p { color: var(--texto-2); font-size: 16px; margin-top: 6px; max-width: 860px; }
+.chip { margin-left: auto; flex: none; font-size: 12px; font-weight: 600; padding: 6px 11px; border-radius: 99px; display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.chip.real { color: var(--real); background: var(--verde-suave); }
+.chip.visual { color: var(--visual); background: #efeafd; }
+.chip.diseno { color: var(--texto-2); background: var(--superficie-2); border: 1px dashed var(--texto-3); }
+.lienzo { flex: 1; min-height: 0; position: relative; }
+
+aside { position: absolute; right: 0; top: 56px; bottom: 60px; width: 410px; background: var(--superficie); border-left: 1px solid var(--borde); box-shadow: -12px 0 30px rgba(24,33,43,.10); transform: translateX(105%); transition: transform .35s ease; z-index: 5; }
+aside.abierto { transform: none; }
+.panel { width: 410px; padding: 22px 22px; height: 100%; overflow: auto; }
+.panel h3 { font-size: 15px; display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+.panel h3::before { content: "⚙"; color: var(--acento); }
+.panel h4 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--texto-3); margin: 14px 0 6px; }
+.panel ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.panel li { font-size: 13.5px; line-height: 1.45; color: var(--texto); padding-left: 14px; position: relative; }
+.panel li::before { content: "·"; position: absolute; left: 3px; color: var(--texto-3); font-weight: 700; }
+.panel code, .mono { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 12.5px; background: var(--superficie-2); border: 1px solid var(--borde); border-radius: 4px; padding: 0 4px; }
+.panel .res { background: var(--acento-suave); border-radius: 8px; padding: 10px 12px; font-size: 13.5px; line-height: 1.45; }
+
+footer { grid-column: 1 / -1; display: flex; align-items: center; gap: 14px; padding: 0 22px; background: var(--superficie); border-top: 1px solid var(--borde); }
+button { font: inherit; font-size: 14px; border: 1px solid var(--borde); background: var(--superficie); padding: 8px 16px; border-radius: 8px; cursor: pointer; color: var(--texto); }
+button.prim { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+button:disabled { opacity: .4; cursor: default; }
+.puntos { display: flex; gap: 5px; margin: 0 auto; }
+.puntos i { width: 7px; height: 7px; border-radius: 50%; background: var(--borde); }
+.puntos i.on { background: var(--acento); width: 20px; border-radius: 4px; }
+.atajos { font-size: 12px; color: var(--texto-3); }
+.btn-panel.on { background: var(--acento-suave); border-color: #c6d2ff; }
+
+/* Tarjetas genéricas */
+.card { background: var(--superficie); border: 1px solid var(--borde); border-radius: var(--radio); padding: 16px 18px; }
+.fila { display: flex; gap: 16px; }
+.col { display: flex; flex-direction: column; gap: 14px; }
+.kpi { display: flex; gap: 10px; }
+.kpi div { background: var(--superficie); border: 1px solid var(--borde); border-radius: 8px; padding: 8px 14px; min-width: 92px; }
+.kpi b { font-size: 24px; display: block; transition: color .3s; }
+.kpi small { font-size: 12px; color: var(--texto-2); }
+.kpi .r b { color: var(--rojo); } .kpi .a b { color: var(--ambar); } .kpi .v b { color: var(--verde); }
+.etq { font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--texto-3); font-weight: 600; }
+.sem { display: inline-block; width: 10px; height: 10px; border-radius: 50%; vertical-align: middle; }
+.sem.verde { background: var(--verde); } .sem.ambar { background: var(--ambar); } .sem.rojo { background: var(--rojo); }
+.tag { font-size: 11.5px; padding: 2px 8px; border-radius: 99px; background: var(--superficie-2); border: 1px solid var(--borde); color: var(--texto-2); white-space: nowrap; }
+.tag.oculta { background: #efeafd; border-color: #d8cdf7; color: var(--visual); }
+.tag.p1 { background: var(--rojo-suave); border-color: #f5c4bf; color: var(--rojo); font-weight: 700; }
+
+/* Mapa de calor */
+.mapa { display: flex; flex-direction: column; gap: 6px; }
+.area { display: grid; grid-template-columns: 170px 1fr; align-items: stretch; gap: 8px; transition: opacity .4s; }
+.area .nom { font-size: 13px; font-weight: 600; color: var(--texto-2); display: flex; align-items: center; }
+.area .tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.mapa.foco .area:not(.foco) { opacity: .22; }
+.tile { min-width: 0; border-radius: 8px; padding: 6px 10px; display: grid; grid-template-columns: 1fr auto; column-gap: 6px; align-items: center; border: 1px solid transparent; transition: background-color .8s, border-color .8s, transform .3s; position: relative; }
+.tile .id { font-size: 11px; font-weight: 700; opacity: .8; }
+.tile .nm { grid-column: 1 / -1; font-size: 12px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tile .cob { font-size: 11.5px; font-weight: 600; justify-self: end; }
+.tile.verde { background: var(--verde-suave); border-color: #c4e8d4; color: #1d6b47; }
+.tile.ambar { background: var(--ambar-suave); border-color: #f1d9a6; color: #8a5a00; }
+.tile.rojo { background: var(--rojo-suave); border-color: #f5c4bf; color: #a12d26; }
+.tile.pulso { animation: pulso 1.4s ease 2; z-index: 1; }
+.tile.marca { outline: 2px solid var(--acento); outline-offset: 2px; }
+@keyframes pulso { 0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(59,91,219,0); } 40% { transform: scale(1.06); box-shadow: 0 0 0 6px rgba(59,91,219,.25); } }
+
+/* Arquitectura */
+.arq { display: grid; grid-template-columns: 1fr 44px 1.5fr 44px 1fr; gap: 18px 0; align-content: start; }
+.capa { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 8px; position: relative; z-index: 1; }
+.capa h4 { font-size: 16px; }
+.capa p, .capa li { font-size: 13.5px; color: var(--texto-2); line-height: 1.45; }
+.capa ul { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.capa .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; font-weight: 700; color: var(--acento); }
+.capa.orq { border: 2px solid var(--acento); background: linear-gradient(180deg, #f5f7ff, #fff); }
+.agentes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+.agente { border: 1px solid #c6d2ff; background: #fff; border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+.agente b { display: block; font-size: 13.5px; }
+.agente small { color: var(--texto-2); }
+.capa.humano { border: 2px solid var(--verde); background: linear-gradient(180deg, #f1fbf6, #fff); }
+.capa.ia { border-style: dashed; }
+.flecha { align-self: center; justify-self: center; color: var(--texto-3); font-size: 22px; }
+.lema { grid-column: 1 / -1; text-align: center; font-size: 17px; color: var(--texto-2); margin-top: 10px; }
+
+/* Flujo n8n */
+.flujo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; align-items: stretch; }
+.bloque { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; padding: 14px; opacity: .35; transition: opacity .5s, border-color .5s, box-shadow .5s; }
+.bloque.on { opacity: 1; border-color: var(--acento); box-shadow: 0 6px 18px rgba(59,91,219,.12); }
+.bloque h4 { font-size: 14px; margin-bottom: 8px; }
+.nodo { font-size: 12.5px; padding: 5px 8px; border-radius: 6px; background: var(--superficie-2); border: 1px solid var(--borde); margin-bottom: 5px; display: flex; justify-content: space-between; gap: 6px; }
+.nodo small { color: var(--texto-3); }
+.nodo.sheets { border-left: 3px solid #1e8e3e; } .nodo.code { border-left: 3px solid #e8710a; } .nodo.http { border-left: 3px solid var(--acento); } .nodo.gmail { border-left: 3px solid #d93025; }
+
+/* Formulario */
+.form { width: 520px; margin: 10px auto 0; background: var(--superficie); border-radius: 14px; border: 1px solid var(--borde); box-shadow: 0 10px 30px rgba(24,33,43,.08); padding: 26px 30px; }
+.form h2 { font-size: 20px; margin-bottom: 4px; }
+.form p { color: var(--texto-2); font-size: 14px; margin-bottom: 18px; }
+.campo { margin-bottom: 14px; }
+.campo label { font-size: 13px; font-weight: 600; display: block; margin-bottom: 5px; }
+.campo .inp { border: 1px solid var(--borde); border-radius: 8px; padding: 9px 12px; font-size: 15px; background: var(--superficie-2); }
+.escribe { display: inline-block; overflow: hidden; white-space: nowrap; border-right: 2px solid var(--acento); animation: escribe 1s steps(12) .4s both, cursor .8s step-end infinite; max-width: 100%; }
+@keyframes escribe { from { width: 0; } }
+@keyframes cursor { 50% { border-color: transparent; } }
+.form .enviar { background: var(--acento); color: #fff; text-align: center; padding: 10px; border-radius: 8px; font-weight: 600; margin-top: 6px; }
+
+/* Email */
+.mail { background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; height: 100%; }
+.mail .hd { padding: 14px 20px; border-bottom: 1px solid var(--borde); }
+.mail .hd b { font-size: 16px; }
+.mail .hd small { display: block; color: var(--texto-2); font-size: 12.5px; margin-top: 3px; }
+.mail .bd { padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; font-size: 13.5px; line-height: 1.45; overflow: hidden; }
+.opcion { border: 1px solid var(--borde); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.opcion .coste { color: #a12d26; }
+.aprobar { align-self: flex-start; background: #1a73e8; color: #fff; border-radius: 4px; padding: 3px 10px; font-size: 12px; margin-top: 4px; }
+.confid { background: #fff4e5; border-radius: 8px; padding: 10px 12px; }
+
+/* Tablas */
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th { text-align: left; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--texto-3); padding: 6px 8px; border-bottom: 1px solid var(--borde); }
+td { padding: 8px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+td:first-child, td .dec { white-space: nowrap; }
+.ley { display: flex; gap: 22px; margin-top: 16px; font-size: 13.5px; color: var(--texto-2); }
+.ley i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.captura *, .captura *::before { animation-duration: 0s !important; animation-delay: 0s !important; transition: none !important; }
+.dec { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.dec.aprobada { background: var(--verde-suave); color: var(--verde); } .dec.descartada { background: var(--superficie-2); color: var(--texto-3); text-decoration: line-through; } .dec.pendiente { background: var(--ambar-suave); color: #8a5a00; }
+
+/* Línea de tiempo */
+.tl { display: flex; align-items: flex-start; }
+.hito { flex: 1; text-align: center; position: relative; font-size: 12.5px; color: var(--texto-2); padding: 0 6px; }
+.hito::before { content: ""; position: absolute; top: 13px; left: -50%; width: 100%; height: 2px; background: var(--borde); z-index: 0; }
+.hito:first-child::before { display: none; }
+.hito .pt { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 8px; position: relative; z-index: 1; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 12px; }
+.pt.verde { background: var(--verde); } .pt.ambar { background: var(--ambar); } .pt.rojo { background: var(--rojo); }
+
+/* Escalado */
+.procs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.proc { background: var(--superficie); border: 1px solid var(--borde); border-radius: 10px; padding: 12px; font-size: 13px; display: flex; flex-direction: column; gap: 6px; }
+.proc b { font-size: 14px; }
+.est { font-size: 11px; font-weight: 700; align-self: flex-start; padding: 2px 8px; border-radius: 99px; }
+.est.c { background: var(--verde-suave); color: var(--verde); } .est.d { background: var(--superficie-2); color: var(--texto-2); border: 1px dashed var(--texto-3); } .est.f { background: #f3f3f3; color: var(--texto-3); }
+.receta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+.receta span { background: var(--superficie); border: 1px solid var(--borde); border-radius: 8px; padding: 8px 12px; }
+.receta span.h { border-color: var(--verde); background: var(--verde-suave); }
+.receta i { color: var(--texto-3); font-style: normal; }
+pre.yaml { font-family: "Cascadia Code", Consolas, ui-monospace, monospace; font-size: 14px; line-height: 1.6; background: #18212b; color: #dfe6ee; border-radius: 10px; padding: 16px 18px; white-space: pre; }
+pre.yaml .k { color: #8fb4ff; } pre.yaml .v { color: #ffd38a; }
+
+.cierre { height: 100%; display: grid; place-items: center; text-align: center; }
+.cierre blockquote { font-size: 38px; line-height: 1.3; letter-spacing: -.6px; max-width: 1000px; font-weight: 700; }
+.cierre blockquote span { color: var(--acento); }
+.cierre p { margin-top: 26px; color: var(--texto-2); font-size: 17px; }
+
+.aparece { animation: aparece .5s ease both; }
+@keyframes aparece { from { opacity: 0; transform: translateY(8px); } }
+.d1 { animation-delay: .15s; } .d2 { animation-delay: .3s; } .d3 { animation-delay: .45s; } .d4 { animation-delay: .6s; }
+.nota { font-size: 12.5px; color: var(--texto-3); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <header>
+    <div class="logo">acme<span>.</span> People OS</div>
+    <div class="migas">Acme / People OS / <b id="miga"></b></div>
+    <div class="demo-badge">Entorno de demostración · datos ficticios</div>
+  </header>
+  <nav id="nav"></nav>
+  <main>
+    <div class="cab"><div><h1 id="titulo"></h1><p id="sub"></p></div><span id="chip" class="chip"></span></div>
+    <div class="lienzo" id="lienzo"></div>
+  </main>
+  <aside id="aside"><div class="panel" id="panel"></div></aside>
+  <footer>
+    <button id="ant">← Anterior</button>
+    <span class="atajos">← → para navegar · D panel técnico</span>
+    <div class="puntos" id="puntos"></div>
+    <button id="btnPanel" class="btn-panel">¿Qué ha pasado por debajo?</button>
+    <button id="sig" class="prim">Siguiente →</button>
+  </footer>
+</div>
+
+<script>
+const D = window.DEMO;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const num = s => esc(s).replace(/(\d)\.(\d)/g, '$1,$2'); // decimales con coma
+const SEM = { verde: 'verde', ambar: 'ámbar', rojo: 'rojo' };
+const sk = id => D.nombres.skills[id] || id;
+const fn = (m, id) => D.mapas[m].funciones.find(f => f.id === id);
+const skl = (m, f, s) => fn(m, f).skills.find(x => x.skill === s);
+const corto = n => n.split(' ')[0];
+const CAPTURA = location.search.includes('captura'); // ?captura: estado final al instante (para revisar o hacer capturas)
+if (CAPTURA) document.documentElement.classList.add('captura');
+const despues = (f, ms) => (CAPTURA ? (f(), 0) : setTimeout(f, ms));
+
+// ---------- Componentes ----------
+function kpi(m) {
+  const c = D.mapas[m].cuenta;
+  return `<div class="kpi" id="kpi"><div class="r"><b>${c.rojo}</b><small>en rojo</small></div><div class="a"><b>${c.ambar}</b><small>en ámbar</small></div><div class="v"><b>${c.verde}</b><small>en verde</small></div></div>`;
+}
+function mapa(m, { foco = null, marcar = [] } = {}) {
+  const areas = [];
+  for (const f of D.mapas[m].funciones) { let a = areas.find(x => x.nombre === f.area); if (!a) areas.push(a = { nombre: f.area, fs: [] }); a.fs.push(f); }
+  return `<div class="mapa${foco ? ' foco' : ''}" id="mapa">${areas.map(a => `<div class="area${a.nombre === foco ? ' foco' : ''}"><div class="nom">${esc(a.nombre)}</div><div class="tiles">${a.fs.map(f => `
+    <div class="tile ${f.semaforo}${marcar.includes(f.id) ? ' marca' : ''}" data-f="${f.id}"><span class="id">${f.id}${f.prioridad !== '-' ? ' · ' + f.prioridad : ''}</span><span class="cob">${f.cobertura}/${f.objetivo}</span><span class="nm">${esc(f.nombre)}</span></div>`).join('')}</div></div>`).join('')}</div>`;
+}
+// Pasa el mapa del estado a al b: cambia colores y cifras, y hace latir lo que cambia
+function transicion(a, b, retraso = 900) {
+  return despues(() => {
+    for (const f of D.mapas[b].funciones) {
+      const el = document.querySelector(`[data-f="${f.id}"]`); if (!el) continue;
+      const antes = D.mapas[a].funciones.find(x => x.id === f.id);
+      el.classList.remove('verde', 'ambar', 'rojo'); el.classList.add(f.semaforo);
+      el.querySelector('.cob').textContent = `${f.cobertura}/${f.objetivo}`;
+      el.querySelector('.id').textContent = f.id + (f.prioridad !== '-' ? ' · ' + f.prioridad : '');
+      if (antes.semaforo !== f.semaforo || antes.cobertura !== f.cobertura) { el.classList.remove('pulso'); void el.offsetWidth; el.classList.add('pulso'); }
+    }
+    const c = D.mapas[b].cuenta, k = document.querySelectorAll('#kpi b');
+    if (k.length) [c.rojo, c.ambar, c.verde].forEach((v, i) => (k[i].textContent = v));
+  }, retraso);
+}
+// Formulario de n8n con título, descripción y campos del JSON real; los valores son los del ensayo
+function formulario(fm, nodo, valores, notas = {}) {
+  return `<div class="form aparece"><h2>${esc(fm.titulo)}</h2><p>${esc(fm.descripcion)}</p>
+    ${fm.campos.map((c, k) => `<div class="campo"><label class="mono" style="border:0;background:none;padding:0">${esc(c)}</label><div class="inp">${k === 0 ? `<span class="escribe">${esc(valores[c])}</span>` : esc(valores[c])}${notas[c] ? ` <span style="color:var(--texto-2)">· ${esc(notas[c])}</span>` : ''}</div></div>`).join('')}
+    <div class="enviar">Enviar</div><div class="nota" style="margin-top:10px;text-align:center">n8n · nodo ${esc(nodo)}</div></div>`;
+}
+const lista = xs => `<ul>${xs.map(x => `<li>${x}</li>`).join('')}</ul>`;
+const panel = ({ datos, reglas, calculo, agentes, resultado }) => `<h3>¿Qué ha pasado por debajo?</h3>
+  ${datos ? `<h4>Datos consultados</h4>${lista(datos)}` : ''}${reglas ? `<h4>Reglas aplicadas</h4>${lista(reglas)}` : ''}
+  ${calculo ? `<h4>Cálculo</h4>${lista(calculo)}` : ''}${agentes ? `<h4>Agentes</h4>${lista(agentes)}` : ''}
+  ${resultado ? `<h4>Resultado</h4><div class="res">${resultado}</div>` : ''}`;
+const cambioTxt = c => `<b>${c.id}</b> ${esc(c.nombre)}: <span class="sem ${c.de}"></span> ${SEM[c.de]} → <span class="sem ${c.a}"></span> ${SEM[c.a]} (cobertura ${c.cobertura_antes} → ${c.cobertura_despues})`;
+const tipoNodo = t => t === 'googleSheets' ? 'sheets' : t === 'code' ? 'code' : t === 'httpRequest' ? 'http' : t === 'gmail' ? 'gmail' : '';
+const nombreTipo = { googleSheets: 'Sheets', code: 'código', httpRequest: 'HTTP', gmail: 'Gmail', formTrigger: 'formulario', webhook: 'webhook', set: 'config', switch: 'switch', respondToWebhook: 'respuesta' };
+
+// ---------- Datos derivados ----------
+const P = D.plantilla;
+const elena = D.elena, sen = elena.senales;
+const kpIni = D.mapas.inicial.key_people, kpBaja = D.mapas.baja.key_people;
+const marcos = D.vacante.candidatos[0];
+const al = id => D.email.alertas.find(a => a.alerta_id === id);
+const gcIni = skl('inicial', 'CUS-01', 'gestion-claves'), gcBaja = skl('baja', 'CUS-01', 'gestion-claves'), gc003 = skl('alr003', 'CUS-01', 'gestion-claves'), gcFin = skl('validar', 'CUS-01', 'gestion-claves');
+const coIni = skl('inicial', 'CUS-02', 'conciliacion-onchain');
+const pb = (m, id) => D.planes[m].find(p => p.empleado_id === id && p.origen.startsWith('ALR'));
+const forma = id => D.nombres.formacion[id];
+
+// ---------- Pasos ----------
+const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida', 'Recalcular el riesgo', 'Propuesta y decisión humana', 'Tres meses después', 'Arquitectura y escalabilidad'];
+
+const PASOS = [
+// 1 · Arquitectura
+{ e: 0, chip: ['visual', 'Diagrama de la arquitectura real'],
+  t: 'Una capa de orquestación, no un HRIS nuevo',
+  s: 'Las definiciones dicen qué se hace, n8n lo ejecuta, el HRIS guarda los datos y una persona decide.',
+  html: () => `<div class="arq">
+    <div class="capa aparece" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:24px"><div><div class="k">Definiciones · qué se hace</div><h4>Repositorio GitHub</h4></div>
+      <p><span class="mono">funciones.yaml</span> criticidad, cobertura objetivo, impacto IA · <span class="mono">reglas-semaforo.md</span> · <span class="mono">taxonomia-skills.yaml</span> (${P.skills} skills) · <span class="mono">catalogo-formacion.yaml</span> · <span class="mono">prompts/</span></p></div>
+    <div class="capa aparece d1"><div class="k">HRIS · sistema de registro</div><h4>Google Sheets</h4><ul><li>${P.personas} personas</li><li>${P.skills_validadas} skills validadas por manager</li><li>Planes de backup, alertas, histórico</li></ul><p class="nota">En producción: Factorial, Bizneo u otro. Solo cambian los nodos que leen y escriben.</p></div>
+    <div class="flecha">⇄</div>
+    <div class="capa orq aparece d2"><div class="k">Orquestación · quién lo ejecuta</div><h4>n8n · ${D.n8n.e1.nodos + D.n8n.e2.nodos} nodos en 2 escenarios</h4>
+      <div class="agentes"><div class="agente"><b>Riesgo</b><small>cobertura, semáforo, key people</small></div><div class="agente"><b>Movilidad</b><small>vacante, candidatos, coste</small></div><div class="agente"><b>Propuesta · Claude</b><small>redacta opciones; no decide</small></div><div class="agente"><b>Skills</b><small>validación del manager</small></div></div>
+      <p class="nota">El nodo de código ejecuta el motor del repo (<span class="mono">calculo/</span>), el mismo que verifica <span class="mono">npm run verificar</span>.</p></div>
+    <div class="flecha">⇄</div>
+    <div class="capa humano aparece d3"><div class="k">Decisión · siempre humana</div><h4>People y managers</h4><ul><li>People aprueba desde el email</li><li>El manager valida skills</li><li>Cada decisión queda registrada</li></ul></div>
+    <div class="lema aparece d4"><b>El riesgo se calcula, no se opina.</b> La IA redacta; la regla decide el riesgo; la persona decide la acción.</div>
+  </div>`,
+  panel: () => panel({ datos: [`Definiciones: leídas de GitHub en cada ejecución (nodo <code>Leer definiciones</code>)`, `Datos de personas: Google Sheets (nodos <code>Leer empleados</code>, <code>Leer skills</code>…)`],
+    reglas: ['Separar <b>qué</b> se hace (repo) de <b>quién</b> lo ejecuta (n8n)', 'Cambiar un umbral = editar un archivo, no rehacer un flujo'],
+    agentes: ['Riesgo, Movilidad y Skills: reglas deterministas', 'Propuesta: Claude redacta; si falla, propuesta por reglas'] }) },
+
+// 2 · Situación inicial
+{ e: 1, chip: ['real', 'Resultado real del motor'],
+  t: '¿Dónde somos frágiles hoy?',
+  s: `${P.personas} personas, ${P.funciones} funciones. Cobertura = cuántas personas activas tienen el nivel validado que pide cada función.`,
+  html: () => `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('inicial')}${mapa('inicial')}</div>
+    <div class="col aparece d2" style="width:290px"><div class="card"><div class="etq">Key people calculadas</div><ul style="list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:8px">${kpIni.map(k => `<li style="font-size:13.5px"><b>${esc(k.nombre)}</b> ${k.oculta ? '<span class="tag oculta">oculta</span>' : ''}<br><span style="color:var(--texto-2)">${esc(k.rol)} · ${k.funciones.map(f => f.funcion).join(', ')}</span></li>`).join('')}</ul></div>
+    <div class="card" style="font-size:13.5px;line-height:1.45"><b>Nadie las ha marcado.</b> Salen del cálculo: única persona que cubre una skill de una función crítica o importante.</div></div></div>`,
+  panel: () => panel({ datos: [`<code>empleados</code>: ${P.personas} activas`, `<code>skills-empleados</code>: ${P.skills_validadas} niveles validados`, `<code>planes-backup</code>: ${P.planes} planes activos`, `<code>funciones.yaml</code>: ${P.funciones} funciones`],
+    reglas: ['Cobertura de una skill = personas activas con nivel validado ≥ mínimo', 'Cobertura de la función = la de su skill más débil', 'Verde ≥ objetivo · ámbar = 1 con backup en desarrollo · rojo = 0, o 1 sin backup', 'Prioridad = semáforo × criticidad'],
+    resultado: `${D.mapas.inicial.cuenta.rojo} en rojo · ${D.mapas.inicial.cuenta.ambar} en ámbar · ${D.mapas.inicial.cuenta.verde} en verde. ${kpIni.length} key people, ${kpIni.filter(k => k.oculta).length} oculta.` }) },
+
+{ e: 1, chip: ['real', 'Resultado real del motor'],
+  t: 'Custodia: una función crítica depende de Elena',
+  s: 'Elena es la única que sostiene la prueba de reservas. Y tenía señales de salida.',
+  html: () => `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('inicial')}${mapa('inicial', { foco: 'Custodia', marcar: ['CUS-02'] })}</div>
+    <div class="col aparece d1" style="width:330px"><div class="card"><div class="etq">Persona</div><h3 style="margin:4px 0 2px">${esc(elena.nombre)}</h3><div style="color:var(--texto-2);font-size:14px">${esc(elena.rol)} · ${elena.antiguedad_meses} meses en Acme</div>
+      <div style="margin-top:12px;font-size:13.5px;line-height:1.5"><span class="tag p1">Key person</span> única cobertura de <b>${esc(sk('conciliacion-onchain'))}</b> (nivel ≥ ${coIni.nivel_minimo}) en <b>CUS-02</b>, función crítica en rojo <b>P1</b>.</div></div>
+      <div class="card aparece d3"><div class="etq">Señales de rotación · solo People</div><ul style="margin-top:8px;font-size:13.5px;line-height:1.6;padding-left:16px">${sen.senales.map(s => `<li>${num(s.replace(/^S\d\s/, ''))}</li>`).join('')}</ul><div class="nota" style="margin-top:6px">Señales objetivas, no una probabilidad de fuga. Nunca se muestran a un manager.</div></div></div></div>`,
+  panel: () => panel({ datos: ['<code>skills-empleados</code> de Custodia', '<code>bandas-salariales</code>, <code>encuesta-clima-agregada</code> (n ≥ 5)'],
+    reglas: ['Key person = única cobertura de una skill requerida en función crítica o importante', 'Señales de rotación: <code>reglas-senales-rotacion.md</code>'],
+    calculo: [`CUS-02 · ${esc(sk('conciliacion-onchain'))} ≥ ${coIni.nivel_minimo}: ${coIni.personas.map(esc).join(', ')} → cobertura ${coIni.cobertura}`, `CUS-01 · ${esc(sk('gestion-claves'))} ≥ ${gcIni.nivel_minimo}: ${gcIni.personas.map(esc).join(', ')} → cobertura ${gcIni.cobertura}`],
+    resultado: 'Prioridad 1 <b>antes</b> de que se vaya. El sistema lo habría avisado.' }) },
+
+// 3 · Elena comunica su salida
+{ e: 2, chip: ['visual', 'Representación del formulario de n8n'],
+  t: 'Elena comunica su salida',
+  s: 'People registra la baja. En producción, el evento llegaría directamente del HRIS.',
+  html: () => formulario(D.n8n.e1.formulario, 'Formulario baja', { empleado_id: elena.id }),
+  panel: () => panel({ datos: ['Entrada: id de la persona (<code>E007</code>)'], agentes: ['Disparo del escenario 1 de n8n'], resultado: 'El formulario solo marca la baja. Todo lo demás lo hace el flujo.' }) },
+
+{ e: 2, chip: ['visual', 'Nodos reales del escenario 1 · animación'],
+  t: 'Qué se pone en marcha',
+  s: `El escenario 1 tiene ${D.n8n.e1.nodos} nodos en cuatro bloques. Se lee de izquierda a derecha.`,
+  html: () => `<div class="flujo">${D.n8n.e1.bloques.map((b, i) => `<div class="bloque" data-b="${i}"><h4>${esc(b.titulo)}</h4>${b.nodos.map(n => `<div class="nodo ${tipoNodo(n.tipo)}">${esc(n.nombre)} <small>${nombreTipo[n.tipo] || n.tipo}</small></div>`).join('')}</div>`).join('')}</div>
+    <div class="ley"><span><i style="background:#1e8e3e"></i>Google Sheets (HRIS)</span><span><i style="background:#e8710a"></i>Motor de reglas del repo</span><span><i style="background:var(--acento)"></i>GitHub / Claude</span><span><i style="background:#d93025"></i>Email a People</span></div>`,
+  luego: () => D.n8n.e1.bloques.forEach((_, i) => temporizadores.push(despues(() => document.querySelector(`[data-b="${i}"]`)?.classList.add('on'), 400 + i * 900))),
+  panel: () => panel({ datos: ['Definiciones y prompt: GitHub (<code>Leer definiciones</code>)', 'Empleados, skills, planes, alertas, cobertura: Sheet'],
+    agentes: ['<b>Motor</b>: agente de Riesgo + Movilidad (código del repo)', '<b>Claude propone</b>: redacta la propuesta', '<b>Propuesta final</b>: si Claude falla, propuesta por reglas', '<b>Escrituras</b> + <b>¿A qué hoja?</b>: cada fila a su hoja'],
+    resultado: 'Ningún dato vive dentro de n8n: lee, calcula, escribe y avisa.' }) },
+
+// 4 · Recalcular
+{ e: 3, chip: ['real', 'Resultado real del motor'],
+  t: 'El sistema recalcula el riesgo',
+  s: 'Mismas reglas, un dato distinto: Elena ya no está activa.',
+  html: () => `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('inicial')}${mapa('inicial', { foco: 'Custodia' })}</div>
+    <div class="col aparece d4" style="width:320px"><div class="card"><div class="etq">Cambios frente a la foto anterior</div><ul style="margin-top:8px;display:flex;flex-direction:column;gap:8px;list-style:none;font-size:13.5px;line-height:1.45">${D.cambios.baja.map(c => `<li>↓ ${cambioTxt(c)}</li>`).join('')}</ul></div>
+    <div class="card" style="font-size:13.5px;line-height:1.45">CUS-03 baja de cobertura pero sigue en verde: <b>no genera alerta</b>. Solo avisa lo que empeora de color.</div></div></div>`,
+  luego: () => transicion('inicial', 'baja'),
+  panel: () => panel({ datos: ['<code>empleados</code>: E007 → <code>baja</code>', '<code>skills-empleados</code>, <code>planes-backup</code>, <code>funciones.yaml</code>', 'Hoja <code>cobertura</code>: foto anterior para comparar'],
+    reglas: ['Solo cuentan personas activas con nivel validado', 'Rojo = cobertura 0, o 1 sin backup en desarrollo', 'Crítica × rojo = P1'],
+    calculo: [`CUS-01 · ${esc(sk('gestion-claves'))} ≥ ${gcBaja.nivel_minimo}: ${gcIni.personas.map(esc).join(', ')} → <b>${gcBaja.personas.map(esc).join(', ')}</b> = ${gcBaja.cobertura}, sin backup → rojo P1`, `CUS-02 · ${esc(sk('conciliacion-onchain'))}: ${coIni.cobertura} → 0 → rojo P1`],
+    agentes: ['Agente de Riesgo (nodo <code>Motor</code>)'],
+    resultado: `${D.cambios.baja.length} funciones empeoran. Mapa: ${D.mapas.baja.cuenta.rojo} · ${D.mapas.baja.cuenta.ambar} · ${D.mapas.baja.cuenta.verde}.` }) },
+
+{ e: 3, chip: ['real', 'Resultado real del motor'],
+  t: 'Aparece una dependencia nueva',
+  s: 'Al irse Elena, Marcos se queda solo firmando claves. Ahora la key person es él.',
+  html: () => {
+    const sale = kpIni.filter(k => !kpBaja.some(x => x.id === k.id)), entra = kpBaja.filter(k => !kpIni.some(x => x.id === k.id));
+    return `<div class="fila" style="gap:22px"><div class="card aparece" style="flex:1"><div class="etq">Key people · antes</div>${kpIni.map(k => `<div style="padding:8px 0;border-bottom:1px solid var(--borde);font-size:14px;${sale.includes(k) ? 'text-decoration:line-through;color:var(--texto-3)' : ''}">${esc(k.nombre)} <span style="color:var(--texto-2)">· ${k.funciones.map(f => f.funcion).join(', ')}</span></div>`).join('')}</div>
+      <div class="card aparece d2" style="flex:1"><div class="etq">Key people · después</div>${kpBaja.map(k => `<div style="padding:8px 0;border-bottom:1px solid var(--borde);font-size:14px;${entra.includes(k) ? 'font-weight:700;color:var(--rojo)' : ''}">${entra.includes(k) ? '＋ ' : ''}${esc(k.nombre)} <span style="color:var(--texto-2);font-weight:400">· ${k.funciones.map(f => `${f.funcion} (${esc(sk(f.skill))})`).join(', ')}</span></div>`).join('')}</div></div>
+      <div class="card aparece d3" style="margin-top:16px;font-size:15px;line-height:1.5">El mapa no solo cuenta huecos: <b>descubre a quién no podemos perder ahora</b>. Esa es la entrada del siguiente paso.</div>`; },
+  panel: () => panel({ reglas: ['Key person = única cobertura de una skill requerida en función crítica o importante', 'Se deduce, no se declara'],
+    calculo: [`${esc(sk('gestion-claves'))} en CUS-01: única persona = ${gcBaja.personas.map(esc).join(', ')}`],
+    resultado: `Sale ${esc(elena.nombre)}; entra ${esc(marcos.nombre)}.` }) },
+
+// 5 · Propuesta y decisión
+{ e: 4, chip: ['real', 'Resultado real del motor · agente de Movilidad'],
+  t: 'Dos maneras de cubrir el puesto, con su coste',
+  s: 'El sistema calcula el perfil del puesto con lo que hacía Elena y busca dentro. No elige: pone el coste encima de la mesa.',
+  html: () => `<div class="fila" style="gap:18px">
+    <div class="card aparece" style="flex:1.1"><div class="etq">Perfil del puesto · ${esc(D.vacante.rol)}</div><table style="margin-top:8px"><tr><th>Skill</th><th>Nivel</th><th>${esc(corto(marcos.nombre))} tiene</th></tr>${D.vacante.perfil.map(p => { const b = marcos.brechas.find(x => x.skill === p.skill); return `<tr><td>${esc(sk(p.skill))}</td><td>${p.nivel}</td><td>${b ? `<span style="color:var(--rojo);font-weight:700">${b.tiene}</span> ${b.formacion.length ? `→ ${b.formacion.join(', ')}` : '<span class="nota">sin formación en catálogo</span>'}` : '<span style="color:var(--verde);font-weight:700">✓</span>'}</td></tr>`; }).join('')}</table>
+      <div class="nota" style="margin-top:8px">Cumple ${marcos.cumple} de ${marcos.de}. Equipo a cargo: ${D.vacante.equipo} personas.</div></div>
+    <div class="col" style="flex:1"><div class="card aparece d2"><div class="etq">Opción A · Buscar fuera</div><p style="font-size:14px;margin-top:6px;line-height:1.45">${esc(al('ALR-001').por_que)}</p><p style="font-size:14px;color:var(--rojo);margin-top:6px">${esc(al('ALR-001').riesgo_si_no)}</p></div>
+      <div class="card aparece d3"><div class="etq">Opción B · Mover a ${esc(marcos.nombre)}</div><p style="font-size:14px;margin-top:6px;line-height:1.45">Cumple ${marcos.cumple} de ${marcos.de} skills del puesto.</p><p style="font-size:14px;color:var(--rojo);margin-top:6px">${esc(al('ALR-002').riesgo_si_no)}</p></div></div></div>`,
+  panel: () => panel({ datos: ['Skills validadas de Elena (perfil del puesto, calculado con ella aún dentro)', '<code>catalogo-formacion.yaml</code>'],
+    reglas: ['Perfil = skills que Elena sostenía en sus funciones + liderazgo del puesto', 'Coste organizativo: ¿el candidato ya es key person?'],
+    agentes: ['Agente de Movilidad (<code>vacante()</code> en <code>calculo/cobertura.js</code>)'],
+    resultado: `Candidatos internos: ${D.vacante.candidatos.map(c => `${esc(c.nombre)} (${c.cumple}/${c.de})`).join(', ')}. Key person en: ${marcos.key_person_en.join(', ')}.` }) },
+
+{ e: 4, chip: ['real', 'Contenido real · texto por reglas'],
+  t: 'La propuesta llega a People',
+  s: 'Un email con dos partes: arriba lo que vería dirección; abajo, solo para People, lo confidencial y los botones para aprobar.',
+  html: () => { const op = D.email.alertas.filter(a => a.grupo), otras = D.email.alertas.filter(a => !a.grupo);
+    return `<div class="mail aparece"><div class="hd"><b>${esc(D.email.asunto.replace('[Acme People OS] ', ''))}</b><small>De: Acme People OS · Para: People · [Acme People OS]</small></div>
+    <div class="bd"><div style="grid-column:1/-1">${esc(D.email.resumen_direccion)}</div>
+      ${op.map(a => `<div class="opcion"><b>${esc(a.accion.split(':')[0])}</b><span>${esc(a.por_que)}</span><span class="coste">${esc(a.riesgo_si_no)}</span><span class="aprobar">Aprobar ${a.alerta_id}</span></div>`).join('')}
+      ${otras.map(a => `<div class="opcion"><b>${esc(a.accion)}</b><span>${esc(a.por_que)}</span><span class="aprobar">Aprobar ${a.alerta_id}</span></div>`).join('')}
+      <div class="confid" style="grid-column:1/-1"><b>Solo People (confidencial).</b> ${num(D.email.confidencial)}</div></div></div>`; },
+  panel: () => panel({ datos: ['Cambios, candidatos, formación, señales de rotación', '<code>prompts/proponer-acciones.md</code>'],
+    reglas: ['El resumen para dirección no lleva salarios ni señales individuales', 'Toda acción queda <b>pendiente</b> hasta que People la aprueba'],
+    agentes: ['<b>Claude propone</b>: redacta con estos datos', '<b>Propuesta final</b>: si Claude no responde, este texto por reglas'],
+    resultado: `Texto de esta pantalla: propuesta por reglas (<code>npm run video</code>, sin API). En n8n el texto lo redacta Claude; las acciones, candidatos y cifras son los mismos. ${D.email.alertas.length} filas en la hoja <code>alertas</code>.` }) },
+
+{ e: 4, chip: ['real', 'Resultado real del motor'],
+  t: 'People decide: opción B, mover a Marcos',
+  s: 'Aprobar una opción descarta la otra. El cambio se aplica y el mapa se recalcula.',
+  html: () => { const p = pb('alr002', 'E008');
+    return `<div class="fila" style="gap:18px"><div class="card aparece" style="flex:1.3"><div class="etq">Hoja alertas</div><table style="margin-top:6px"><tr><th>Alerta</th><th>Acción</th><th>Decisión</th></tr>${D.alertas002.map(a => `<tr><td><b>${a.alerta_id}</b></td><td>${esc(a.accion.length > 70 ? a.accion.slice(0, 70) + '…' : a.accion)}</td><td><span class="dec ${a.decision}">${a.decision}</span></td></tr>`).join('')}</table></div>
+      <div class="col" style="flex:1"><div class="card aparece d2" style="font-size:14px;line-height:1.55"><div class="etq">Se aplica</div>${esc(marcos.nombre)} → <b>${esc(D.marcos002.rol)}</b><br>${D.marcos002.dependen} personas pasan a depender de él<br>Plan <b>${p.plan_id}</b>: ${esc(sk(p.skill_id))} → ${p.nivel_objetivo} con ${p.formacion_id}<br><span class="nota">${esc(forma(p.formacion_id).nombre)}</span></div>
+      <div class="card aparece d3" style="font-size:15px;line-height:1.5">El mapa <b>no cambia de color</b>: promover a alguien no crea skills nuevas.</div></div></div>`; },
+  panel: () => panel({ datos: ['Botón <b>Aprobar ALR-002</b> del email (webhook de n8n)'], reglas: ['Opciones del mismo grupo son excluyentes: ALR-001 se descarta sola'],
+    agentes: ['<b>Aplicar decisión</b>: cambio de rol, equipo y plan para cerrar la brecha', 'Agente de Riesgo: recalcula'],
+    resultado: `Cambios en el mapa: ${D.cambios.alr002.length || 'ninguno'}.` }) },
+
+{ e: 4, chip: ['real', 'Resultado real del motor'],
+  t: 'Plan de backup aprobado: de rojo a ámbar',
+  s: 'Javier está a un nivel y tiene interés declarado. Con un plan activo, la función deja de estar en rojo.',
+  html: () => { const p = pb('alr003', 'E009'), f = forma(p.formacion_id);
+    return `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('alr002')}${mapa('alr002', { foco: 'Custodia' })}</div>
+    <div class="col aparece d1" style="width:320px"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">Plan ${p.plan_id} · activo</div><b>${esc(D.javier.nombre)}</b><br>${esc(sk(p.skill_id))}: ${D.javier.skill.nivel_validado} → ${p.nivel_objetivo}<br>${p.formacion_id} · ${esc(f.nombre)} (${f.semanas} semanas)</div>
+    <div class="card aparece d4" style="font-size:13.5px;line-height:1.5">${D.cambios.alr003.map(c => '↑ ' + cambioTxt(c)).join('<br>')}<br><br>CUS-02 sigue en rojo: con cobertura 0, un plan no basta.</div></div></div>`; },
+  luego: () => transicion('alr002', 'alr003'),
+  panel: () => panel({ datos: ['Botón <b>Aprobar ALR-003</b>', 'Nueva fila en <code>planes-backup</code>'],
+    reglas: ['Backup en desarrollo = plan activo + nivel validado = mínimo − 1', 'Cobertura 1 con backup en desarrollo → ámbar'],
+    calculo: [`CUS-01 · ${esc(sk('gestion-claves'))}: cobertura ${gc003.cobertura}, backup en desarrollo: ${gc003.backups.map(esc).join(', ')} → ámbar`],
+    resultado: `Mapa: ${D.mapas.alr003.cuenta.rojo} · ${D.mapas.alr003.cuenta.ambar} · ${D.mapas.alr003.cuenta.verde}. Javier aún no cuenta como cobertura: está aprendiendo.` }) },
+
+// 6 · Tres meses después
+{ e: 5, chip: ['visual', 'Representación del formulario de n8n'],
+  t: 'Tres meses después: el manager valida',
+  s: 'Javier ha completado el mentoring. Completar un curso no sube el nivel: lo valida una persona.',
+  html: () => formulario(D.n8n.e2.formulario, 'Formulario skill', { empleado_id: D.javier.id, skill_id: 'gestion-claves', nivel: '3', validado_por: 'E008' },
+    { empleado_id: D.javier.nombre, skill_id: sk('gestion-claves'), nivel: 'avanzado', validado_por: marcos.nombre }),
+  panel: () => panel({ datos: ['Entrada: persona, skill, nivel y quién valida'], reglas: ['Solo cuentan niveles <b>validados</b> por el manager, nunca los declarados'],
+    agentes: [`Agente de Skills (escenario 2, ${D.n8n.e2.nodos} nodos): actualiza <code>skills-empleados</code>, cierra el plan y recalcula`] }) },
+
+{ e: 5, chip: ['real', 'Resultado real del motor'],
+  t: 'La función vuelve a verde',
+  s: 'El plan se cierra y Javier ya cuenta como cobertura. El ciclo completo, registrado en el histórico.',
+  html: () => { const h = D.historico.filter(x => x.funcion_id === 'CUS-01'), lbl = e => e.replace(/ \(.*\)$/, '').replace('Baja de Elena Prieto Marín', 'Baja de Elena').replace('Nueva skill validada', 'Skill validada');
+    return `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('alr003')}${mapa('alr003', { foco: 'Custodia' })}</div>
+    <div class="col aparece d1" style="width:360px"><div class="card"><div class="etq">Histórico de CUS-01</div><div class="tl" style="margin-top:14px">${h.map(x => `<div class="hito"><div class="pt ${x.semaforo}">${x.cobertura}</div>${esc(lbl(x.evento))}</div>`).join('')}</div></div>
+    <div class="card aparece d3" style="font-size:13.5px;line-height:1.5">${D.cambios.validar.map(c => '↑ ' + cambioTxt(c)).join('<br>')}<br>Plan ${pb('validar', 'E009').plan_id} → <b>${pb('validar', 'E009').estado}</b>.${D.mapas.validar.key_people.some(k => k.id === marcos.id) ? '' : ` ${esc(marcos.nombre)} deja de ser key person.`}<br><br><span style="color:var(--rojo)">CUS-02 sigue en rojo.</span> El sistema no se engaña: hay un plan, pero hoy nadie sabe hacerlo.</div></div></div>`; },
+  luego: () => transicion('alr003', 'validar'),
+  panel: () => panel({ datos: ['<code>skills-empleados</code>: E009 gestion-claves 3, validado por E008', '<code>planes-backup</code>: plan → completado'],
+    calculo: [`CUS-01 · ${esc(sk('gestion-claves'))} ≥ ${gcFin.nivel_minimo}: ${gcFin.personas.map(esc).join(', ')} = ${gcFin.cobertura} ≥ objetivo → verde`],
+    agentes: ['Agente de Skills → agente de Riesgo', 'Email de cierre a People: <i>Riesgo reducido</i>'],
+    resultado: `Mapa final: ${D.mapas.validar.cuenta.rojo} · ${D.mapas.validar.cuenta.ambar} · ${D.mapas.validar.cuenta.verde}. Key people: ${D.mapas.validar.key_people.length}.` }) },
+
+// 7 · Arquitectura y escalabilidad
+{ e: 6, chip: ['real', 'Archivo real del repo'],
+  t: 'Cambiar una regla es editar un archivo',
+  s: 'Las reglas no están dentro del flujo. n8n las lee de GitHub en cada ejecución.',
+  html: () => `<div class="fila" style="gap:22px;align-items:flex-start"><pre class="yaml aparece" style="flex:1.2"># definiciones/funciones.yaml\n${esc(D.definiciones.cus01).replace(/^(\s*-?\s*)([a-z_]+):/gm, '$1<span class="k">$2</span>:').replace(/(nivel: )(\d)/g, '$1<span class="v">$2</span>')}</pre>
+    <div class="col" style="flex:1"><div class="card aparece d1" style="font-size:14.5px;line-height:1.55"><b>Ejemplo.</b> Si dirección decide que custodia necesita 3 personas, se añade <span class="mono">cobertura_objetivo: 3</span> a CUS-01. Commit, y la siguiente ejecución ya lo aplica.</div>
+      <div class="card aparece d2" style="font-size:14.5px;line-height:1.55">Lo mismo con la criticidad, los niveles, el catálogo de formación o el prompt de Claude. <b>El flujo no se toca.</b></div>
+      <div class="card aparece d3" style="font-size:14.5px;line-height:1.55">El motor es una sola versión de la lógica, probada antes de cada ensayo: <span class="mono">npm run verificar</span>, <span class="mono">npm run probar-n8n</span>.</div></div></div>`,
+  panel: () => panel({ datos: ['<code>definiciones/</code> y <code>prompts/</code> en GitHub'], reglas: ['<code>reglas-semaforo.md</code>: fuente única de las reglas'], agentes: ['Nodo <code>Leer definiciones</code> (HTTP a GitHub)'], resultado: 'Si mañana el orquestador no es n8n, definiciones y motor sirven igual.' }) },
+
+{ e: 6, chip: ['diseno', 'Estado según el README · construido y diseñado'],
+  t: 'Mismo patrón para el resto de People',
+  s: 'Cada proceso nuevo se construye con las mismas piezas, sobre un único registro de personas.',
+  html: () => { const pr = [['Skills y cobertura', 'c', 'Construido'], ['Movilidad interna', 'c', 'Construido'], ['Formación dirigida al riesgo', 'c', 'Construido'], ['Rotación no deseada', 'c', 'Construido · solo People'], ['Compensación', 'd', 'Diseñado'], ['Clima', 'd', 'Diseñado'], ['Onboarding / offboarding', 'd', 'Diseñado'], ['Selección', 'f', 'Fuera de alcance'], ['Desempeño', 'f', 'Fuera de alcance'], ['Administración y nómina', 'f', 'No se reinventa']];
+    return `<div class="receta aparece"><span>Definiciones en el repo</span><i>→</i><span>Disparo</span><i>→</i><span>Regla determinista</span><i>→</i><span>IA si hay texto</span><i>→</i><span>Aviso</span><i>→</i><span class="h">Decisión humana registrada</span></div>
+    <div class="procs aparece d2" style="margin-top:22px">${pr.map(([n, c, e]) => `<div class="proc"><b>${n}</b><span class="est ${c}">${e}</span></div>`).join('')}</div>
+    <div class="card aparece d3" style="margin-top:18px;font-size:14.5px;line-height:1.5">Ejemplo: en <b>offboarding</b>, la baja ya dispara el recálculo que acabamos de ver. Onboarding es el camino inverso: alta → plan por rol → la persona entra en el mapa desde el día 1. Receta en <span class="mono">docs/escalado.md</span>.</div>`; },
+  panel: () => panel({ reglas: ['Lo que decide riesgos o prioridades: regla explícita', 'Lo que es texto: IA con revisión humana', 'Lo que afecta a una persona: decide una persona'], resultado: 'Solo "Construido" funciona hoy de extremo a extremo. El resto está diseñado, no implementado.' }) },
+
+{ e: 6, chip: ['visual', 'Cierre'],
+  t: '', s: '',
+  html: () => `<div class="cierre"><div><blockquote class="aparece">People OS no solo automatiza procesos: ayuda a <span>desarrollar, compartir y preservar</span> las capacidades que necesita el negocio.</blockquote><p class="aparece d2">Construido como trabajaría el departamento: una persona + IA · ${P.personas} personas · ${P.funciones} funciones · todo en un repo</p></div></div>`,
+  panel: null },
+];
+
+// ---------- Navegación ----------
+let i = 0, temporizadores = [], panelAbierto = /panel/.test(location.search);
+const nav = $('#nav');
+nav.innerHTML = `<h6>Demostración</h6>${ESCENAS.map((n, k) => `<div class="esc" data-e="${k}"><span class="n">${k + 1}</span>${n}</div>`).join('')}<div class="nav-pie">Datos: <span class="mono">npm run video</span> (${esc(D.generado)})<br>Motor real del repo · propuesta por reglas</div>`;
+nav.querySelectorAll('.esc').forEach(el => el.onclick = () => ir(PASOS.findIndex(p => p.e === +el.dataset.e)));
+$('#puntos').innerHTML = PASOS.map(() => '<i></i>').join('');
+
+function ir(n) {
+  i = Math.max(0, Math.min(PASOS.length - 1, n));
+  temporizadores.forEach(clearTimeout); temporizadores = [];
+  const p = PASOS[i];
+  $('#miga').textContent = ESCENAS[p.e];
+  $('#titulo').textContent = p.t; $('#sub').textContent = p.s;
+  $('#chip').className = 'chip ' + p.chip[0]; $('#chip').textContent = p.chip[1];
+  $('#lienzo').innerHTML = p.html();
+  $('#panel').innerHTML = p.panel ? p.panel() : '';
+  $('#aside').classList.toggle('abierto', !!p.panel && panelAbierto);
+  $('#btnPanel').classList.toggle('on', panelAbierto); $('#btnPanel').disabled = !p.panel;
+  if (p.luego) { const t = p.luego(); if (t) temporizadores.push(t); }
+  nav.querySelectorAll('.esc').forEach(el => { const e = +el.dataset.e; el.classList.toggle('activa', e === p.e); el.classList.toggle('hecha', e < p.e); });
+  document.querySelectorAll('#puntos i').forEach((el, k) => el.classList.toggle('on', k === i));
+  $('#ant').disabled = i === 0; $('#sig').disabled = i === PASOS.length - 1;
+  history.replaceState(null, '', '#' + (i + 1));
+}
+function alternarPanel() {
+  if (!PASOS[i].panel) return;
+  panelAbierto = !panelAbierto; // sin volver a pintar el paso: la animación no se repite
+  $('#aside').classList.toggle('abierto', panelAbierto); $('#btnPanel').classList.toggle('on', panelAbierto);
+}
+$('#ant').onclick = () => ir(i - 1); $('#sig').onclick = () => ir(i + 1); $('#btnPanel').onclick = alternarPanel;
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); ir(i + 1); }
+  else if (e.key === 'ArrowLeft' || e.key === 'PageUp') ir(i - 1);
+  else if (e.key.toLowerCase() === 'd') alternarPanel();
+  else if (e.key.toLowerCase() === 'r') ir(i); // repite la animación del paso
+});
+function escalar() { const s = Math.min(innerWidth / 1600, innerHeight / 900); $('#stage').style.transform = `translate(-50%, -50%) scale(${s})`; }
+addEventListener('resize', escalar); escalar();
+ir((+location.hash.slice(1) || 1) - 1);
+</script>
+</body>
+</html>

@@ -79,7 +79,9 @@ Principios de diseño (argumentos para el CEO):
 │   ├── cifras.js                 # `npm run cifras`: cifras que citan guion y plan (las usa el auditor)
 │   ├── propuesta.js              # Propuesta por reglas, opciones de vacante y mensaje para Claude (demo y n8n)
 │   ├── hojas.js                  # Filas de las hojas calculadas (export y n8n)
-│   └── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19)
+│   ├── exportar-n8n.js           # `npm run n8n`: genera los 2 escenarios de n8n y salidas/n8n/definiciones.json (D-16, D-18, D-19)
+│   └── exportar-video.js         # `npm run video`: datos del reproductor del vídeo desde el motor (D-20)
+├── video/                        # Reproductor de la demo para grabar el vídeo + guion de locución (D-20)
 ├── salidas/sheets/               # CSV listos para importar + LEEME.md con los pasos
 ├── prompts/
 │   ├── normalizar-skills.md      # Texto libre → taxonomía con nivel propuesto y evidencia
