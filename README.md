@@ -1,18 +1,26 @@
 # People OS · Acme
 
-**Capa de orquestación y agentes sobre el HRIS de una compañía de 160 personas, para que una sola persona gestione el 360º de RRHH.**
+**Cómo gestionaría una sola persona el 360º de RRHH de una compañía de 160 personas, orquestando agentes sobre el HRIS en lugar de construir uno nuevo.**
 
 Prueba técnica. Acme es una fintech cripto regulada y ficticia (MiCA, sujeto obligado AML) en pleno plan *AI first*. Todos los datos (personas, skills, salarios, encuestas) son inventados.
 
-**Lo que hace, en una línea:** se va la responsable de custodia → el sistema recalcula el riesgo, propone cómo cubrir el puesto y a quién retener → People aprueba desde el email → el mapa vuelve a cambiar → tres meses después, un agente avisa al manager, este valida una skill y el riesgo baja → cada mes, otro agente vigila que nada se degrade en silencio.
+El README va de lo general a lo concreto:
 
-**Pruébalo sin instalar nada.** Basta con el enlace del panel (en el mensaje de la prueba): una página que sirve el propio n8n, con el mapa en vivo, los pasos a seguir, las decisiones con su botón *Aprobar*, la bandeja con los emails que genera el sistema y un botón para reiniciar la demo. Detrás no hay nada simulado: son los cuatro escenarios de n8n trabajando sobre el Sheet (D-22).
+1. **[Visión](#parte-1--visión-people-os)**: el plano completo de People OS y cómo encaja en la compañía. Casi todo es diseño.
+2. **[Alcance de la demo](#parte-2--la-demo-se-va-elena)**: un caso construido de principio a fin, la salida de una persona clave, y cómo probarlo.
+3. **[Parte técnica](#parte-3--cómo-está-construido)**: cómo está hecho el repo, qué decidí y por qué, y sus límites.
+
+**Pruébalo sin instalar nada:** con el enlace del panel que va en el mensaje de la prueba (detalle en la [parte 2](#cómo-probarlo)).
 
 ---
 
-## 1. El problema y el criterio
+## Parte 1 · Visión: People OS
 
-La pregunta de partida no es "cómo automatizo RRHH", es **qué debe seguir haciendo una persona y qué no**. Mi respuesta:
+> Esta parte es el **plano completo**: cómo construiría People OS para cubrir el 360º con una sola persona. Lo que funciona hoy está en la parte 2 y aparece como **Construido** en las tablas. El resto es diseño.
+
+### 1.1 El criterio: qué hace una persona y qué no
+
+La pregunta de partida no es "cómo automatizo RRHH", es **qué debe seguir haciendo una persona**.
 
 | Tipo de trabajo | Quién lo hace | Ejemplo |
 |---|---|---|
@@ -21,163 +29,235 @@ La pregunta de partida no es "cómo automatizo RRHH", es **qué debe seguir haci
 | Decisiones sobre personas | **Humano** | Aprobar una movilidad, una contratación, un plan de formación |
 | Conversaciones | **Humano** | Permanencia, feedback, salidas |
 
-Un límite que no se cruza: **la IA no decide nada sobre una persona.** Propone, redacta y el humano decide, y queda registrado. El AI Act europeo trata la IA en decisiones de empleo como alto riesgo; aquí el riesgo, el semáforo y los candidatos salen de reglas que se pueden leer y comprobar, no de un modelo.
+Un límite que no se cruza: **la IA no decide nada sobre una persona.** Propone y redacta; decide People o el manager, y queda registrado. El AI Act europeo trata la IA en decisiones de empleo como alto riesgo.
 
-**El proceso elegido para la demo:** cobertura de funciones críticas y riesgo de salida. En una empresa regulada, una función sin cobertura (custodia, AML, seguridad) pone en riesgo la licencia. Y es lo que una persona sola no puede hacer a mano: cruzar 160 personas, 39 skills y 24 funciones cada vez que algo cambia.
+### 1.2 People OS dentro de la compañía
 
-## 2. Arquitectura
+People OS no es un departamento aislado ni un HRIS nuevo. Es **uno de los módulos de Acme OS**, el sistema operativo de la compañía, junto a Finance, Operations, Product o Risk & Compliance. Todos cuelgan de Acme OS y comparten dos cosas:
 
-**Principio: separar qué se hace (definiciones y reglas) de quién lo ejecuta (orquestador y agentes).** Cambiar un umbral es editar un archivo, no rehacer un flujo. Y el orquestador se puede cambiar sin perder la lógica.
+- **Un registro único de personas** (el HRIS): quién es quién, su rol, su equipo y sus skills. Ningún módulo mantiene su propia lista de personas.
+- **Eventos**: cuando algo pasa en un módulo, los demás se enteran y actúan. Una alta en People abre cuentas en IT y avisa a Finanzas para la nómina. Un cambio regulatorio en Cumplimiento puede subir la criticidad de una función en People.
 
 ```mermaid
 flowchart TB
-  subgraph HRIS["Sistema de registro · HRIS"]
-    S[(Google Sheets en la demo<br/>Factorial, Bizneo u otro en producción)]
-  end
-  subgraph DEF["Definiciones · qué se hace · repo"]
-    D1[funciones.yaml<br/>criticidad · cobertura objetivo · impacto IA]
-    D2[reglas-semaforo.md<br/>reglas-senales-rotacion.md]
-    D3[taxonomia-skills.yaml<br/>catalogo-formacion.yaml]
-    D4[prompts/]
-  end
-  subgraph ORQ["Orquestación · n8n + agentes"]
-    A1[Agente de riesgo]
-    A2[Agente de movilidad]
-    A3[Agente de propuesta · Claude]
-    A4[Agente de skills]
-    A5[Seguimiento de planes ⏱]
-    A6[Centinela · informe ⏱]
-  end
-  T((Calendario<br/>cada lunes · día 1))
-  H{{People y managers deciden<br/>desde el email}}
-  DEF --> ORQ
-  S <--> ORQ
-  T --> A5
-  T --> A6
-  ORQ --> H
-  H --> ORQ
+  ACME["<b>Acme OS</b><br/>registro único de personas · eventos compartidos"]
+  ACME --> PEO["<b>People OS</b>"]
+  ACME --> FIN["Finance OS"]
+  ACME --> OPS["Operations OS"]
+  ACME --> PRO["Product OS"]
+  ACME --> RC["Risk & Compliance OS"]
+
+  PEO --> T["Talento"]
+  PEO --> OB["On y offboarding"]
+  PEO --> AD["Administración"]
+  PEO --> DE["Desarrollo"]
+  PEO --> EX["Experiencia"]
+  PEO --> R["Riesgo · transversal"]
+
+  classDef people fill:#1f6feb,color:#fff,stroke:#1f6feb
+  classDef area fill:#ddf4ff,color:#0a3069,stroke:#54aeff
+  classDef otro fill:#f6f8fa,color:#57606a,stroke:#d0d7de
+  class PEO people
+  class T,OB,AD,DE,EX,R area
+  class FIN,OPS,PRO,RC otro
 ```
 
-| Capa | Qué contiene | Dónde | Quién la cambia |
+### 1.3 Principio: orquestar, no reinventar
+
+Tres capas, cada una con un dueño distinto:
+
+| Capa | Qué es | Herramienta | Quién la cambia |
 |---|---|---|---|
-| **HRIS** | Empleados, skills validadas, planes, encuesta agregada | Google Sheets (demo) | People y managers |
-| **Definiciones** | Funciones y criticidad, reglas, umbrales, taxonomía, catálogo, prompts | `definiciones/`, `prompts/` | People, editando un archivo |
-| **Orquestación y agentes** | Disparadores (eventos y calendario), cálculo, propuesta, avisos, seguimiento, aprobación | n8n (`flujos/n8n/`) con el motor de `calculo/` | — |
-| **Decisión** | Aprobar, descartar, validar | Email a People, formulario del manager | Humano, siempre |
+| **Sistema de registro** | Empleados, ausencias, documentos, nómina | El HRIS de la compañía (Factorial, Bizneo u otro). En la demo, Google Sheets | No se reinventa: se conecta por API |
+| **Definiciones** | Reglas, umbrales, criticidad de funciones, catálogos, prompts | Archivos en el repo | People, editando un archivo, sin tocar flujos |
+| **Orquestación y agentes** | Disparadores, cálculo, propuestas, avisos, aprobaciones | n8n + Claude | Nadie a mano: ejecuta lo que dicen las definiciones |
 
-**Sobre el HRIS.** No he construido un HRIS ni quiero hacerlo. Google Sheets hace de sistema de registro en la demo porque es lo que permite enseñar el 360º en tres días. Los nodos `Leer empleados`, `Actualizar skills`, `Guardar planes` son el **adaptador**: en producción apuntan a la API de Factorial, Bizneo o el HRIS que use la compañía. Definiciones, motor de cálculo y flujos no cambian.
+La conexión con el HRIS es un **adaptador**. Si la compañía cambia de HRIS, se cambia el adaptador; definiciones, reglas y agentes siguen igual.
 
-**Dónde está la IA y dónde no.** Sí: convertir texto en datos (captura de skills) y datos en texto (propuestas, informes). No: el riesgo. Si alguien pregunta "¿por qué está en rojo?", la respuesta es una regla de `definiciones/reglas-semaforo.md`, no una opinión del modelo. Y si la API de Claude no responde, el flujo sigue con una propuesta generada por reglas: el sistema nunca se queda en blanco.
+### 1.4 Las áreas y sus agentes
 
-## 3. Los agentes
+Pocos agentes por área, cada uno con una tarea concreta. Ninguno decide sobre una persona: detectan, calculan, proponen y redactan.
 
-Pocos agentes, cada uno con una tarea concreta, encadenados. Una salida de uno es la entrada del siguiente. Fichas de cada uno: [`agentes/`](agentes/README.md).
-
-| Agente | Qué hace | Áreas que toca | Estado |
+| Área | Agente | Qué hace | Estado |
 |---|---|---|---|
-| **Riesgo** | Cuando algo cambia (baja, validación, aprobación), recalcula cobertura y semáforo por función, descubre *key people* (incluidas las ocultas entre áreas), asigna prioridad y decide si la función se **cubre** o se **rediseña con IA** | Talento, desarrollo, organización | Funciona |
-| **Movilidad** | Ante una vacante, calcula el perfil del puesto, busca candidatos internos, sus brechas, la formación que las cierra y el **coste organizativo** de moverlos (por ejemplo, que ya sean key person) | Talento, compensación | Funciona |
-| **Propuesta** (Claude) | Redacta para People las opciones (buscar fuera o mover dentro), los planes de backup y las conversaciones de permanencia, con el porqué y el riesgo de no hacerlo. Si no hay IA, propuesta por reglas | Transversal | Funciona |
-| **Skills** | El manager valida el nivel alcanzado → actualiza el HRIS, cierra el plan de backup y recalcula. Completar un curso no sube el nivel: lo valida una persona | Desarrollo | Funciona |
-| [**Seguimiento de planes**](agentes/seguimiento-planes.md) ⏱ | **Sin que nadie lo pida**, cada lunes: cuando un plan de backup llega a su fecha, escribe al manager con el formulario de validación rellenado; si no valida, le recuerda; tras 2 avisos, abre una alerta para People | Desarrollo | Funciona |
-| [**Centinela**](agentes/centinela.md) ⏱ | **Sin que nadie lo pida**, cada mes: recalcula el mapa, detecta lo que se degrada (funciones frágiles y desde cuándo, validaciones de más de 6 meses, decisiones pendientes) y envía el informe para dirección, que redacta Claude | Organización, dirección | Funciona |
-| **Captura** | Texto libre del empleado → skills normalizadas contra la taxonomía → el manager valida | Desarrollo | Diseñado (`prompts/normalizar-skills.md`), probado en n8n, no en la demo |
-| **Asistente de People** | Preguntas en lenguaje natural sobre el mapa: "¿quién puede cubrir a Elena?" | Transversal | Propuesta (`agentes/`) |
+| **Talento** | Movilidad | Ante una vacante, busca candidatos internos, sus brechas y el coste de moverlos | **Construido** |
+| | Selección | Publica la oferta, agenda entrevistas, primer cribado explicado (alto riesgo: siempre con revisión humana) | Diseño |
+| | Sucesión | Mantiene un backup para cada función crítica y avisa cuando falta | Diseño (sale del mapa de riesgo) |
+| **On y offboarding** | Onboarding | Plan por rol, cuentas, buddy, seguimiento a 30, 60 y 90 días; la persona entra en el mapa desde el día 1 | Diseño |
+| | Offboarding | Checklist, bajas de accesos, traspaso de conocimiento; **la baja dispara el recálculo de riesgo** | Diseño (el disparo está construido) |
+| **Administración** | Administración | Vacaciones, solicitudes, documentos y variables de nómina (altas, bajas, incentivos) hacia el HRIS o la gestoría. No calcula nóminas | Diseño |
+| **Desarrollo** | Skills | El manager valida un nivel, se actualiza el registro y se recalcula | **Construido** |
+| | Seguimiento de planes | Cada lunes persigue al manager cuando un plan de formación llega a su fecha | **Construido** |
+| | Captura | Texto libre del empleado → skills normalizadas → el manager valida | Diseño (probado en n8n) |
+| | Desempeño | Recordatorios del ciclo y resumen de evidencias para el manager | Diseño |
+| **Experiencia** | Escucha | Encuestas y clima, siempre agregados (n ≥ 5); detecta señales de desenganche | Diseño |
+| **Transversal** | Riesgo | Recalcula cobertura, key people y prioridad cada vez que algo cambia; decide si una función se cubre o se rediseña con IA | **Construido** |
+| | Propuesta | Redacta para People las opciones con su porqué y su coste | **Construido** |
+| | Centinela | Cada mes vigila que nada se degrade en silencio e informa a dirección | **Construido** |
+| | Asistente de People | Responde en lenguaje natural: "¿dónde somos frágiles?", "¿quién puede cubrir a Elena?" | Diseño |
 
-Lo interconectado: **Riesgo** detecta → **Movilidad** calcula opciones → **Propuesta** las redacta → **People decide** → **Riesgo** recalcula → **Seguimiento** avisa al manager cuando toca → **Skills** cierra el ciclo → **Centinela** vigila cada mes que nada se degrade en silencio.
+### 1.5 Cómo se hablan los agentes
 
-Los dos agentes ⏱ actúan solos en lo operativo (vigilar, recordar, escalar, informar) y nunca deciden sobre una persona: no suben niveles ni cierran planes. Reglas: [`definiciones/reglas-agentes.md`](definiciones/reglas-agentes.md).
+Lo importante no es cada agente, sino las cadenas: la salida de uno es la entrada del siguiente.
 
-## 4. La demo
+- **Se va alguien:** Offboarding registra la baja → Riesgo recalcula → Movilidad busca opciones → Propuesta las redacta → People decide → Riesgo recalcula. *(Construido, salvo el checklist de offboarding. Es la parte 2.)*
+- **Alguien aprende:** Seguimiento avisa al manager → el manager valida → Skills actualiza → Riesgo baja el semáforo → Centinela lo refleja en el informe mensual. *(Construido.)*
+- **Entra alguien:** Selección cierra la oferta → Onboarding lanza el plan por rol → avisa a IT y Finanzas → Skills registra las skills objetivo → Riesgo ve la nueva cobertura desde el día 1. *(Diseño.)*
+- **Algo empeora sin que nadie lo diga:** Escucha detecta clima bajo en un área → Riesgo cruza con key people → Propuesta prepara una conversación de permanencia → People conversa. *(Diseño.)*
 
-Cuatro escenarios en n8n, con datos de 160 personas y 24 funciones: los tres de la historia y el **panel con reinicio**, que es la entrada para quien la prueba (escenario 0). Cómo está montado: [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md).
+### 1.6 Qué hace la persona de People
 
-**En vídeo (unos 8 min):** [`video/reproductor.html`](video/reproductor.html) recorre la historia completa con los resultados reales del motor, y deja ver por debajo los datos, las reglas y los agentes de cada paso. Guion de locución: [`video/LEEME.md`](video/LEEME.md).
+Con este sistema, una persona no ejecuta procesos: **los supervisa**. Su trabajo es lo que no se automatiza:
 
-**Escenario 1 · Se va la responsable de custodia.**
-1. Formulario de baja (en producción, el evento lo dispara el HRIS).
-2. El agente de riesgo recalcula: *Gestión de claves* pasa de verde a rojo, *Prueba de reservas* se queda sin nadie. Marcos pasa a ser key person.
-3. Llega un email a People. Primera decisión: cubrir el puesto. **Opción A**, buscar fuera (perfil calculado, 2-3 meses sin responsable). **Opción B**, mover a Marcos (cumple 3 de 5 skills; coste: ya es la única persona que firma claves, concentrar el puesto en él concentra el riesgo). Además: plan de backup para Javier, conversación de permanencia con Marcos. Y solo para People: su compa-ratio en la banda del puesto sería 0,76, la opción B exige revisar condiciones.
-4. People aprueba desde el email. La otra opción se descarta sola, el cambio se aplica, el mapa se recalcula.
+- Decidir: aprobar una movilidad, una contratación, un plan de formación.
+- Conversar: permanencia, feedback, salidas.
+- Mantener las definiciones: qué es una función crítica, qué umbral dispara una alerta.
+- Pactar con dirección y con cada área los objetivos.
 
-**Escenario 2 · Tres meses después.** El agente de seguimiento avisa a Marcos de que el plan de Javier ha llegado a su fecha. Marcos valida el nivel desde el enlace. El plan se cierra, el recálculo devuelve *Gestión de claves* a verde, llega el email "Riesgo reducido".
+### 1.7 El mismo sistema, en el plan AI first
 
-**Escenario 3 · Agentes que trabajan solos.** El plan de Marcos nadie lo valida: el agente recuerda a su manager y, tras dos avisos, abre una alerta para People. El día 1 del mes, el centinela recalcula el mapa y deja el informe para dirección: *Prueba de reservas* sigue sin nadie, la conversación de permanencia con Marcos lleva semanas sin decidirse y hay validaciones de skills de hace más de 6 meses que sostienen funciones críticas.
+El mapa que dice dónde somos frágiles dice también **qué funciones va a cambiar la IA y quién está preparado**: madurez IA por área, impacto IA por función y una regla explícita. Si una función está en rojo y su impacto IA es alto, la respuesta es rediseñarla y recualificar, no formar un backup en el proceso actual. Con los datos ficticios, el cruce señala CX y Compliance: muchas personas, madurez baja, funciones de impacto alto.
 
-**El dato que nadie tenía.** Elena tenía cuatro señales de rotación (compa-ratio 0,86, 22 meses sin revisión, clima de su área bajo, evaluación 5) y sostenía una función crítica. El sistema la tenía como prioridad 1 antes de irse. Eso es lo que cambia: no es un mapa para mirar, es un sistema que avisa y propone antes.
+La primera función que el sistema propone rediseñar es la propia **Gestión de personas**: está en rojo, depende de una persona y tiene impacto IA alto. Por eso People OS está construido como trabajaría el departamento: una persona más IA, y todo documentado en un repo, no en una cabeza. Plan a 90 días con cuatro palancas (adopción, herramientas, formación, estructura): [`docs/plan-ai-first-people.md`](docs/plan-ai-first-people.md).
 
-## 5. Decisiones técnicas
+---
 
-Registro completo con alternativas y porqués: [`docs/decisiones.md`](docs/decisiones.md). Las que importan:
+## Parte 2 · La demo: se va Elena
 
-- **n8n** (D-04): elegido con una prueba, no con una opinión. Los flujos se exportan como JSON y se versionan aquí; el nodo de código ejecuta el mismo motor que se verifica en local (`npm run verificar`), no una segunda implementación. Alternativa descartada: Make, que domino más pero obliga a duplicar el cálculo en fórmulas.
-- **Un motor de cálculo en el repo** (D-10): `calculo/` es la referencia; `npm run n8n` genera el código de los nodos. Una sola versión de la lógica, probada antes de cada ensayo (`npm run probar-n8n`). Si mañana no es n8n, el motor sirve igual.
-- **Las definiciones se leen en tiempo de ejecución desde GitHub** (D-16): cambiar una regla es un commit; n8n la ve en la siguiente ejecución.
-- **La IA propone, la regla decide** (D-14, D-15): candidatos, prioridades y "cubrir o rediseñar" son reglas explícitas. Claude solo redacta.
-- **Dos opciones, no una recomendación** (D-15): cubrir un puesto es una decisión de People y dirección. El sistema pone el coste de cada opción encima de la mesa.
-- **Agentes que actúan solos, con reglas** (D-21): el seguimiento de planes y el centinela arrancan con el calendario, no con un clic. Deciden cuándo actuar y qué detectar con reglas que se prueban (`npm run probar-n8n`); no suben niveles ni cierran planes. Alternativa aplazada: un asistente conversacional con *tool use*, más vistoso pero no determinista.
-- **Demo local como plan B** (D-12): `npm run demo` recorre el ciclo entero sin n8n ni red, agentes incluidos.
-- **Se prueba sin instalar nada** (D-22): el panel enseña lo que ya está en el Sheet y la bandeja recoge cada email, así que la demo no depende de un buzón ni de que alguien monte nada. El reinicio carga los CSV iniciales desde GitHub.
-- **Un vídeo que no puede contradecir a la demo** (D-20): las cifras del reproductor las genera el motor (`npm run video`), no se escriben a mano.
+### Por qué este caso
 
-## 6. Cómo se amplía al 360º
+De todo el plano, he construido una cadena completa: **cobertura de funciones críticas y riesgo de salida**. Es la que mejor responde a la pregunta de un CEO, *¿dónde somos frágiles?*, por tres motivos:
 
-Cada proceso nuevo se construye con las mismas cuatro piezas: definiciones en `definiciones/`, datos sobre el **registro único de personas** del HRIS, una regla determinista para lo que decide riesgos o prioridades, y un flujo con disparo → regla → IA si hay texto → aviso → **decisión humana registrada**. Receta y ejemplo de onboarding: [`docs/escalado.md`](docs/escalado.md).
+- En una empresa regulada, una función sin cobertura (custodia, AML, seguridad) pone en riesgo la licencia.
+- Es lo que una persona sola no puede hacer a mano: cruzar 160 personas, 39 skills y 24 funciones cada vez que algo cambia.
+- El mapa que resulta alimenta casi todas las demás áreas: movilidad, formación, retención, compensación y el plan AI first.
 
-| Proceso | Se automatiza | Hace la IA | Decide el humano | Estado |
-|---|---|---|---|---|
-| Skills y cobertura | Recálculo, semáforo, key people, alertas, seguimiento de planes, informe mensual | Captura, propuestas, informe | Manager valida; People aprueba | **Construido** |
-| Movilidad interna | Candidatos y coste de moverlos | Explica opciones | People y managers | **Construido** (sale del mapa) |
-| Formación | Plan dirigido al riesgo | Propone itinerario | People | **Construido** (sale del mapa) |
-| Rotación no deseada | Señales objetivas sobre key people | — | People conversa | **Construido** (solo People) |
-| Compensación | Compa-ratio, prioridad de revisión | Redacta propuesta al comité | Comité | Diseñado (`docs/usos-mapa-cobertura.md`) |
-| Clima | Cruce con el mapa, agregados n ≥ 5 | Resume comentarios | Dirección | Diseñado |
-| Onboarding / offboarding | Plan por rol, alta en el mapa; la baja **dispara el recálculo** | Email del día 0 | Manager | Diseñado (`docs/escalado.md`) |
-| Selección | Publicación, agenda | Primer cribado explicado (alto riesgo: con cautela) | Manager y People | Fuera de alcance |
-| Desempeño | Recordatorios del ciclo | Resumen de evidencias | Manager | Fuera de alcance |
-| Administración y nómina | Variables (altas, bajas, incentivos) → HRIS o gestoría | — | — | Fuera de alcance: no se reinventa |
+El caso: **Elena, responsable de custodia, se va.** Era la única persona que sabía hacer la prueba de reservas.
 
-Detalle de cada proceso: [`docs/vision-procesos-rrhh.md`](docs/vision-procesos-rrhh.md).
+### La historia, paso a paso
 
-## 7. El mismo mapa, en el plan AI first
+**Escenario 1 · La baja.**
+1. Se registra la baja de Elena (en la demo, un formulario; en producción, el evento lo dispara el HRIS).
+2. **Riesgo** recalcula: *Gestión de claves* pasa de verde a rojo, *Prueba de reservas* se queda sin nadie. Marcos pasa a ser key person: ahora es el único que firma claves.
+3. **Movilidad** calcula el perfil del puesto que queda libre y busca candidatos internos.
+4. **Propuesta** redacta un email a People con la primera decisión, cubrir el puesto:
+   - **Opción A**, buscar fuera: perfil calculado, 2-3 meses con el equipo de 7 personas sin responsable.
+   - **Opción B**, mover a Marcos: cumple 3 de 5 skills del puesto. Coste: si asume el puesto, todo el riesgo de custodia se concentra en él.
+   - Además: plan de backup para Javier (a un nivel y con interés declarado) y conversación de permanencia con Marcos.
+   - Solo para People, en un bloque aparte: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda sería 0,76. La opción B exige revisar condiciones.
+5. **People decide** desde el email. La otra opción se descarta sola, el cambio se aplica y Riesgo recalcula.
 
-El sistema que dice dónde somos frágiles dice también **qué funciones va a cambiar la IA y quién está preparado**: madurez IA por área (tres skills transversales), impacto IA por función y una regla explícita: *función en rojo con impacto IA alto → rediseñar y recualificar, no formar un backup en el proceso actual.* Con los datos ficticios, el cruce señala CX y Compliance: muchas personas, madurez baja, funciones de impacto alto.
+**Escenario 2 · Tres meses después.** **Seguimiento de planes** detecta que el plan de Javier ha llegado a su fecha y escribe a Marcos con el formulario de validación rellenado. Marcos valida el nivel. **Skills** actualiza el registro y cierra el plan, Riesgo devuelve *Gestión de claves* a verde y llega el email "Riesgo reducido". Completar un curso no sube el nivel: lo valida una persona.
 
-La primera función que el sistema propone rediseñar con IA es la propia *Gestión de personas* (PEO-01): está en rojo, depende de una persona y tiene impacto IA alto. Por eso esta prueba está construida como trabajaría el departamento: una persona más IA, y todo documentado en un repo, no en una cabeza. Cómo lo llevaría desde People en 90 días, con las cuatro palancas (adopción, herramientas, formación, estructura): [`docs/plan-ai-first-people.md`](docs/plan-ai-first-people.md).
+**Escenario 3 · Agentes que trabajan solos.** El plan de Marcos nadie lo valida: Seguimiento recuerda a su manager y, tras dos avisos, abre una alerta para People. El día 1 del mes, **Centinela** recalcula y deja el informe para dirección: *Prueba de reservas* sigue sin nadie, la conversación con Marcos lleva semanas sin decidirse y hay validaciones de skills antiguas que sostienen funciones críticas.
 
-## 8. Qué no está hecho y límites
+### El dato que nadie tenía
 
-- **No es producción.** Los botones de aprobar son enlaces sin identificación; el formulario de skill no comprueba que quien valida sea el manager. En producción: login de People y del manager, y registro de quién aprobó qué.
-- **Sheets llega hasta ~200 personas.** Después, base de datos o directamente el HRIS. Las definiciones y las reglas no cambian.
-- **El mapa vale lo que valga la validación de skills.** Solo cuentan las validadas por el manager; hace falta una cadencia semestral. El centinela ya señala cada mes las validaciones de más de 6 meses que sostienen funciones críticas; pedir la revalidación a cada manager sería el siguiente paso. Es el límite número 1 del sistema.
-- **Privacidad.** Las señales de rotación, los salarios y el impacto IA los ve solo People y dirección; los managers nunca ven señales individuales. En la demo se representa con hojas protegidas; en producción, permisos por rol. `impacto_ia` describe funciones, no personas: no es una lista de nadie.
-- **Sin modelo predictivo de fuga.** Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta.
-- **La captura de skills y el onboarding** están diseñados y no construidos. Con tres días, un proceso entero que funciona vale más que dos a medias.
+Elena tenía cuatro señales de rotación: compa-ratio 0,86, 22 meses sin revisión, clima de su área por debajo de la media y evaluación 5. Y sostenía una función crítica. **El sistema la tenía como prioridad 1 antes de que se fuera.** No es un mapa para mirar: es un sistema que avisa y propone antes.
 
-## Cómo reproducirlo
+### Qué agente actúa en cada paso
 
-```bash
-npm install
-npm run verificar   # comprueba que datos y reglas producen los casos de la demo
-npm run probar-n8n  # ejecuta el código de los tres escenarios de n8n contra un Sheet simulado
-npm run demo -- reset && npm run demo -- baja E007   # el ciclo entero en local, sin n8n
-npm run demo -- aprobar ALR-002 && npm run demo -- aprobar ALR-003   # People mueve a Marcos y aprueba el backup de Javier
-npm run demo -- seguimiento +84               # el agente de seguimiento, 12 semanas (84 días) después
-npm run demo -- centinela +84                 # el centinela y su informe para dirección
-npm run video       # regenera los datos del reproductor del vídeo
+| Paso | Agente | Lo dispara | Decide |
+|---|---|---|---|
+| Recalcular el mapa | Riesgo | Una baja, una aprobación, una validación | Una regla |
+| Opciones para cubrir el puesto | Movilidad | Una vacante | Una regla |
+| Redactar la propuesta | Propuesta (Claude) | Cualquier empeoramiento | — (si Claude falla, la redacta una regla) |
+| Aprobar | — | — | **People** |
+| Avisar al manager | Seguimiento de planes | El calendario, cada lunes | Una regla |
+| Validar el nivel | Skills | El manager | **Manager** |
+| Informe mensual | Centinela | El calendario, día 1 | — |
+
+### Cómo probarlo
+
+Con el **enlace del panel** que va en el mensaje de la prueba. Es una página que sirve el propio n8n y muestra:
+
+- qué hacer ahora, según el estado de la demo;
+- el mapa en vivo y las key people;
+- las decisiones pendientes, con su botón *Aprobar*;
+- la bandeja de People, con la copia de cada email que genera el sistema;
+- un botón para **reiniciar** la demo y empezar de cero.
+
+Detrás no hay nada simulado: son los cuatro escenarios de n8n trabajando sobre el Sheet. Si dos personas la prueban a la vez comparten datos; se arregla con *Reiniciar*.
+
+---
+
+## Parte 3 · Cómo está construido
+
+### Las piezas
+
+```mermaid
+flowchart LR
+  DEF["definiciones/ · prompts/<br/>qué se hace"] -->|se leen en cada ejecución<br/>desde GitHub| N8N
+  CALC["calculo/<br/>motor de referencia"] -->|npm run n8n genera<br/>el código de los nodos| N8N
+  N8N["n8n · 4 escenarios<br/>panel · baja · skill · agentes"] <-->|adaptador| SHEET[("Google Sheets<br/>hace de HRIS")]
+  N8N --> CLAUDE["API de Claude<br/>redacta"]
+  N8N --> EMAIL["Email y bandeja<br/>People y managers"]
+  CAL((Calendario)) --> N8N
 ```
-
-Para montarlo en n8n (cuatro escenarios, tres credenciales, una vez): [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md). Los flujos están en [`flujos/n8n/`](flujos/n8n/).
-
-## Mapa del repo
 
 | Carpeta | Qué hay |
 |---|---|
-| `definiciones/` | Qué se hace: funciones, reglas (semáforo, señales, agentes), taxonomía, catálogo, contexto de Acme |
+| `definiciones/` | Qué se hace: funciones y criticidad, reglas del semáforo, señales de rotación, reglas de los agentes, taxonomía, catálogo de formación, contexto de Acme |
 | `prompts/` | Lo que se le pide a Claude: normalizar skills, proponer acciones, informe a dirección |
 | `calculo/` | Motor de cálculo de referencia, reglas de los agentes, verificación y demo local |
-| `flujos/n8n/` | Los cuatro escenarios exportados (incluido el panel) y su código fuente |
+| `flujos/n8n/` | Los cuatro escenarios exportados (panel y reinicio, baja, skill, agentes autónomos) y su código fuente |
 | `datos/`, `salidas/` | Datos ficticios de origen y hojas calculadas (lo que carga el Sheet) |
-| `agentes/` | Diseño de los agentes: los que actúan solos, los propuestos y el auditor de la demo |
+| `agentes/` | Ficha de cada agente: qué hace, qué no hace, dónde vive |
 | `docs/` | Arquitectura, decisiones, escalado, guion de la demo, usos del mapa, plan AI first |
-| `video/` | Reproductor de la demo para grabar el vídeo, sus datos y el guion de locución |
+| `video/` | Reproductor de la demo, alimentado por el motor |
+
+### Dónde está la IA y dónde no
+
+- **Sí:** convertir texto en datos (captura de skills) y datos en texto (propuestas, informe a dirección).
+- **No:** el riesgo. Semáforo, prioridad, key people, candidatos y "cubrir o rediseñar" salen de reglas que se pueden leer en [`definiciones/reglas-semaforo.md`](definiciones/reglas-semaforo.md) y comprobar con `npm run verificar`. Si alguien pregunta "¿por qué está en rojo?", la respuesta es una regla, no una opinión del modelo.
+- **Si Claude no responde**, el flujo sigue con una propuesta generada por reglas. El sistema nunca se queda en blanco.
+
+### Decisiones y por qué
+
+Registro completo con alternativas: [`docs/decisiones.md`](docs/decisiones.md). Las que importan:
+
+- **n8n** (D-04). Elegido con una prueba, no con una opinión. Los flujos se exportan como JSON y se versionan aquí. Descarté Make, que domino más, porque obligaba a duplicar el cálculo en fórmulas.
+- **Un solo motor de cálculo, en el repo** (D-10). `calculo/` es la referencia y `npm run n8n` genera el código de los nodos. Una sola versión de la lógica, probada antes de cada cambio. Si mañana no es n8n, el motor sirve igual.
+- **Definiciones leídas en tiempo de ejecución** (D-01, D-16). Cambiar una regla es un commit; n8n la ve en la siguiente ejecución, sin tocar el flujo.
+- **Dos opciones, no una recomendación** (D-15). Cubrir un puesto es una decisión de People y dirección. El sistema pone el coste de cada opción encima de la mesa.
+- **Agentes que actúan solos, con reglas** (D-21). Seguimiento y Centinela arrancan con el calendario, no con un clic. Deciden cuándo actuar y qué detectar; no suben niveles ni cierran planes. Aplacé el asistente conversacional: más vistoso, pero no determinista para que alguien lo pruebe solo.
+- **Se prueba sin instalar nada** (D-22). El panel solo enseña lo que ya está en el Sheet, así que no puede contradecir a los flujos. La bandeja quita la dependencia de un buzón.
+- **Lo confidencial, separado** (D-19). El resumen para dirección no lleva señales individuales ni salarios; eso va en un bloque solo para People. Los managers nunca ven señales de rotación.
+
+### Cómo reproducirlo y verificarlo
+
+```bash
+npm install
+npm run verificar    # datos y reglas producen los casos de la demo (18 comprobaciones)
+npm run probar-n8n   # el código de los cuatro escenarios contra un Sheet simulado, dos vueltas seguidas
+npm run cifras       # las cifras que citan los documentos, calculadas por el motor
+
+# El ciclo entero en local, sin n8n ni red
+npm run demo -- reset && npm run demo -- baja E007
+npm run demo -- aprobar ALR-002 && npm run demo -- aprobar ALR-003
+npm run demo -- seguimiento +84
+npm run demo -- centinela +84
+```
+
+Montarlo en n8n (cuatro escenarios, tres credenciales, una vez): [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md).
+
+### Cómo se añade un proceso nuevo
+
+Cada proceso del plano de la parte 1 se construye con las mismas cuatro piezas:
+
+1. **Definiciones** en `definiciones/`: reglas, umbrales y catálogos. Sin lógica dentro del flujo.
+2. **Datos** sobre el registro único de personas. Nunca una lista paralela.
+3. **Una regla determinista** para todo lo que decide prioridades o riesgos, con su comprobación en `calculo/`.
+4. **Un flujo**: disparo → regla → IA si hay texto → aviso → **decisión humana registrada**.
+
+Receta completa con el ejemplo de onboarding: [`docs/escalado.md`](docs/escalado.md). Detalle de cada proceso del 360º: [`docs/vision-procesos-rrhh.md`](docs/vision-procesos-rrhh.md).
+
+### Límites y qué no está hecho
+
+- **No es producción.** Los botones de aprobar son enlaces sin identificación y el formulario de skill no comprueba que quien valida sea el manager. En producción: login de People y del manager, y registro de quién aprobó qué.
+- **Sheets llega hasta unas 200 personas.** Después, base de datos o directamente el HRIS. Las definiciones y las reglas no cambian.
+- **Algunos umbrales siguen en el código** (`calculo/cobertura.js`, `calculo/agentes.js`), documentados en `definiciones/`. El siguiente paso es moverlos a un archivo de definiciones, como el resto.
+- **El mapa vale lo que valga la validación de skills.** Solo cuentan las validadas por el manager. El centinela ya señala cada mes las validaciones antiguas que sostienen funciones críticas. Es el límite número 1.
+- **Privacidad.** Señales de rotación, salarios e impacto IA los ven solo People y dirección. En la demo se representa con una hoja aparte y protegida; en producción, permisos por rol. `impacto_ia` describe funciones, no personas.
+- **Sin modelo predictivo de fuga.** Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta.
+- **Del plano de la parte 1, solo está construida una cadena.** Un proceso entero que funciona vale más que varios a medias.
