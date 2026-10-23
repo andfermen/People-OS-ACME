@@ -163,6 +163,36 @@ const datos = {
   n8n: { e1: bloquesN8n('E1-baja-de-elena.json'), e2: bloquesN8n('E2-actualizacion-de-skill.json'), e3: bloquesN8n('E3-agentes-autonomos.json') },
 };
 
+// Guion para leer mientras se graba (video/guion.html): sale de la tabla de locución de video/LEEME.md, una sola fuente
+const leeme = fs.readFileSync(path.join(RAIZ, 'video', 'LEEME.md'), 'utf8').replace(/\r/g, '');
+const escH = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const bloques = [];
+for (const l of leeme.split('\n')) {
+  const esc = l.match(/^\| \*\*(\d+ · [^*]+)\*\* \|/);
+  const paso = l.match(/^\| (\d+) \| ([^|]+) \| ([^|]+) \| "(.+)" \|$/);
+  if (esc) bloques.push(`<h2>${escH(esc[1])}</h2>`);
+  else if (paso) {
+    const tecla = paso[3].includes('⚙');
+    bloques.push(`<div class="paso"><div class="cab"><b>${paso[1]}</b> · ${escH(paso[3].replace('⚙', '').trim())} <span>${escH(paso[2].trim())}</span>${tecla ? ' <em>pulsa D para el panel técnico, y D otra vez antes de avanzar</em>' : ''}</div><p>${escH(paso[4])}</p><div class="sig">→ siguiente</div></div>`);
+  }
+}
+fs.writeFileSync(path.join(RAIZ, 'video', 'guion.html'), `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guion del vídeo · People OS</title>
+<!-- Generado por \`npm run video\` desde la tabla de locución de video/LEEME.md. No editar a mano. -->
+<style>
+body{margin:0;background:#18212b;color:#eef1f5;font-family:Inter,"Segoe UI",system-ui,sans-serif}
+main{max-width:860px;margin:0 auto;padding:24px 20px 120px}
+h1{font-size:20px;color:#9fb1c7;font-weight:600}h1 small{display:block;font-size:14px;margin-top:6px;font-weight:400}
+h2{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:#8fb4ff;margin:42px 0 12px;border-top:1px solid #2c3846;padding-top:18px}
+.paso{margin:0 0 22px}.cab{font-size:15px;color:#9fb1c7}.cab b{color:#fff;font-size:18px}.cab span{float:right;font-variant-numeric:tabular-nums}
+.cab em{display:block;color:#ffd38a;font-style:normal;font-size:14px;margin-top:4px}
+p{font-size:27px;line-height:1.5;margin:8px 0 6px}.sig{font-size:13px;color:#5f7286}
+</style></head><body><main>
+<h1>Guion del vídeo · People OS<small>Lee a tu ritmo, no hace falta literal. Avanza el reproductor con → al terminar cada bloque.</small></h1>
+${bloques.join('\n')}
+</main></body></html>
+`);
+
 fs.mkdirSync(path.dirname(SALIDA), { recursive: true });
 fs.writeFileSync(SALIDA, `// Generado por \`npm run video\` (calculo/exportar-video.js). No editar a mano.\nwindow.DEMO = ${JSON.stringify(datos, null, 1)};\n`);
 const c = m => `${m.cuenta.rojo}·${m.cuenta.ambar}·${m.cuenta.verde}`;

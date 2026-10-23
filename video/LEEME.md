@@ -18,20 +18,33 @@ Una diferencia con n8n, dicha en la propia pantalla del email: el **texto** de l
 
 ## Uso
 
-1. `npm run video` (regenera `datos.js`; reinicia `salidas/demo/`).
+1. `npm run video` (regenera `datos.js` y `guion.html`; reinicia `salidas/demo/`).
 2. Abre `video/reproductor.html` en Chrome o Edge, a pantalla completa (F11).
 3. **→ / espacio** siguiente · **←** anterior · **D** abre y cierra el panel *¿Qué ha pasado por debajo?* · **R** repite la animación del paso.
 4. `reproductor.html#6` abre directamente el paso 6. `?captura` muestra cada paso sin animaciones (para capturas); `?panel` empieza con el panel abierto.
 
-## Grabación (OBS o Loom)
+## Grabación: la forma sencilla (Clipchamp, escena a escena)
 
-1. Resolución de la pantalla o de la captura: 1920×1080. El reproductor se escala solo y mantiene el 16:9.
-2. OBS: fuente *Captura de ventana* del navegador (o Loom: *Solo pantalla*, pestaña actual). Micrófono a −12 dB aprox.
-3. Ensaya una vez con el guion en otra pantalla. Graba de un tirón; si te equivocas, vuelve con ← y repite el paso (los cortes se hacen después).
-4. El panel técnico (**D**) se abre solo en los pasos marcados con ⚙ en el guion, cuando vas a explicarlo, y se cierra antes de avanzar.
-5. Exporta en MP4 (H.264). En Loom: *Download*. Revisa que se lean las cifras del mapa a 1080p.
+Clipchamp viene con Windows 11, es gratis y exporta sin marca de agua. Loom gratis no sirve: corta a 5 minutos.
 
-No hay narración sintética: la voz es la tuya.
+**Prepara (una vez)**
+1. Abre `video/reproductor.html` en Chrome o Edge, en pantalla completa (**F11**).
+2. Abre `video/guion.html` donde puedas leerlo sin que salga en la grabación: otra pantalla, el móvil o una ventana pequeña al lado. Es el guion de abajo en letra grande.
+3. Silencia notificaciones (*Configuración → Sistema → Notificaciones → No molestar*).
+
+**Graba (8 tomas, una por escena)**
+1. Abre **Clipchamp** → *Crear un vídeo nuevo* → *Grabar y crear* → **Pantalla**. Comparte la **pestaña** del reproductor y elige tu micrófono.
+2. Coloca el reproductor al principio de la escena (la barra de la izquierda te lleva a cada una), pulsa **Grabar**, lee el bloque de esa escena avanzando con **→**, y **Detener**.
+3. ¿Te has equivocado? *Volver a grabar* solo esa toma. ¿Bien? *Guardar y editar*: la toma se pone en la línea de tiempo.
+4. Repite con la siguiente escena. Las tomas se colocan una detrás de otra.
+
+**Exporta**
+1. Si sobra algo al principio o al final de una toma, selecciónala en la línea de tiempo y arrastra el borde para recortarla.
+2. **Exportar → 1080p**. Sale un MP4 listo para enviar.
+
+Reglas para que quede bien: **D** (panel técnico) solo en los pasos marcados en el guion, y ciérralo antes de avanzar. Habla pausado: los tiempos del guion son orientativos. No hay narración sintética: la voz es la tuya.
+
+*Alternativa sin edición:* la grabadora de la **Herramienta Recortes** (**Win + Mayús + R**, con micrófono activado) graba de un tirón y guarda el MP4 directamente; si te equivocas, hay que repetir entera.
 
 ## Guion de locución
 
