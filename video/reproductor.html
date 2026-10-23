@@ -431,12 +431,12 @@ const PASOS = [
 // 6 · Tres meses después
 { e: 5, chip: ['real', 'Resultado real del agente de seguimiento'],
   t: 'Nadie pulsa nada: el agente avisa al manager',
-  s: `Semana 12. Es lunes y el plan de Javier ha llegado a su fecha. El agente de seguimiento escribe a su manager con el formulario ya rellenado.`,
+  s: `Semana 12. Cada lunes, el agente de seguimiento revisa los planes: el de Javier ha llegado a su fecha, así que escribe a su manager con el formulario ya rellenado.`,
   html: () => { const x = accionPlan(12, pb('alr003', 'E009').plan_id), f = forma(x.formacion_id);
     return `<div class="fila" style="gap:18px;align-items:flex-start"><div class="mail aparece" style="flex:1.4;height:auto"><div class="hd"><b>Para ${esc(x.manager.nombre)} (manager) · ¿Ha alcanzado ${esc(x.empleado.nombre)} el nivel ${x.nivel_objetivo}?</b><small>De: Acme People OS · ${esc(AG.semanas[12])} · enviado por el agente, sin intervención de People</small></div>
       <div style="padding:16px 20px;font-size:14px;line-height:1.6">Hola, ${esc(corto(x.manager.nombre))}. El plan <b>${x.plan_id}</b> de tu equipo ha llegado a su fecha de revisión.<ul style="margin:8px 0 8px 20px"><li>Persona: <b>${esc(x.empleado.nombre)}</b></li><li>${esc(sk(x.skill_id))}: nivel validado hoy ${x.nivel_actual}, objetivo ${x.nivel_objetivo}</li><li>${x.formacion_id} · ${esc(f.nombre)} (${f.semanas} semanas)</li><li>Función que protege: ${x.funcion_id}</li></ul>
       <span class="aprobar" style="font-size:13px;padding:6px 12px">Validar a ${esc(x.empleado.nombre)}</span><p style="margin-top:10px;font-style:italic;color:var(--texto-2)">Completar la formación no sube el nivel: lo confirmas tú. Si aún no lo tiene, te lo recordaré en ${U.diasEntreAvisos} días.</p></div></div>
-      <div class="col aparece d2" style="flex:1"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">Ese lunes, el agente</div>${AG.seguimiento[12].map(a => `✉ ${a.plan_id} · aviso a <b>${esc(a.manager.nombre)}</b> por ${esc(a.empleado.nombre)}`).join('<br>')}<br><span class="nota">y lo anota en planes-backup (avisos, último aviso)</span></div>
+      <div class="col aparece d2" style="flex:1"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">En esa revisión, el agente</div>${AG.seguimiento[12].map(a => `✉ ${a.plan_id} · aviso a <b>${esc(a.manager.nombre)}</b> por ${esc(a.empleado.nombre)}`).join('<br>')}<br><span class="nota">y lo anota en planes-backup (avisos, último aviso)</span></div>
       <div class="card aparece d3" style="font-size:14.5px;line-height:1.5">Nadie tiene que acordarse de perseguir a nadie. <b>El agente actúa; el nivel lo decide el manager.</b></div></div></div>`; },
   panel: () => panel({ datos: ['<code>planes-backup</code>: planes activos, avisos, último aviso', 'Catálogo: semanas de cada formación'],
     reglas: ['Revisión = fecha objetivo, o inicio + semanas de la formación', `Recordatorio cada ${U.diasEntreAvisos} días; tras ${U.avisosAntesDeEscalar} avisos, escala a People`],
@@ -517,7 +517,8 @@ const PASOS = [
 
 { e: 7, chip: ['visual', 'Cierre'],
   t: '', s: '',
-  html: () => `<div class="cierre"><div><blockquote class="aparece">People OS no solo automatiza procesos: ayuda a <span>desarrollar, compartir y preservar</span> las capacidades que necesita el negocio.</blockquote><p class="aparece d2">Construido como trabajaría el departamento: una persona + IA · ${P.personas} personas · ${P.funciones} funciones · todo en un repo</p></div></div>`,
+  html: () => `<div class="cierre"><div><blockquote class="aparece">People OS no solo automatiza procesos: ayuda a <span>desarrollar, compartir y preservar</span> las capacidades que necesita el negocio.</blockquote><p class="aparece d2">Construido como trabajaría el departamento: una persona + IA · ${P.personas} personas · ${P.funciones} funciones · todo en un repo</p>
+    <p class="aparece d3" style="margin-top:34px;display:inline-block;background:var(--acento);color:#fff;border-radius:10px;padding:12px 22px;font-size:19px;font-weight:600">Pruébalo tú: el enlace del panel, sin instalar nada</p></div></div>`,
   panel: null },
 ];
 
