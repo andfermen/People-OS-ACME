@@ -60,4 +60,4 @@ Segundo disparador (escenario 3, D-21): el calendario. Cada lunes, el **seguimie
 | Dirección | Mapa completo, key people, propuestas (sin señales individuales) |
 | People | Todo, incluida la hoja `senales-rotacion-PEOPLE` |
 
-En la demo, el control de acceso se representa con una hoja protegida. En producción: archivos separados y permisos por rol (fuera de alcance, §12).
+En la demo, con datos ficticios, las señales están en una pestaña aparte del mismo Sheet y quien lo abra la ve. En producción: archivos separados y permisos por rol (fuera de alcance, §12). Lo que sí está construido: el resumen para dirección y los avisos a managers no llevan señales individuales ni salarios.

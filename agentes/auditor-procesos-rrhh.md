@@ -30,5 +30,5 @@ Andrea describe cómo se hace hoy un proceso (onboarding, evaluación del desemp
 ## Esfuerzo y riesgo
 
 - **Esfuerzo:** medio día (definición del agente + una prueba con el onboarding de CLAUDE.md §8).
-- **Riesgo en directo:** ninguno: no forma parte de la demo.
-- **Recomendación:** construirlo después del viernes, o enseñarlo en el bloque de escalado si sobra tiempo, aplicado al onboarding.
+- **Riesgo:** ninguno: no forma parte de la demo.
+- **Recomendación:** siguiente paso, aplicado primero al onboarding.

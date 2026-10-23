@@ -82,7 +82,7 @@ Pocos agentes por área, cada uno con una tarea concreta. Ninguno decide sobre u
 |---|---|---|---|
 | **Talento** | Movilidad | Ante una vacante, busca candidatos internos, sus brechas y el coste de moverlos | **Construido** |
 | | Selección | Publica la oferta, agenda entrevistas, primer cribado explicado (alto riesgo: siempre con revisión humana) | Diseño |
-| | Sucesión | Mantiene un backup para cada función crítica y avisa cuando falta | Diseño (sale del mapa de riesgo) |
+| | Sucesión | Mantiene un backup para cada función crítica y avisa cuando falta | Diseño (el plan de backup de una función que se queda sin cobertura ya lo proponen Propuesta y Seguimiento) |
 | **On y offboarding** | Onboarding | Plan por rol, cuentas, buddy, seguimiento a 30, 60 y 90 días; la persona entra en el mapa desde el día 1 | Diseño |
 | | Offboarding | Checklist, bajas de accesos, traspaso de conocimiento; **la baja dispara el recálculo de riesgo** | Diseño (el disparo está construido) |
 | **Administración** | Administración | Vacaciones, solicitudes, documentos y variables de nómina (altas, bajas, incentivos) hacia el HRIS o la gestoría. No calcula nóminas | Diseño |
@@ -100,7 +100,7 @@ Pocos agentes por área, cada uno con una tarea concreta. Ninguno decide sobre u
 
 Lo importante no es cada agente, sino las cadenas: la salida de uno es la entrada del siguiente.
 
-- **Se va alguien:** Offboarding registra la baja → Riesgo recalcula → Movilidad busca opciones → Propuesta las redacta → People decide → Riesgo recalcula. *(Construido, salvo el checklist de offboarding. Es la parte 2.)*
+- **Se va alguien:** se registra la baja (en la demo, un formulario; en producción, el HRIS) → Riesgo recalcula → Movilidad busca opciones → Propuesta las redacta → People decide → Riesgo recalcula. *(Construido, salvo el checklist de offboarding. Es la parte 2.)*
 - **Alguien aprende:** Seguimiento avisa al manager → el manager valida → Skills actualiza → Riesgo baja el semáforo → Centinela lo refleja en el informe mensual. *(Construido.)*
 - **Entra alguien:** Selección cierra la oferta → Onboarding lanza el plan por rol → avisa a IT y Finanzas → Skills registra las skills objetivo → Riesgo ve la nueva cobertura desde el día 1. *(Diseño.)*
 - **Algo empeora sin que nadie lo diga:** Escucha detecta clima bajo en un área → Riesgo cruza con key people → Propuesta prepara una conversación de permanencia → People conversa. *(Diseño.)*
@@ -118,7 +118,7 @@ Con este sistema, una persona no ejecuta procesos: **los supervisa**. Su trabajo
 
 El mapa que dice dónde somos frágiles dice también **qué funciones va a cambiar la IA y quién está preparado**: madurez IA por área, impacto IA por función y una regla explícita. Si una función está en rojo y su impacto IA es alto, la respuesta es rediseñarla y recualificar, no formar un backup en el proceso actual. Con los datos ficticios, el cruce señala CX y Compliance: muchas personas, madurez baja, funciones de impacto alto.
 
-La primera función que el sistema propone rediseñar es la propia **Gestión de personas**: está en rojo, depende de una persona y tiene impacto IA alto. Por eso People OS está construido como trabajaría el departamento: una persona más IA, y todo documentado en un repo, no en una cabeza. Plan a 90 días con cuatro palancas (adopción, herramientas, formación, estructura): [`docs/plan-ai-first-people.md`](docs/plan-ai-first-people.md).
+Una de las dos funciones que el sistema propone rediseñar es la propia **Gestión de personas** (la otra es el reporting AML, que va primero por prioridad): está en rojo, depende de una persona y tiene impacto IA alto. Por eso People OS está construido como trabajaría el departamento: una persona más IA, y todo documentado en un repo, no en una cabeza. Plan a 90 días con cuatro palancas (adopción, herramientas, formación, estructura): [`docs/plan-ai-first-people.md`](docs/plan-ai-first-people.md).
 
 ---
 
@@ -136,7 +136,7 @@ El caso: **Elena, responsable de custodia, se va.** Era la única persona que sa
 
 ### La historia, paso a paso
 
-**Escenario 1 · La baja.**
+**Escenario 1 · La baja** *(en n8n: escenario 1).*
 1. Se registra la baja de Elena (en la demo, un formulario; en producción, el evento lo dispara el HRIS).
 2. **Riesgo** recalcula: *Gestión de claves* pasa de verde a rojo, *Prueba de reservas* se queda sin nadie. Marcos pasa a ser key person: ahora es el único que firma claves.
 3. **Movilidad** calcula el perfil del puesto que queda libre y busca candidatos internos.
@@ -147,9 +147,9 @@ El caso: **Elena, responsable de custodia, se va.** Era la única persona que sa
    - Solo para People, en un bloque aparte: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda sería 0,76. La opción B exige revisar condiciones.
 5. **People decide** desde el email. La otra opción se descarta sola, el cambio se aplica y Riesgo recalcula.
 
-**Escenario 2 · Tres meses después.** **Seguimiento de planes** detecta que el plan de Javier ha llegado a su fecha y escribe a Marcos con el formulario de validación rellenado. Marcos valida el nivel. **Skills** actualiza el registro y cierra el plan, Riesgo devuelve *Gestión de claves* a verde y llega el email "Riesgo reducido". Completar un curso no sube el nivel: lo valida una persona.
+**Escenario 2 · Tres meses después** *(en n8n: escenario 3, seguimiento → escenario 2, validación).* **Seguimiento de planes** detecta que el plan de Javier ha llegado a su fecha y escribe a Marcos con el formulario de validación rellenado. Marcos valida el nivel. **Skills** actualiza el registro y cierra el plan, Riesgo devuelve *Gestión de claves* a verde y llega el email "Riesgo reducido". Completar un curso no sube el nivel: lo valida una persona.
 
-**Escenario 3 · Agentes que trabajan solos.** El plan de Marcos nadie lo valida: Seguimiento recuerda a su manager y, tras dos avisos, abre una alerta para People. El día 1 del mes, **Centinela** recalcula y deja el informe para dirección: *Prueba de reservas* sigue sin nadie, la conversación con Marcos lleva semanas sin decidirse y hay validaciones de skills antiguas que sostienen funciones críticas.
+**Escenario 3 · Agentes que trabajan solos** *(en n8n: escenario 3).* El plan de Marcos nadie lo valida: Seguimiento recuerda a su manager y, tras dos avisos, abre una alerta para People. El día 1 del mes, **Centinela** recalcula y deja el informe para dirección: *Prueba de reservas* sigue sin nadie, la conversación con Marcos lleva semanas sin decidirse y hay validaciones de skills antiguas que sostienen funciones críticas.
 
 ### El dato que nadie tenía
 
@@ -161,7 +161,7 @@ Elena tenía cuatro señales de rotación: compa-ratio 0,86, 22 meses sin revisi
 |---|---|---|---|
 | Recalcular el mapa | Riesgo | Una baja, una aprobación, una validación | Una regla |
 | Opciones para cubrir el puesto | Movilidad | Una vacante | Una regla |
-| Redactar la propuesta | Propuesta (Claude) | Cualquier empeoramiento | — (si Claude falla, la redacta una regla) |
+| Redactar la propuesta | Propuesta (Claude) | Una baja que empeora funciones | — (si Claude falla, la redacta una regla) |
 | Aprobar | — | — | **People** |
 | Avisar al manager | Seguimiento de planes | El calendario, cada lunes | Una regla |
 | Validar el nivel | Skills | El manager | **Manager** |
@@ -177,7 +177,7 @@ Con el **enlace del panel** que va en el mensaje de la prueba. Es una página qu
 - la bandeja de People, con la copia de cada email que genera el sistema;
 - un botón para **reiniciar** la demo y empezar de cero.
 
-Detrás no hay nada simulado: son los cuatro escenarios de n8n trabajando sobre el Sheet. Si dos personas la prueban a la vez comparten datos; se arregla con *Reiniciar*.
+Detrás no hay nada simulado salvo dos cosas: el paso del tiempo (el campo *Cuándo* de los agentes adelanta el calendario, por ejemplo "+12 semanas") y los destinatarios (todos los emails van a la bandeja de la demo, no a cada persona). El resto son los cuatro escenarios de n8n trabajando sobre el Sheet. Si dos personas la prueban a la vez comparten datos; se arregla con *Reiniciar*.
 
 ---
 
@@ -202,7 +202,7 @@ flowchart LR
 | `calculo/` | Motor de cálculo de referencia, reglas de los agentes, verificación y demo local |
 | `flujos/n8n/` | Los cuatro escenarios exportados (panel y reinicio, baja, skill, agentes autónomos) y su código fuente |
 | `datos/`, `salidas/` | Datos ficticios de origen y hojas calculadas (lo que carga el Sheet) |
-| `agentes/` | Ficha de cada agente: qué hace, qué no hace, dónde vive |
+| `agentes/` | Qué hace cada agente, qué no hace y dónde vive: tabla de todos y ficha de los autónomos y los propuestos |
 | `docs/` | Arquitectura, decisiones, escalado, guion de la demo, usos del mapa, plan AI first |
 | `video/` | Reproductor de la demo, alimentado por el motor |
 
@@ -218,7 +218,7 @@ Registro completo con alternativas: [`docs/decisiones.md`](docs/decisiones.md). 
 
 - **n8n** (D-04). Elegido con una prueba, no con una opinión. Los flujos se exportan como JSON y se versionan aquí. Descarté Make, que domino más, porque obligaba a duplicar el cálculo en fórmulas.
 - **Un solo motor de cálculo, en el repo** (D-10). `calculo/` es la referencia y `npm run n8n` genera el código de los nodos. Una sola versión de la lógica, probada antes de cada cambio. Si mañana no es n8n, el motor sirve igual.
-- **Definiciones leídas en tiempo de ejecución** (D-01, D-16). Cambiar una regla es un commit; n8n la ve en la siguiente ejecución, sin tocar el flujo.
+- **Definiciones leídas en tiempo de ejecución** (D-01, D-16). Cambiar una regla es editar un archivo, regenerar (`npm run n8n`) y hacer commit; n8n la lee de GitHub en la siguiente ejecución, sin tocar el flujo.
 - **Dos opciones, no una recomendación** (D-15). Cubrir un puesto es una decisión de People y dirección. El sistema pone el coste de cada opción encima de la mesa.
 - **Agentes que actúan solos, con reglas** (D-21). Seguimiento y Centinela arrancan con el calendario, no con un clic. Deciden cuándo actuar y qué detectar; no suben niveles ni cierran planes. Aplacé el asistente conversacional: más vistoso, pero no determinista para que alguien lo pruebe solo.
 - **Se prueba sin instalar nada** (D-22). El panel solo enseña lo que ya está en el Sheet, así que no puede contradecir a los flujos. La bandeja quita la dependencia de un buzón.
@@ -258,6 +258,6 @@ Receta completa con el ejemplo de onboarding: [`docs/escalado.md`](docs/escalado
 - **Sheets llega hasta unas 200 personas.** Después, base de datos o directamente el HRIS. Las definiciones y las reglas no cambian.
 - **Algunos umbrales siguen en el código** (`calculo/cobertura.js`, `calculo/agentes.js`), documentados en `definiciones/`. El siguiente paso es moverlos a un archivo de definiciones, como el resto.
 - **El mapa vale lo que valga la validación de skills.** Solo cuentan las validadas por el manager. El centinela ya señala cada mes las validaciones antiguas que sostienen funciones críticas. Es el límite número 1.
-- **Privacidad.** Señales de rotación, salarios e impacto IA los ven solo People y dirección. En la demo se representa con una hoja aparte y protegida; en producción, permisos por rol. `impacto_ia` describe funciones, no personas.
+- **Privacidad.** En producción, señales de rotación, salarios e impacto IA los verían solo People y dirección, con permisos por rol y las señales en un archivo aparte. En la demo, con datos ficticios, están en pestañas del mismo Sheet y quien lo abra las ve. Lo que sí está construido: el resumen para dirección y los managers nunca reciben señales individuales ni salarios. `impacto_ia` describe funciones, no personas.
 - **Sin modelo predictivo de fuga.** Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta.
 - **Del plano de la parte 1, solo está construida una cadena.** Un proceso entero que funciona vale más que varios a medias.

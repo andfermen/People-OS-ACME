@@ -27,5 +27,5 @@ People (o dirección) pregunta en lenguaje natural y el asistente responde **ley
 ## Esfuerzo y riesgo
 
 - **Esfuerzo:** 1-2 días (workflow con agente + 4 herramientas + pruebas de privacidad).
-- **Riesgo en directo:** alto a dos días de la presentación: respuestas no deterministas y otra pieza que puede fallar.
-- **Recomendación:** presentarlo como siguiente paso, con este diseño. Si se construye, probar antes que una pregunta de un manager sobre señales individuales se rechaza.
+- **Riesgo:** alto para que alguien lo pruebe solo: respuestas no deterministas, datos personales y otra pieza que puede fallar.
+- **Recomendación:** siguiente paso, con este diseño (D-21 explica por qué se construyeron antes los agentes autónomos). Si se construye, probar antes que una pregunta de un manager sobre señales individuales se rechaza.

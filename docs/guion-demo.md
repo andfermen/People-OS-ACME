@@ -1,4 +1,4 @@
-# Guion de la demo en directo (25 min)
+# Guion para enseñar la demo en n8n (25 min, si hay una sesión)
 
 > **Para qué:** enseñar la demo en n8n en una sesión con el CEO, por ejemplo después de que haya visto el vídeo. El vídeo tiene su propio guion, más corto: `video/LEEME.md`.
 > **Antes de empezar:** `npm run verificar` y `npm run probar-n8n` → todo en ✅. Abre el **panel** (escenario 0) y pulsa **Reiniciar la demo**. Ten abiertos el panel, el Sheet (hoja `cobertura`) y este guion: desde el panel se abren los formularios y se ven los emails en la bandeja. Montaje: `flujos/n8n/LEEME.md`.
@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | 1 | El problema | 2 | `docs/vision-procesos-rrhh.md`: qué se automatiza y qué no | "Automatizo lo calculable; la IA captura y redacta; yo decido y converso." |
 | 2 | La pregunta | 1 | — | "Si mañana no viene una persona, ¿qué función queda descubierta? Y en un plan AI first: ¿qué funciones van a cambiar y quién está preparado?" |
-| 3 | Arquitectura | 3 | Diagrama del README; abrir `funciones.yaml` y cambiar un objetivo | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
+| 3 | Arquitectura | 3 | Diagrama del README; abrir `funciones.yaml` y enseñar dónde cambiaría un objetivo (n8n lo vería tras `npm run n8n` y un commit) | "El riesgo se calcula, no se opina. Cambiar una regla es editar un archivo." |
 | 4 | El mapa | 3 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
 | 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → email a People | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |

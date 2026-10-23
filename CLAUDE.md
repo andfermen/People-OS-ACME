@@ -9,7 +9,7 @@ Prueba técnica para un proceso de selección. El reto: **diseñar e implementar
 - Empresa: **Acme**, ficticia, inspirada en una fintech cripto española regulada. Estructura y áreas basadas en información pública de esa empresa; nombre, personas y datos inventados. **Todos los datos (personas, skills, salarios, encuestas) son ficticios.** En todo el repo la empresa se llama Acme. **La empresa real de referencia no se nombra en ningún archivo del repo** (es público).
 - Contexto clave del CEO: la compañía (~160 personas) está en un **plan "AI first"**: objetivos de adopción, herramientas, formación y rediseño/reducción de equipos. **El rol al que opta Andrea es liderar People en esa transformación.** Por tanto la prueba no es solo "un sistema de RRHH": es la evidencia de cómo lideraría People en un plan AI first. El mapa de skills es el instrumento de ese plan (ver §6 "Lente AI first" y `docs/plan-ai-first-people.md`).
 - Argumento meta: esta prueba se ha construido como trabajaría el departamento, **una persona + IA** (Claude Code, orquestador, API de Claude).
-- Presentación: **en directo por Teams, al CEO.** Perfil técnico, pero evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
+- Entrega (D-20, D-22): **un vídeo de unos 5 minutos, el enlace del panel de n8n para probarla sin instalar nada y el repositorio.** No hay presentación en directo. El CEO tiene perfil técnico y evalúa criterio, pensamiento crítico, autonomía e **implementación real**.
 - Lo que más pesa: **procesos funcionando de extremo a extremo.** No solo documentación.
 - Cuenta Google de la demo: **Gmail personal de Andrea** (Sheets, Drive, Gmail y conexiones del orquestador). **No escribir esa dirección en el repo**: en archivos y flujos usar la variable `EMAIL_DEMO`. Todo lo de la demo vive en la carpeta de Drive `Acme People OS` y los emails salen con el prefijo `[Acme People OS]` en el asunto. Nunca guardar contraseñas ni claves de API en el repo.
 
@@ -21,7 +21,7 @@ Prueba técnica para un proceso de selección. El reto: **diseñar e implementar
 Reglas de trabajo:
 1. Antes de crear o cambiar algo relevante, explica en 2-3 líneas qué vas a hacer y por qué.
 2. Pasos ejecutables y numerados cuando Andrea tenga que hacer algo fuera del repo (Make/n8n, Google, Telegram).
-3. Nada que Andrea no pueda explicar y defender en directo. Simple > sofisticado.
+3. Nada que Andrea no pueda explicar y defender ante el CEO. Simple > sofisticado.
 4. Si algo es frágil para una demo en vivo, dilo y propón alternativa.
 5. Todo en español. Commits pequeños y descriptivos.
 6. Cada decisión relevante se registra en `docs/decisiones.md` (qué, alternativas, por qué).
@@ -37,7 +37,7 @@ Reglas de trabajo:
 | Cálculo | Cobertura, semáforo, key people: **determinista** | Nodo de código de n8n con la lógica de `calculo/cobertura.js` (D-04) |
 | Ejecución | Flujos de captura, recálculo y avisos | n8n (ver §9) |
 | Inteligencia | Normalizar skills desde texto libre, proponer acciones, redactar informes | API de Claude |
-| Visualización | Mapa de calor y vistas de uso | Sheet con formato condicional → dashboard si hay tiempo |
+| Visualización | Mapa de calor, decisiones y bandeja de emails | Panel servido por n8n (escenario 0, D-22) y el Sheet con formato condicional |
 
 Principios de diseño (argumentos para el CEO):
 - **El riesgo se calcula, no se opina.** Cobertura, semáforo y key people salen de reglas explícitas. La IA captura datos y propone acciones; no decide el riesgo.
@@ -122,12 +122,12 @@ Referencia de inspiración: la herramienta Opportunity de BBVA (vista del emplea
 | 4 | Por cada función que empeora: candidatos a backup (nivel requerido −1, con interés), formación del catálogo, señales de rotación de las key people restantes. Si es una baja: perfil del puesto y candidatos internos con brechas y coste organizativo (D-15) | Regla |
 | 5 | Propuesta priorizada: qué hacer, con quién, por qué y riesgo de no hacerlo (`prompts/proponer-acciones.md`) | IA |
 | 6 | Email a dirección + fila en hoja `alertas` + mapa actualizado | Orquestador |
-| 7 | People aprueba una acción en la hoja `alertas` (ej. opción A buscar fuera o B mover a Marcos; plan de backup de Javier) | Humano |
+| 7 | People aprueba una acción con el botón *Aprobar* del email o del panel (ej. opción A buscar fuera o B mover a Marcos; plan de backup de Javier); queda en la hoja `alertas` | Humano |
 | 8 | La aprobación marca `backup_en_desarrollo` → vuelve al paso 1 → la función pasa de rojo a ámbar | Ciclo |
 
 Segundo disparador: el mismo flujo, programado mensualmente, genera el **informe de riesgo para dirección** (`prompts/informe-direccion.md`).
 
-Hojas necesarias en el Sheet: `empleados`, `skills-empleados`, `funciones`, `cobertura` (calculada), `historico-semaforo`, `alertas` (con columna `decision`: pendiente/aprobada/descartada), `catalogo-formacion`.
+Hojas necesarias en el Sheet: `empleados`, `skills-empleados`, `funciones`, `cobertura` (calculada), `historico-semaforo`, `alertas` (con columna `decision`: pendiente/aprobada/descartada), `catalogo-formacion`, `planes-backup` (con `avisos` y `ultimo_aviso`, D-21) y `bandeja` (copia de cada email, D-22).
 
 ### Escenario 2 de n8n · Nueva skill adquirida (D-18)
 Cierra la historia de la demo: rojo → ámbar → **verde**. Misma lógica del flujo principal, otro disparador.
@@ -145,7 +145,7 @@ Agentes que actúan **sin que nadie pulse nada**, con reglas en `definiciones/re
 - Formulario **Ejecutar un agente ahora** con fecha simulada para la demo.
 
 ### Captura (explicada, no construida)
-Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre qué hace → Claude normaliza contra `taxonomia-skills.yaml` (skill, nivel propuesto, evidencia) → el manager valida. El prompt `prompts/normalizar-skills.md` queda en el repo con 2-3 ejemplos de entrada/salida. Ejemplo en directo solo si sobra tiempo el jueves.
+Respuesta a "¿de dónde salen los datos?": el empleado describe en texto libre qué hace → Claude normaliza contra `taxonomia-skills.yaml` (skill, nivel propuesto, evidencia) → el manager valida. El prompt `prompts/normalizar-skills.md` queda en el repo con 2-3 ejemplos de entrada/salida. Se presenta como extensión, no se enseña en la demo.
 
 ### Salidas
 1. **Mapa de calor** áreas × funciones con semáforo.
@@ -206,14 +206,14 @@ Casos que **deben existir** para la demo:
 
 Documentados en `docs/usos-mapa-cobertura.md`: riesgo de rotación no deseada en áreas críticas, segmentación de encuestas y revisión salarial. Al construir datos y vistas, respetar las reglas de ese documento (anonimato n ≥ 5, sin scoring individual de fuga, criterios retributivos objetivos).
 
-## 8. Proceso 2 · Onboarding (secundario, pendiente de confirmar)
+## 8. Proceso 2 · Onboarding (diseñado, no construido)
 
-Solo si el proceso central está cerrado el jueves a mediodía. Versión mínima: alta → plan por rol + email día 0. Conexión con el mapa: la persona nueva entra en el Flujo A desde el día 1. El asistente Q&A sobre Oráculo (Telegram) queda como extensión.
+Diseñado en `docs/escalado.md` como ejemplo de cómo se añade un proceso. Versión mínima: alta → plan por rol + email día 0. Conexión con el mapa: la persona nueva entra en el Flujo A desde el día 1. El asistente Q&A sobre Oráculo (Telegram) queda como extensión.
 
 ## 9. Orquestador: n8n (decidido, D-04)
 
 La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a la primera. Contexto de la decisión:
-- **n8n** (cloud, prueba gratuita): encaja con el enunciado; los workflows son JSON que Claude Code genera y versiona en el repo; tiene nodo de código para el cálculo del semáforo. Riesgo: herramienta nueva en directo.
+- **n8n** (cloud, prueba gratuita): encaja con el enunciado; los workflows son JSON que Claude Code genera y versiona en el repo; tiene nodo de código para el cálculo del semáforo. Riesgo: herramienta nueva para Andrea.
 - **Make** (plan de pago): Andrea lo domina; menos riesgo. El cálculo iría en fórmulas de Sheets.
 - **Test:** Claude Code genera un workflow n8n mínimo (formulario → Claude normaliza skills → Sheet). Si funciona en ~1 h → n8n. Si no → Make.
 
@@ -224,21 +224,15 @@ La prueba de captura (formulario → Claude → `captura-pendiente`) funcionó a
 - [x] **Mié** · Lente AI first: skills de IA en la taxonomía, `impacto_ia` en funciones, caso rojo con impacto alto (CMP-04), plantilla a 160 personas, `empresa.md` con la empresa de referencia (D-13, D-14).
 - [x] **Mié mediodía** · Test n8n vs Make → **n8n** (D-04).
 - [x] **Mié PM** · Cálculo de cobertura + semáforo + mapa de calor en el Sheet. Hoja `historico-semaforo` y `alertas`.
-- [ ] **Jue AM** · Flujo principal pasos 1-8 en el orquestador (generado y probado: `flujos/n8n/`, D-16; falta montarlo en n8n y ensayar). Escenario "baja" y cierre del ciclo (aprobar backup → rojo a ámbar).
-- [ ] **Jue PM** · Vistas de rotación/encuesta/salarial y madurez IA. ~~`plan-ai-first-people.md`~~ ✓. Prompt de captura con ejemplos. Ensayo, plan B (capturas + vídeo), `guion-demo.md`, `escalado.md`, README.
-- [ ] **Vie** · Presentación.
+- [x] **Jue** · Flujo principal en n8n (escenarios 1 y 2, D-16, D-18, D-19), montado y ensayado. Vistas de rotación, encuesta, salarial y madurez IA en el Sheet. Prompt de captura con ejemplos. `guion-demo.md`, `escalado.md`, README.
+- [x] **Cambio de entrega** · Sin presentación en directo: vídeo con el reproductor (D-20), agentes que actúan solos (escenario 3, D-21) y panel con reinicio para probarla sin instalar nada (escenario 0, D-22).
+- [ ] **Cierre** · Grabar el vídeo y enviar: vídeo + enlace del panel + repositorio.
 
-## 11. Guion (borrador, 20-25 min)
+## 11. Guion
 
-1. El problema: RRHH 360º con una persona; qué se automatiza y qué no (2 min).
-2. La pregunta del CEO: *¿dónde somos frágiles?* Y en un plan AI first, también: *¿qué funciones van a cambiar y quién está preparado?* (2 min).
-3. Arquitectura y principios (4 min).
-4. El mapa: semáforo, key people ocultas, de dónde salen los datos (captura explicada) (4 min).
-5. Demo "se va la responsable de custodia": recálculo → rojo → email con propuesta (4 min).
-6. Cierre del ciclo: aprobar plan de backup → custodia pasa a ámbar (2 min). Opcional: "tres meses después", el backup completa la formación, el manager valida → verde.
-7. Usos: rotación, encuestas, revisión salarial (4 min).
-8. Cómo lo usaría para liderar el plan AI first (adopción, herramientas, formación, estructura) y cómo escala al resto de People (3 min).
-9. Cierre: "esta prueba la he construido como trabajaría el departamento: una persona + IA" (1 min).
+- **Vídeo** (unos 5 min, 13 pasos): `video/LEEME.md` (locución) y `video/guion.html` (para leer al grabar).
+- **Sesión en directo**, si la hay (25 min, en n8n): `docs/guion-demo.md`.
+- Idea de cierre de ambos: "esta prueba la he construido como trabajaría el departamento: una persona + IA".
 
 ## 12. Fuera de alcance
 

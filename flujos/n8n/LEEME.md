@@ -29,7 +29,7 @@ Credenciales: **Google Sheets OAuth2**, la **Header Auth** de Claude (cabecera `
    3. Guarda y **activa**. Nodo **Botón Aprobar** → **Production URL** (acaba en `/webhook/acme-aprobar`) → pégala en **Configuración** → `url_aprobar`. Guarda otra vez.
    4. Apunta la **Production URL** del **Formulario baja**.
 2. **Escenario 2.** Importa `E2-actualizacion-de-skill.json` → **Configuración** (`sheet_id`, `email_demo`) → credenciales → guarda y activa. Apunta la **Production URL** del **Formulario skill**.
-3. **Escenario 3.** Importa `E3-agentes-autonomos.json` → **Configuración**: `sheet_id`, `email_demo` y `url_formulario_skill` = la URL del Formulario skill → credenciales (también **Leer histórico** y **Leer bandeja** si aparecen; Header Auth en **Claude redacta el informe**) → guarda y activa. Apunta la **Production URL** de **Ejecutar un agente ahora**.
+3. **Escenario 3.** Importa `E3-agentes-autonomos.json` → **Configuración**: `sheet_id`, `email_demo` y `url_formulario_skill` = la URL del Formulario skill → credenciales (también **Leer histórico**; Header Auth en **Claude redacta el informe**) → guarda y activa. Apunta la **Production URL** de **Ejecutar un agente ahora**.
 4. **Escenario 0.** Importa `E0-panel-y-reinicio.json` → **Configuración**: `sheet_id`, `url_form_baja`, `url_form_skill`, `url_form_agentes` (las tres URLs apuntadas) y, si quieres, `url_video` → credencial de Google Sheets en todos los nodos verdes → guarda y **activa**.
 5. Nodo **Abrir el panel** → **Production URL** (acaba en `/webhook/acme-panel`): **este es el enlace que se envía**.
 6. **En el Sheet** deben existir las hojas `bandeja` (cabecera `fecha, asunto, html`) y, en `planes-backup`, las columnas `avisos` y `ultimo_aviso`. Ya están creadas.
@@ -40,7 +40,7 @@ Credenciales: **Google Sheets OAuth2**, la **Header Auth** de Claude (cabecera `
 2. Haz el recorrido completo una vez (abajo). Después, **Reiniciar** otra vez.
 3. **n8n:** comprueba hasta cuándo dura tu plan. Si la prueba gratuita caduca mientras alguien lo prueba, no funciona nada: paga un mes del plan básico si hace falta.
 4. **Claude:** pon un límite de gasto mensual a la clave de API. Si se agota, la demo sigue con la propuesta por reglas.
-5. *(Opcional)* Comparte el Sheet en **solo lectura** con enlace: el panel ya enseña el mapa, pero el Sheet es el "HRIS" y un perfil técnico querrá verlo.
+5. *(Opcional)* Comparte el Sheet en **solo lectura** con enlace: el panel ya enseña el mapa, pero el Sheet es el "HRIS" y un perfil técnico querrá verlo. Se verán todas las pestañas, también señales y salarios (ficticios); el README lo dice. Si no lo compartes, el enlace al Sheet del pie del panel pedirá acceso.
 6. Envía: el enlace del panel, el vídeo y el repositorio.
 
 ## Recorrido (lo mismo que guía el panel)

@@ -5,7 +5,7 @@ tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
-Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que Andrea (consultora de RRHH, no desarrolladora) presenta en directo al CEO. Tu trabajo es encontrar lo que fallaría o quedaría mal delante del CEO **antes** de que pase. Lee `CLAUDE.md` al empezar: es el contexto del proyecto.
+Eres el auditor de la demo de **People OS · Acme**, una prueba técnica que Andrea (consultora de RRHH, no desarrolladora) entrega al CEO como vídeo, enlace del panel de n8n y repositorio (D-20, D-22). Tu trabajo es encontrar lo que fallaría o quedaría mal delante del CEO **antes** de que pase. Lee `CLAUDE.md` al empezar: es el contexto del proyecto.
 
 ## Lo que SIEMPRE haces
 
@@ -75,6 +75,6 @@ Repasa el plan de `CLAUDE.md` §10 (una casilla sin marcar solo es hallazgo si l
 - verificar: N/N · probar-n8n: N/N · GitHub al día · …
 
 ## Qué no he podido comprobar
-- El Sheet real (estado inicial: Elena activa, `alertas` vacía) → pedir a Claude Code "reinicia la demo" antes del ensayo.
+- El Sheet real (estado inicial: Elena activa, `alertas` y `bandeja` vacías) → pulsar **Reiniciar la demo** en el panel (o pedir a Claude Code "reinicia la demo").
 - n8n real (credenciales, workflows activos) y la llegada de los emails.
 ```
