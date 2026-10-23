@@ -288,7 +288,9 @@ const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida
 const AG = D.agentes, U = AG.umbrales;
 const accionPlan = (sem, plan) => AG.seguimiento[sem].find(x => x.plan_id === plan);
 
-const PASOS = [
+// Versión corta por defecto (~5 min); ?completo enseña también los pasos marcados como largo
+const COMPLETO = location.search.includes('completo');
+const TODOS = [
 // 1 · Arquitectura
 { e: 0, chip: ['visual', 'Diagrama de la arquitectura real'],
   t: 'Una capa de orquestación, no un HRIS nuevo',
@@ -340,7 +342,7 @@ const PASOS = [
   html: () => formulario(D.n8n.e1.formulario, 'Formulario baja', { empleado_id: elena.id }),
   panel: () => panel({ datos: ['Entrada: id de la persona (<code>E007</code>)'], agentes: ['Disparo del escenario 1 de n8n'], resultado: 'El formulario solo marca la baja. Todo lo demás lo hace el flujo.' }) },
 
-{ e: 2, chip: ['visual', 'Nodos reales del escenario 1 · animación'],
+{ largo: true, e: 2, chip: ['visual', 'Nodos reales del escenario 1 · animación'],
   t: 'Qué se pone en marcha',
   s: `El escenario 1 tiene ${D.n8n.e1.nodos} nodos en cuatro bloques. Se lee de izquierda a derecha.`,
   html: () => `<div class="flujo">${D.n8n.e1.bloques.map((b, i) => `<div class="bloque" data-b="${i}"><h4>${esc(b.titulo)}</h4>${b.nodos.map(n => `<div class="nodo ${tipoNodo(n.tipo)}">${esc(n.nombre)} <small>${nombreTipo[n.tipo] || n.tipo}</small></div>`).join('')}</div>`).join('')}</div>
@@ -353,7 +355,7 @@ const PASOS = [
 // 4 · Recalcular
 { e: 3, chip: ['real', 'Resultado real del motor'],
   t: 'El sistema recalcula el riesgo',
-  s: 'Mismas reglas, un dato distinto: Elena ya no está activa.',
+  s: 'Mismas reglas, un dato distinto: Elena ya no está activa. Marcos se queda solo firmando claves: es la nueva key person.',
   html: () => `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('inicial')}${mapa('inicial', { foco: 'Custodia' })}</div>
     <div class="col aparece d4" style="width:320px"><div class="card"><div class="etq">Cambios frente a la foto anterior</div><ul style="margin-top:8px;display:flex;flex-direction:column;gap:8px;list-style:none;font-size:13.5px;line-height:1.45">${D.cambios.baja.map(c => `<li>↓ ${cambioTxt(c)}</li>`).join('')}</ul></div>
     <div class="card" style="font-size:13.5px;line-height:1.45">CUS-03 baja de cobertura pero sigue en verde: <b>no genera alerta</b>. Solo avisa lo que empeora de color.</div></div></div>`,
@@ -364,7 +366,7 @@ const PASOS = [
     agentes: ['Agente de Riesgo (nodo <code>Motor</code>)'],
     resultado: `${D.cambios.baja.length} funciones empeoran. Mapa: ${D.mapas.baja.cuenta.rojo} · ${D.mapas.baja.cuenta.ambar} · ${D.mapas.baja.cuenta.verde}.` }) },
 
-{ e: 3, chip: ['real', 'Resultado real del motor'],
+{ largo: true, e: 3, chip: ['real', 'Resultado real del motor'],
   t: 'Aparece una dependencia nueva',
   s: 'Al irse Elena, Marcos se queda solo firmando claves. Ahora la key person es él.',
   html: () => {
@@ -404,7 +406,7 @@ const PASOS = [
     agentes: ['<b>Claude propone</b>: redacta con estos datos', '<b>Propuesta final</b>: si Claude no responde, este texto por reglas'],
     resultado: `Texto de esta pantalla: propuesta por reglas (<code>npm run video</code>, sin API). En n8n el texto lo redacta Claude; las acciones, candidatos y cifras son los mismos. ${D.email.alertas.length} filas en la hoja <code>alertas</code>.` }) },
 
-{ e: 4, chip: ['real', 'Resultado real del motor'],
+{ largo: true, e: 4, chip: ['real', 'Resultado real del motor'],
   t: 'People decide: opción B, mover a Marcos',
   s: 'Aprobar una opción descarta la otra. El cambio se aplica y el mapa se recalcula.',
   html: () => { const p = pb('alr002', 'E008');
@@ -417,7 +419,7 @@ const PASOS = [
 
 { e: 4, chip: ['real', 'Resultado real del motor'],
   t: 'Plan de backup aprobado: de rojo a ámbar',
-  s: 'Javier está a un nivel y tiene interés declarado. Con un plan activo, la función deja de estar en rojo.',
+  s: 'People mueve a Marcos al puesto (la otra opción se descarta sola) y aprueba el plan de Javier, que está a un nivel. Con un plan activo, la función deja de estar en rojo.',
   html: () => { const p = pb('alr003', 'E009'), f = forma(p.formacion_id);
     return `<div class="fila" style="height:100%"><div class="col" style="flex:1">${kpi('alr002')}${mapa('alr002', { foco: 'Custodia' })}</div>
     <div class="col aparece d1" style="width:320px"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">Plan ${p.plan_id} · activo</div><b>${esc(D.javier.nombre)}</b><br>${esc(sk(p.skill_id))}: ${D.javier.skill.nivel_validado} → ${p.nivel_objetivo}<br>${p.formacion_id} · ${esc(f.nombre)} (${f.semanas} semanas)</div>
@@ -443,7 +445,7 @@ const PASOS = [
     agentes: ['Escenario 3 de n8n · disparo <b>Cada lunes 8:00</b> → nodo <code>Seguimiento</code>'],
     resultado: `${AG.seguimiento[12].length} avisos, 0 clics de People. El enlace abre el formulario del escenario 2 rellenado.` }) },
 
-{ e: 5, chip: ['visual', 'Representación del formulario de n8n'],
+{ largo: true, e: 5, chip: ['visual', 'Representación del formulario de n8n'],
   t: 'El manager valida desde el aviso',
   s: 'Marcos abre el enlace: el formulario llega rellenado. Completar un curso no sube el nivel: lo valida una persona.',
   html: () => formulario(D.n8n.e2.formulario, 'Formulario skill', { empleado_id: D.javier.id, skill_id: 'gestion-claves', nivel: '3', validado_por: 'E008' },
@@ -465,7 +467,7 @@ const PASOS = [
     resultado: `Mapa final: ${D.mapas.validar.cuenta.rojo} · ${D.mapas.validar.cuenta.ambar} · ${D.mapas.validar.cuenta.verde}. Key people: ${D.mapas.validar.key_people.length}.` }) },
 
 // 7 · Agentes que trabajan solos
-{ e: 6, chip: ['real', 'Resultado real del agente de seguimiento'],
+{ largo: true, e: 6, chip: ['real', 'Resultado real del agente de seguimiento'],
   t: 'Si nadie responde, el agente insiste y escala',
   s: 'Javier ya está validado. El plan de Marcos no: el agente recuerda a su manager y, tras dos avisos, se lo pasa a People.',
   html: () => { const planes = AG.seguimiento[12].map(a => a.plan_id);
@@ -497,7 +499,7 @@ const PASOS = [
     resultado: 'Texto de esta pantalla: informe por reglas (sin API). En n8n lo redacta Claude con los mismos datos; si falla, sale este.' }) },
 
 // 8 · Arquitectura y escalabilidad
-{ e: 7, chip: ['real', 'Archivo real del repo'],
+{ largo: true, e: 7, chip: ['real', 'Archivo real del repo'],
   t: 'Cambiar una regla es editar un archivo',
   s: 'Las reglas no están dentro del flujo. n8n las lee de GitHub en cada ejecución.',
   html: () => `<div class="fila" style="gap:22px;align-items:flex-start"><pre class="yaml aparece" style="flex:1.2"># definiciones/funciones.yaml\n${esc(D.definiciones.cus01).replace(/^(\s*-?\s*)([a-z_]+):/gm, '$1<span class="k">$2</span>:').replace(/(nivel: )(\d)/g, '$1<span class="v">$2</span>')}</pre>
@@ -508,7 +510,7 @@ const PASOS = [
 
 { e: 7, chip: ['diseno', 'Estado según el README · construido y diseñado'],
   t: 'Mismo patrón para el resto de People',
-  s: 'Cada proceso nuevo se construye con las mismas piezas, sobre un único registro de personas.',
+  s: 'Las reglas viven en archivos, no en los flujos: cambiar un umbral es un commit. Y cada proceso nuevo se construye con las mismas piezas, sobre un único registro de personas.',
   html: () => { const pr = [['Skills y cobertura', 'c', 'Construido'], ['Movilidad interna', 'c', 'Construido'], ['Formación dirigida al riesgo', 'c', 'Construido'], ['Rotación no deseada', 'c', 'Construido · solo People'], ['Compensación', 'd', 'Diseñado'], ['Clima', 'd', 'Diseñado'], ['Onboarding / offboarding', 'd', 'Diseñado'], ['Selección', 'f', 'Fuera de alcance'], ['Desempeño', 'f', 'Fuera de alcance'], ['Administración y nómina', 'f', 'No se reinventa']];
     return `<div class="receta aparece"><span>Definiciones en el repo</span><i>→</i><span>Disparo</span><i>→</i><span>Regla determinista</span><i>→</i><span>IA si hay texto</span><i>→</i><span>Aviso</span><i>→</i><span class="h">Decisión humana registrada</span></div>
     <div class="procs aparece d2" style="margin-top:22px">${pr.map(([n, c, e]) => `<div class="proc"><b>${n}</b><span class="est ${c}">${e}</span></div>`).join('')}</div>
@@ -521,6 +523,7 @@ const PASOS = [
     <p class="aparece d3" style="margin-top:34px;display:inline-block;background:var(--acento);color:#fff;border-radius:10px;padding:12px 22px;font-size:19px;font-weight:600">Pruébalo tú: el enlace del panel, sin instalar nada</p></div></div>`,
   panel: null },
 ];
+const PASOS = TODOS.filter(p => COMPLETO || !p.largo);
 
 // ---------- Navegación ----------
 let i = 0, temporizadores = [], panelAbierto = /panel/.test(location.search);
