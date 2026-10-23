@@ -1,31 +1,43 @@
-# Asistente de People · propuesta
+# Asistente de People · construido (el agente)
 
-## Qué haría
+**Dónde vive:** n8n, escenario 4 ([`flujos/n8n/E4-asistente-people.json`](../flujos/n8n/E4-asistente-people.json)), en `/webhook/acme-asistente`; se abre desde el panel. Herramientas en [`calculo/asistente.js`](../calculo/asistente.js), instrucciones en [`prompts/asistente-people.md`](../prompts/asistente-people.md) (D-25).
 
-People (o dirección) pregunta en lenguaje natural y el asistente responde **leyendo el mapa ya calculado**:
+## Por qué es un agente y el resto no
 
-- "¿Dónde somos frágiles?" → funciones en rojo y ámbar por prioridad, con la key person de cada una.
-- "¿Qué pasa si se va Carmen?" → lanza el mismo cálculo que el escenario "baja" (sin escribir nada) y resume qué cambia.
-- "¿Quién podría cubrir a Elena?" → la vacante y los candidatos internos que ya calcula el motor (`vacante()`), con sus brechas.
-- "¿Qué área va peor en IA?" → la hoja `madurez-ia`.
+En el resto del sistema, las reglas deciden y Claude solo redacta. Aquí **Claude decide qué hacer**: ante una pregunta elige qué herramientas usar, en qué orden y cuándo tiene bastante para responder. Las herramientas son del motor, así que **el modelo razona, pero las cifras no las pone él**.
 
-## Cómo
+## Qué hace
 
-| Pieza | Qué es |
+People pregunta en lenguaje natural. Por ejemplo, *"¿qué pasa si se va Carmen?"*:
+
+1. Claude decide buscar a Carmen (`buscar_persona`) para tener su id, o va directo si ya lo tiene.
+2. Decide simular su baja (`simular_baja`): qué funciones empeoran, quién pasa a ser key person y qué candidatos internos hay, con sus brechas. No se cambia nada en el HRIS.
+3. Si le hace falta, mira los candidatos de la función afectada (`candidatos_para_funcion`).
+4. Responde en pocas líneas, con las cifras de las herramientas y un "siguiente paso (decide People)".
+
+La página enseña la respuesta y **cómo lo ha razonado**: cada herramienta que ha usado, con qué datos y qué le devolvió el motor.
+
+| Herramienta | Devuelve |
 |---|---|
-| Entrada | Formulario de n8n o chat (Telegram, como el asistente de onboarding de CLAUDE.md §8) |
-| Herramientas del agente | Leer `cobertura`, `key-people`, `madurez-ia`, `alertas`; simular una baja con el motor (solo lectura) |
-| Modelo | API de Claude con *tool use*: el modelo elige qué herramienta llamar; las cifras salen siempre de la herramienta |
-| Salida | Respuesta corta + enlace a la hoja |
+| `consultar_mapa` | Funciones en rojo y ámbar con su prioridad y quién las sostiene; key people |
+| `buscar_persona` | Rol, área, manager, skills validadas y dónde es key person |
+| `simular_baja` | Qué empeora, nuevas key people, perfil del puesto y candidatos internos |
+| `candidatos_para_funcion` | Skills que pide, quién la cubre, personas a un nivel (con interés) y formación |
+| `madurez_ia` | Madurez IA por área, agregada (n ≥ 5) |
 
-## Reglas
+## Qué no hace
 
-- **No calcula el riesgo:** pregunta al motor y cita lo que devuelve. Si no hay dato, lo dice.
-- **Quién ve qué:** a dirección, sin señales de rotación ni salarios; a People, también eso, marcado como confidencial. Un manager no puede preguntar por la "probabilidad de fuga" de nadie.
-- **No escribe nada:** para cambiar algo (registrar una baja, aprobar) remite a los formularios de los escenarios 1 y 2 o a los botones del email.
+- **No cambia nada:** todas las herramientas leen. Para registrar una baja o aprobar, remite al panel.
+- **No ve salarios, evaluaciones ni señales de rotación:** no hay herramienta que los devuelva, y el prompt manda negarse a estimar "quién se va a ir". `npm run probar-n8n` comprueba que ninguna herramienta los devuelve.
+- **No decide:** propone el siguiente paso y dice que lo decide People.
 
-## Esfuerzo y riesgo
+## Cómo está montado
 
-- **Esfuerzo:** 1-2 días (workflow con agente + 4 herramientas + pruebas de privacidad).
-- **Riesgo:** alto para que alguien lo pruebe solo: respuestas no deterministas, datos personales y otra pieza que puede fallar.
-- **Recomendación:** siguiente paso, con este diseño (D-21 explica por qué se construyeron antes los agentes autónomos). Si se construye, probar antes que una pregunta de un manager sobre señales individuales se rechaza.
+Un bucle de agente desplegado en n8n, de hasta 4 vueltas: **Claude razona k** (API de Claude con *tool use*) → **Herramientas k** (el motor ejecuta lo que pide) → **¿Sigue?** Cuando Claude responde sin pedir herramientas, sale a **Respuesta**. No usa nodos de agente de terceros: cada paso es visible en el lienzo y se puede probar sin la API (`probar-n8n` simula las respuestas de Claude).
+
+## Límites
+
+- **No es determinista:** qué consulta y cómo lo redacta puede variar; las cifras, no. Por eso enseña sus pasos.
+- **Sin memoria entre preguntas:** cada pregunta empieza de cero.
+- **Si Claude no responde**, la página lo dice y no inventa nada.
+- Para ensayarlo, conviene hacer preguntas trampa: el salario de alguien, quién se va a ir. Tiene que negarse.

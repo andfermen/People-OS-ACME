@@ -10,7 +10,8 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { cargar, calcular, comparar, vacante } = require('./cobertura');
-const { UMBRALES_AGENTES, sumarDias, seguimientoPlanes, vigilar, informePorReglas, mdAHtml } = require('./agentes');
+const { umbralesAutomatizaciones, sumarDias, seguimientoPlanes, vigilar, informePorReglas, mdAHtml } = require('./agentes');
+const { ejecutarHerramienta, resumenResultado } = require('./asistente');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -129,6 +130,14 @@ function bloquesN8n(archivo) {
   return { nodos: w.nodes.filter(n => !n.type.endsWith('stickyNote')).length, bloques, formulario };
 }
 
+// Asistente (D-25): los pasos que da el motor ante "¿Qué pasa si se va Carmen?" sobre el estado inicial.
+// La respuesta redactada la escribe Claude en el panel; el vídeo solo enseña las herramientas y sus resultados reales.
+const motorJs = require('./cobertura');
+const pasosAsistente = [['buscar_persona', { texto: 'Carmen' }], ['simular_baja', { empleado_id: 'E011' }]].map(([herramienta, entrada]) => {
+  const r = ejecutarHerramienta(herramienta, entrada, datosIni, motorJs);
+  return { herramienta, entrada, resumen: resumenResultado(herramienta, r), resultado: r };
+});
+
 const datos = {
   generado: new Date().toISOString().slice(0, 10),
   origen: 'npm run video · calculo/demo.js (propuesta por reglas, sin API)',
@@ -149,8 +158,9 @@ const datos = {
   marcos002: { rol: marcos002.rol, dependen: dependenDeMarcos },
   planes: { alr002: planes002, alr003: planes003, validar: planesFin },
   historico: historico.filter(h => h.funcion_id === 'CUS-01' || h.funcion_id === 'CUS-02').map(h => ({ evento: h.evento, funcion_id: h.funcion_id, semaforo: h.semaforo, cobertura: +h.cobertura })),
+  asistente: { pregunta: '¿Qué pasa si se va Carmen?', pasos: pasosAsistente },
   agentes: {
-    umbrales: UMBRALES_AGENTES, hoy, semanas: { 12: semana(12), 13: semana(13), 14: semana(14) },
+    umbrales: umbralesAutomatizaciones(datosIni.reglas), hoy, semanas: { 12: semana(12), 13: semana(13), 14: semana(14) },
     seguimiento: { 12: seg12, 13: seg13, 14: seg14 }, escalado,
     centinela: { ...centinela, senales: centinela.senales.length }, // el vídeo no muestra señales individuales
     informe_html: mdAHtml(informe),
@@ -160,7 +170,7 @@ const datos = {
     skills: Object.fromEntries(datosIni.taxonomia.skills.map(s => [s.id, s.nombre])),
     formacion: Object.fromEntries(datosIni.catalogo.map(f => [f.id, { nombre: f.nombre, tipo: f.tipo, semanas: f.semanas }])),
   },
-  n8n: { e1: bloquesN8n('E1-baja-de-elena.json'), e2: bloquesN8n('E2-actualizacion-de-skill.json'), e3: bloquesN8n('E3-agentes-autonomos.json') },
+  n8n: { e1: bloquesN8n('E1-baja-de-elena.json'), e2: bloquesN8n('E2-actualizacion-de-skill.json'), e3: bloquesN8n('E3-automatizaciones-calendario.json') },
 };
 
 // Guion para leer mientras se graba (video/guion.html): sale de la tabla de locución de video/LEEME.md, una sola fuente

@@ -5747,6 +5747,160 @@ window.DEMO = {
    "cobertura": 0
   }
  ],
+ "asistente": {
+  "pregunta": "¿Qué pasa si se va Carmen?",
+  "pasos": [
+   {
+    "herramienta": "buscar_persona",
+    "entrada": {
+     "texto": "Carmen"
+    },
+    "resumen": "E011 Carmen Vega Herrera (Directora de compliance (MLRO))",
+    "resultado": {
+     "personas": [
+      {
+       "id": "E011",
+       "nombre": "Carmen Vega Herrera",
+       "rol": "Directora de compliance (MLRO)",
+       "area": "Compliance AML/KYC",
+       "estado": "activo",
+       "manager": "Sergio Navarro Gil",
+       "skills_validadas": [
+        {
+         "skill": "Prevención de blanqueo (PBC/FT)",
+         "nivel": 4
+        },
+        {
+         "skill": "Monitorización de transacciones",
+         "nivel": 3
+        },
+        {
+         "skill": "Verificación KYC/KYB",
+         "nivel": 3
+        },
+        {
+         "skill": "Regulación MiCA",
+         "nivel": 3
+        },
+        {
+         "skill": "Liderazgo de equipos",
+         "nivel": 3
+        },
+        {
+         "skill": "Gestión de stakeholders",
+         "nivel": 3
+        },
+        {
+         "skill": "Uso de IA en el trabajo diario",
+         "nivel": 1
+        },
+        {
+         "skill": "Automatización y agentes",
+         "nivel": 1
+        },
+        {
+         "skill": "Criterio y verificación de resultados de IA",
+         "nivel": 2
+        }
+       ],
+       "key_person_en": [
+        "CMP-03"
+       ]
+      }
+     ]
+    }
+   },
+   {
+    "herramienta": "simular_baja",
+    "entrada": {
+     "empleado_id": "E011"
+    },
+    "resumen": "1 función(es) empeoran (CMP-03 ambar→rojo); 1 candidato(s) interno(s)",
+    "resultado": {
+     "simulacion": "Baja de Carmen Vega Herrera (Directora de compliance (MLRO)). No se ha cambiado nada en el HRIS.",
+     "funciones_que_empeoran": [
+      {
+       "id": "CMP-03",
+       "nombre": "Comunicación de operaciones sospechosas",
+       "de": "ambar",
+       "a": "rojo",
+       "cobertura_antes": 1,
+       "cobertura_despues": 0
+      }
+     ],
+     "mapa_antes": {
+      "rojo": 4,
+      "ambar": 3,
+      "verde": 17
+     },
+     "mapa_despues": {
+      "rojo": 5,
+      "ambar": 2,
+      "verde": 17
+     },
+     "nuevas_key_people": [],
+     "puesto": {
+      "rol": "Directora de compliance (MLRO)",
+      "equipo": 19,
+      "perfil": [
+       {
+        "skill": "Verificación KYC/KYB",
+        "nivel": 2
+       },
+       {
+        "skill": "Prevención de blanqueo (PBC/FT)",
+        "nivel": 3
+       },
+       {
+        "skill": "Monitorización de transacciones",
+        "nivel": 3
+       },
+       {
+        "skill": "Regulación MiCA",
+        "nivel": 3
+       },
+       {
+        "skill": "Gestión de stakeholders",
+        "nivel": 3
+       },
+       {
+        "skill": "Liderazgo de equipos",
+        "nivel": 2
+       }
+      ],
+      "candidatos_internos": [
+       {
+        "nombre": "Beatriz Lorenzo Santos",
+        "rol": "Directora legal y regulatoria",
+        "cumple": "3 de 6",
+        "brechas": [
+         {
+          "skill": "Verificación KYC/KYB",
+          "tiene": 0,
+          "necesita": 2,
+          "formacion": []
+         },
+         {
+          "skill": "Prevención de blanqueo (PBC/FT)",
+          "tiene": 0,
+          "necesita": 3,
+          "formacion": []
+         },
+         {
+          "skill": "Monitorización de transacciones",
+          "tiene": 0,
+          "necesita": 3,
+          "formacion": []
+         }
+        ],
+        "ya_es_key_person_en": []
+       }
+      ]
+     }
+    }
+   }
+  ]
+ },
  "agentes": {
   "umbrales": {
    "diasEntreAvisos": 7,
@@ -5877,6 +6031,12 @@ window.DEMO = {
   },
   "centinela": {
    "fecha": "2027-01-29",
+   "umbrales": {
+    "diasEntreAvisos": 7,
+    "avisosAntesDeEscalar": 2,
+    "mesesValidacion": 6,
+    "diasDecisionPendiente": 7
+   },
    "cuenta": {
     "rojo": 4,
     "ambar": 3,
@@ -6351,7 +6511,7 @@ window.DEMO = {
  },
  "n8n": {
   "e1": {
-   "nodos": 29,
+   "nodos": 17,
    "bloques": [
     {
      "titulo": "1 · Entradas",
@@ -6367,7 +6527,7 @@ window.DEMO = {
      ]
     },
     {
-     "titulo": "2 · Lee el Sheet",
+     "titulo": "2 · Lee",
      "nodos": [
       {
        "nombre": "Configuración",
@@ -6378,34 +6538,22 @@ window.DEMO = {
        "tipo": "httpRequest"
       },
       {
-       "nombre": "Leer empleados",
-       "tipo": "googleSheets"
+       "nombre": "Pedir lectura",
+       "tipo": "code"
       },
       {
-       "nombre": "Leer skills",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer alertas",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer cobertura",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "¿Qué se ha pedido?",
-       "tipo": "switch"
+       "nombre": "Leer HRIS",
+       "tipo": "executeWorkflow"
       }
      ]
     },
     {
      "titulo": "3 · Calcula (reglas) y propone (Claude)",
      "nodos": [
+      {
+       "nombre": "¿Qué se ha pedido?",
+       "tipo": "switch"
+      },
       {
        "nombre": "Motor",
        "tipo": "code"
@@ -6433,7 +6581,7 @@ window.DEMO = {
      ]
     },
     {
-     "titulo": "4 · Escribe en el Sheet y avisa",
+     "titulo": "4 · Escribe en el HRIS y avisa",
      "nodos": [
       {
        "nombre": "Repartir",
@@ -6444,48 +6592,12 @@ window.DEMO = {
        "tipo": "code"
       },
       {
-       "nombre": "¿A qué hoja?",
-       "tipo": "switch"
+       "nombre": "Escribir en el HRIS",
+       "tipo": "executeWorkflow"
       },
       {
        "nombre": "Enviar email",
        "tipo": "gmail"
-      },
-      {
-       "nombre": "Actualizar empleados",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar alertas",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar cobertura",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Añadir al histórico",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar en la bandeja",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Vaciar key-people",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Filas key-people",
-       "tipo": "code"
-      },
-      {
-       "nombre": "Escribir key-people",
-       "tipo": "googleSheets"
       }
      ]
     }
@@ -6499,7 +6611,7 @@ window.DEMO = {
    }
   },
   "e2": {
-   "nodos": 21,
+   "nodos": 10,
    "bloques": [
     {
      "titulo": "Escenario 2 · Actualización de skill",
@@ -6517,20 +6629,12 @@ window.DEMO = {
        "tipo": "httpRequest"
       },
       {
-       "nombre": "Leer empleados",
-       "tipo": "googleSheets"
+       "nombre": "Pedir lectura",
+       "tipo": "code"
       },
       {
-       "nombre": "Leer skills",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer cobertura",
-       "tipo": "googleSheets"
+       "nombre": "Leer HRIS",
+       "tipo": "executeWorkflow"
       },
       {
        "nombre": "Validar skill",
@@ -6545,48 +6649,12 @@ window.DEMO = {
        "tipo": "code"
       },
       {
-       "nombre": "¿A qué hoja?",
-       "tipo": "switch"
+       "nombre": "Escribir en el HRIS",
+       "tipo": "executeWorkflow"
       },
       {
        "nombre": "Enviar email",
        "tipo": "gmail"
-      },
-      {
-       "nombre": "Actualizar skills",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Añadir skill nueva",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar cobertura",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Añadir al histórico",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar en la bandeja",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Vaciar key-people",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Filas key-people",
-       "tipo": "code"
-      },
-      {
-       "nombre": "Escribir key-people",
-       "tipo": "googleSheets"
       }
      ]
     }
@@ -6603,7 +6671,7 @@ window.DEMO = {
    }
   },
   "e3": {
-   "nodos": 30,
+   "nodos": 18,
    "bloques": [
     {
      "titulo": "1 · Disparo: nadie pulsa nada",
@@ -6617,21 +6685,21 @@ window.DEMO = {
        "tipo": "scheduleTrigger"
       },
       {
-       "nombre": "Ejecutar un agente ahora",
+       "nombre": "Ejecutar ahora",
        "tipo": "formTrigger"
       },
       {
-       "nombre": "Agente: seguimiento",
+       "nombre": "Automatización: seguimiento",
        "tipo": "set"
       },
       {
-       "nombre": "Agente: centinela",
+       "nombre": "Automatización: centinela",
        "tipo": "set"
       }
      ]
     },
     {
-     "titulo": "2 · Lee el Sheet",
+     "titulo": "2 · Lee",
      "nodos": [
       {
        "nombre": "Configuración",
@@ -6642,38 +6710,22 @@ window.DEMO = {
        "tipo": "httpRequest"
       },
       {
-       "nombre": "Leer empleados",
-       "tipo": "googleSheets"
+       "nombre": "Pedir lectura",
+       "tipo": "code"
       },
       {
-       "nombre": "Leer skills",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer alertas",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer cobertura",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Leer histórico",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "¿Qué agente?",
-       "tipo": "switch"
+       "nombre": "Leer HRIS",
+       "tipo": "executeWorkflow"
       }
      ]
     },
     {
-     "titulo": "3 · Los agentes deciden cuándo actuar (reglas)",
+     "titulo": "3 · Deciden cuándo actuar (reglas)",
      "nodos": [
+      {
+       "nombre": "¿Qué automatización?",
+       "tipo": "switch"
+      },
       {
        "nombre": "Seguimiento",
        "tipo": "code"
@@ -6693,7 +6745,7 @@ window.DEMO = {
      ]
     },
     {
-     "titulo": "4 · Escribe en el Sheet y avisa",
+     "titulo": "4 · Escribe en el HRIS y avisa",
      "nodos": [
       {
        "nombre": "Repartir",
@@ -6704,53 +6756,21 @@ window.DEMO = {
        "tipo": "code"
       },
       {
-       "nombre": "¿A qué hoja?",
-       "tipo": "switch"
+       "nombre": "Escribir en el HRIS",
+       "tipo": "executeWorkflow"
       },
       {
        "nombre": "Enviar email",
        "tipo": "gmail"
-      },
-      {
-       "nombre": "Guardar planes",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar alertas",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar cobertura",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Añadir al histórico",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Guardar en la bandeja",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Vaciar key-people",
-       "tipo": "googleSheets"
-      },
-      {
-       "nombre": "Filas key-people",
-       "tipo": "code"
-      },
-      {
-       "nombre": "Escribir key-people",
-       "tipo": "googleSheets"
       }
      ]
     }
    ],
    "formulario": {
-    "titulo": "Acme · Ejecutar un agente ahora",
-    "descripcion": "Para la demo: lanza un agente sin esperar a su día. «Cuándo» simula el paso del tiempo: +12 semanas es cuando el plan de Javier llega a su fecha.",
+    "titulo": "Acme · Ejecutar una automatización ahora",
+    "descripcion": "Para la demo: lanza el seguimiento de planes o el centinela sin esperar a su día. «Cuándo» simula el paso del tiempo: +12 semanas es cuando el plan de Javier llega a su fecha.",
     "campos": [
-     "agente",
+     "automatizacion",
      "cuando",
      "fecha"
     ]

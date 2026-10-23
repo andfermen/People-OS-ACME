@@ -4,7 +4,7 @@
 const cfg = $('Configuración').first().json;
 const T = tablas();
 const base = String(cfg.webhookUrl || '').replace(/acme-panel.*$/, ''); // …/webhook/ de esta misma instancia
-const url = { aprobar: base + 'acme-aprobar', reiniciar: base + 'acme-reiniciar', panel: base + 'acme-panel' };
+const url = { aprobar: base + 'acme-aprobar', reiniciar: base + 'acme-reiniciar', panel: base + 'acme-panel', asistente: base + 'acme-asistente' };
 const configurado = u => u && !/^PEGAR_/.test(u);
 
 const empleados = T['empleados'].filas, alertas = T['alertas'].filas, planes = T['planes-backup'].filas;
@@ -22,13 +22,13 @@ const pasos = [
     hecho: alertas.some(a => /^VAC-/.test(a.grupo || '') && a.decision === 'aprobada') },
   { t: 'Aprobar el plan de backup de Javier', d: `${backupJavier ? `<b>${esc(backupJavier.alerta_id)}</b>: c` : 'C'}on un plan activo, <i>Gestión de claves</i> pasa de rojo a ámbar.`,
     hecho: backupJavier && backupJavier.decision === 'aprobada' },
-  { t: 'Tres meses después: el agente de seguimiento', d: 'Formulario de agentes → <b>seguimiento</b>, <b>+12 semanas</b>. Nadie le pide nada: el agente ve que el plan de Javier ha llegado a su fecha y escribe a su manager. Míralo en la bandeja.',
-    hecho: planJavier && (+planJavier.avisos > 0 || planJavier.estado === 'completado'), accion: enlace(cfg.url_form_agentes, 'Formulario de agentes') },
+  { t: 'Tres meses después: el seguimiento de planes', d: 'Formulario <i>Ejecutar ahora</i> → <b>seguimiento</b>, <b>+12 semanas</b>. Nadie le pide nada: la automatización ve que el plan de Javier ha llegado a su fecha y escribe a su manager. Míralo en la bandeja.',
+    hecho: planJavier && (+planJavier.avisos > 0 || planJavier.estado === 'completado'), accion: enlace(cfg.url_form_automatizaciones, 'Formulario «Ejecutar ahora»') },
   { t: 'El manager valida a Javier', d: 'Pulsa <i>Validar a Javier</i> en el aviso de la bandeja (o abre el formulario de skill con <b>E009 · gestion-claves · 3 · E008</b>). <i>Gestión de claves</i> vuelve a verde.',
     hecho: planJavier && planJavier.estado === 'completado', accion: enlace(cfg.url_form_skill, 'Formulario de skill') },
-  { t: 'Si nadie responde (opcional)', d: 'Agentes → seguimiento con <b>+13</b> y después <b>+14 semanas</b>: el agente recuerda y, tras dos avisos, escala a People.',
+  { t: 'Si nadie responde (opcional)', d: '<i>Ejecutar ahora</i> → seguimiento con <b>+13</b> y después <b>+14 semanas</b>: recuerda al manager y, tras dos avisos, escala a People.',
     hecho: alertas.some(a => /^SEG-/.test(a.grupo || '')), opcional: true },
-  { t: 'El centinela: el informe del mes', d: 'Agentes → <b>centinela</b>, <b>+14 semanas</b>. Recalcula sin que nadie lo pida y deja en la bandeja el informe para dirección.',
+  { t: 'El centinela: el informe del mes', d: '<i>Ejecutar ahora</i> → <b>centinela</b>, <b>+14 semanas</b>. Recalcula sin que nadie lo pida y deja en la bandeja el informe para dirección.',
     hecho: bandeja.some(b => /informe para dirección/.test(b.asunto || '')) },
 ];
 const siguiente = pasos.findIndex(p => !p.hecho && !p.opcional);
@@ -91,11 +91,14 @@ details{border:1px solid var(--b);border-radius:8px;margin-bottom:8px;padding:8p
 <section class="intro"><h2>Cómo probarlo</h2><p>Todo lo que ves lo calcula el sistema ahora, leyendo el Sheet que hace de HRIS. Los formularios se abren en otra pestaña: tras enviarlos, vuelve aquí y pulsa <b>Actualizar</b> (el recálculo tarda unos segundos; la propuesta de Claude, algo más).</p>
 <p class="nota">Si otra persona lo está probando a la vez, compartís los datos. <b>Reiniciar</b> lo deja como al principio.</p></section>
 <section><h2>Qué hacer ahora</h2><ol class="pasos">${htmlPasos}</ol></section>
+<section class="intro"><h2>Pregúntale al asistente · un agente</h2><p>Claude decide qué consultar (el mapa, una persona, una baja simulada, candidatos, madurez IA) y responde con las cifras del motor. Solo lee: no cambia nada y no ve salarios ni señales individuales.</p>
+<form action="${url.asistente}" method="get" target="_blank" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"><input name="pregunta" placeholder="Por ejemplo: ¿qué pasa si se va Carmen?" style="flex:1;min-width:220px;padding:8px 12px;border:1px solid var(--b);border-radius:6px;font:inherit"><button class="btn" style="margin-top:0">Preguntar ↗</button></form>
+<p class="nota" style="margin-top:8px">Prueba: ${['¿Qué pasa si se va Carmen?', '¿Quién podría cubrir la prueba de reservas?', '¿Qué área va peor en IA?'].map(e => `<a href="${url.asistente}?pregunta=${encodeURIComponent(e)}" target="_blank">${e}</a>`).join(' · ')}</p></section>
 <section><h2>Mapa de cobertura</h2><div class="kpi"><div class="r"><b>${cuenta.rojo}</b>en rojo</div><div class="a"><b>${cuenta.ambar}</b>en ámbar</div><div class="v"><b>${cuenta.verde}</b>en verde</div></div>${htmlMapa}
 <h2 style="margin-top:14px">Key people (calculadas, nadie las marca)</h2><ul class="kp">${htmlKp}</ul></section>
 <section><h2>Decisiones pendientes de People</h2>${htmlDecisiones}</section>
 <section><h2>Bandeja de People</h2><p class="nota">Copia de cada email que ha enviado el sistema, el más reciente arriba. En producción, cada uno llega a su destinatario (People o el manager); aquí se ven todos.</p>${htmlBandeja}</section>
 </main>
-<footer>Código, reglas y decisiones: <a href="${String(cfg.repo).replace('raw.githubusercontent.com', 'github.com').replace(/\/main$/, '')}">repositorio</a>${configurado(cfg.url_video) ? ` · <a href="${cfg.url_video}">vídeo</a>` : ''} · <a href="https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit">Sheet</a></footer>
+<footer>Código, reglas y decisiones: <a href="${String(cfg.repo).replace('raw.githubusercontent.com', 'github.com').replace(/\/main$/, '')}">repositorio</a>${configurado(cfg.url_video) ? ` · <a href="${cfg.url_video}">vídeo</a>` : ''} · <a href="${enlaceHris()}">HRIS (Google Sheets)</a></footer>
 </body></html>`;
 return [{ json: { html: pagina } }];

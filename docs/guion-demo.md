@@ -12,7 +12,7 @@
 | 4 | El mapa | 3 | Hoja `cobertura` y hoja `key-people` | Ver abajo |
 | 5 | Demo: baja | 4 | Escenario 1 · formulario baja con E007 → el Sheet cambia → email a People | Ver abajo |
 | 6 | Cierre del ciclo | 2 | En el email de People: aprobar la opción B y el backup de Javier → CUS-01 pasa a ámbar | "La IA propone; People decide; el sistema recalcula." |
-| 7 | Agentes que trabajan solos | 4 | Escenario 3 · seguimiento (+12 semanas) → Marcos valida a Javier → CUS-01 a verde · centinela e informe | Ver abajo |
+| 7 | Automatizaciones y agente | 4 | Escenario 3 · seguimiento (+12 semanas) → Marcos valida a Javier → CUS-01 a verde · centinela e informe · escenario 4 · una pregunta al asistente | Ver abajo |
 | 8 | Usos | 3 | Rotación, encuesta y revisión salarial | Ver abajo |
 | 9 | Plan AI first y escalado | 2 | Hoja `madurez-ia`, escenario "se va Lucía", `docs/plan-ai-first-people.md`, `docs/escalado.md` | Ver abajo |
 | 10 | Cierre | 1 | — | "Esta prueba la he construido como trabajaría el departamento: una persona + IA." |
@@ -46,14 +46,15 @@
 2. **Aprobar ALR-003** (plan de backup de Javier) → fila nueva en `planes-backup` → recálculo → **CUS-01 pasa de 🔴 a 🟡** (lo dicen la página y un email).
 3. CUS-02 sigue en rojo (cobertura 0: un backup no basta). *"El sistema no se engaña: sin nadie que lo sepa hacer hoy, sigue en rojo."*
 
-## 7 · Agentes que trabajan solos
+## 7 · Automatizaciones y agente
 
-Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos agentes que arrancan con el calendario."* Reglas: `definiciones/reglas-agentes.md` (D-21).
+Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos automatizaciones que arrancan con el calendario. Y para preguntar, un agente."* Reglas: `definiciones/reglas-agentes.md` (D-21).
 
-1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar un agente ahora** → `seguimiento`, cuándo = `+12 semanas`. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
+1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar ahora** → `seguimiento`, cuándo = `+12 semanas`. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
 2. En el aviso a Marcos → **Validar a Javier**: el formulario del escenario 2 llega rellenado (`E009`, `gestion-claves`, `3`, `E008`). Enviar → email *Riesgo reducido*: **CUS-01 pasa de 🟡 a 🟢**. *"Completar un curso no es tener la skill: el agente pregunta, la valida una persona."*
-3. *(Si hay tiempo)* Mismo formulario con `+13` y `+14 semanas`: el agente recuerda a Sergio y luego escala a People (alerta `ALR-005`). *"El agente no cierra ni cambia el plan. Su trabajo es que nada se quede olvidado."*
+3. *(Si hay tiempo)* Mismo formulario con `+13` y `+14 semanas`: la automatización recuerda a Sergio y luego escala a People (alerta `ALR-005`). *"No cierra ni cambia el plan. Su trabajo es que nada se quede olvidado."*
 4. **Centinela.** En n8n arranca el día 1 de cada mes. En la demo: `centinela`, `+14 semanas`. Email *Revisión … · informe para dirección*: arriba, el informe listo para reenviar (CUS-02 sigue sin nadie, la conversación de permanencia con Marcos sin decidir, validaciones de skills de más de 6 meses); abajo, solo People, las señales de rotación. *"A dirección le llega lo organizativo; lo personal se queda en People."*
+5. **Asistente (el agente).** Desde el panel: *"¿Qué pasa si se va Carmen?"*. Claude decide buscarla, simular su baja y mirar candidatos; responde con esas cifras y la página enseña qué ha consultado. *"Aquí sí razona el modelo: decide qué consultar. Pero las cifras las pone el motor, y solo lee."* Si hay tiempo, una pregunta trampa: *"¿Cuánto cobra Marcos?"* → se niega.
 
 ## 8 · Usos
 
@@ -73,9 +74,9 @@ Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer 
 | Pregunta | Respuesta corta |
 |---|---|
 | ¿Y si las skills están mal? | Solo cuentan las validadas por el manager. Revisión semestral, y el centinela marca cada mes las validaciones de más de 6 meses. Es el límite número 1 del sistema. |
-| ¿La IA decide algo? | No. Captura y redacta. El riesgo es una regla y las acciones las aprueba People. |
-| ¿Qué hace el sistema solo? | Vigilar, recordar, escalar e informar: el seguimiento de planes y el centinela. Deciden **cuándo** actuar con reglas; no suben niveles ni cierran planes. |
-| ¿Y si el manager no responde? | El agente le recuerda a los 7 días y, tras 2 avisos, abre una alerta para People. Si el manager ya no está, escala directamente. |
-| ¿Por qué no un agente conversacional? | Está diseñado (`agentes/asistente-people.md`), pero no es determinista y toca datos personales. Primero, agentes cuyas decisiones se pueden probar. |
+| ¿La IA decide algo? | Sobre personas, no. Redacta, y en el asistente decide qué consultar. El riesgo es una regla y las acciones las aprueba People. |
+| ¿Qué hace el sistema solo? | Vigilar, recordar, escalar e informar: el seguimiento de planes y el centinela. Son automatizaciones: deciden **cuándo** actuar con reglas; no suben niveles ni cierran planes. |
+| ¿Y si el manager no responde? | El seguimiento le recuerda a los 7 días y, tras 2 avisos, abre una alerta para People. Si el manager ya no está, escala directamente. |
+| ¿Dónde están los agentes? | Uno, el asistente: Claude razona con herramientas del motor. El resto son automatizaciones con reglas, a propósito: lo que fija riesgos o prioridades tiene que poder auditarse y repetirse (AI Act). El modelo razona solo donde no se decide nada sobre nadie. |
 | ¿Por qué no un modelo de predicción de fuga? | Por ética, por el AI Act y por los datos: con 160 personas y pocas salidas al año no hay muestra. Las señales llevan a una conversación, no a una etiqueta. |
 | ¿Escala? | Las definiciones sí. Sheets llega hasta ~200 personas; después, base de datos o HRIS. |

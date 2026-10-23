@@ -5,7 +5,7 @@ const m = $('Motor').first().json;
 const prop = $('Propuesta final').first().json;
 if (!prop.alertas.length) return [{ json: { filas: m.filas, email: null } }]; // ninguna función empeora: se actualiza el mapa, sin aviso
 
-const sheet = `https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit`;
+const sheet = enlaceHris();
 const aprobar = a => `<a href="${cfg.url_aprobar}?alerta=${a.alerta_id}" style="background:#1a73e8;color:#fff;padding:4px 10px;border-radius:4px;text-decoration:none">Aprobar ${a.alerta_id}</a>`;
 const opciones = prop.alertas.filter(a => a.grupo);
 const otras = prop.alertas.filter(a => !a.grupo);

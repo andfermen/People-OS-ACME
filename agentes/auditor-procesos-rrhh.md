@@ -4,7 +4,7 @@ Adaptación del agente genérico de auditoría de procesos de pymes al 360º de 
 
 ## Qué haría
 
-Andrea describe cómo se hace hoy un proceso (onboarding, evaluación del desempeño, offboarding, revisión salarial…) con notas o un texto libre. El agente devuelve:
+People describe cómo se hace hoy un proceso (onboarding, evaluación del desempeño, offboarding, revisión salarial…) con notas o un texto libre. El agente devuelve:
 
 1. **Mapa del proceso actual**, paso a paso.
 2. **Cuellos de botella**, con impacto alto/medio/bajo.
@@ -25,7 +25,7 @@ Andrea describe cómo se hace hoy un proceso (onboarding, evaluación del desemp
 
 - No inventa datos del proceso: lo que no está en la descripción va a "qué falta validar".
 - Ninguna decisión sobre personas pasa a la IA: si un paso lo exige, lo marca como humano.
-- Una propuesta cada vez: no genera documentos sin que Andrea apruebe el anterior.
+- Una propuesta cada vez: no genera documentos sin que People apruebe el anterior.
 
 ## Esfuerzo y riesgo
 

@@ -1,13 +1,14 @@
-// Agentes autónomos (D-21): seguimiento de planes de backup y centinela de riesgo.
-// Implementa definiciones/reglas-agentes.md. Deterministas: deciden CUÁNDO actuar y QUÉ detectar; nunca deciden sobre una persona.
+// Automatizaciones con calendario (D-21): seguimiento de planes de backup y centinela de riesgo. No son agentes: aplican reglas.
+// Implementa definiciones/reglas-agentes.md con los umbrales de definiciones/reglas.yaml (automatizaciones). Deterministas: deciden CUÁNDO actuar y QUÉ detectar; nunca deciden sobre una persona.
 // Sin dependencias: lo usan la demo local (demo.js), el vídeo (exportar-video.js) y los nodos de código de n8n (exportar-n8n.js).
 
-const UMBRALES_AGENTES = {
-  diasEntreAvisos: 7,        // si el manager no valida, se le recuerda a los 7 días
-  avisosAntesDeEscalar: 2,   // tras 2 avisos sin validar, el plan se escala a People
-  mesesValidacion: 6,        // cadencia semestral: una validación más antigua se marca como caducada
-  diasDecisionPendiente: 7,  // una alerta sin decidir más de 7 días se recuerda en el informe
-};
+// Umbrales con nombres cortos, leídos de reglas.yaml (automatizaciones): seguimiento y centinela
+const umbralesAutomatizaciones = reglas => ({
+  diasEntreAvisos: reglas.automatizaciones.seguimiento.dias_entre_avisos,
+  avisosAntesDeEscalar: reglas.automatizaciones.seguimiento.avisos_antes_de_escalar,
+  mesesValidacion: reglas.automatizaciones.centinela.meses_validacion,
+  diasDecisionPendiente: reglas.automatizaciones.centinela.dias_decision_pendiente,
+});
 
 const dias = (desde, hasta) => Math.round((Date.parse(hasta) - Date.parse(desde)) / 864e5);
 const sumarDias = (fecha, n) => new Date(Date.parse(fecha) + n * 864e5).toISOString().slice(0, 10);
@@ -20,11 +21,11 @@ function fechaRevision(plan, catalogo) {
   return fechaValida(plan.fecha_inicio) && f ? sumarDias(plan.fecha_inicio, f.semanas * 7) : '';
 }
 
-// ---------- Agente de seguimiento de planes ----------
+// ---------- Seguimiento de planes ----------
 // Para cada plan activo que ha llegado a su fecha: avisa al manager, le recuerda cada 7 días y, tras 2 avisos, escala a People.
 // Devuelve las acciones; no escribe nada. avisos y ultimo_aviso viven en la hoja planes-backup.
 function seguimientoPlanes(datos, hoy) {
-  const U = UMBRALES_AGENTES;
+  const U = umbralesAutomatizaciones(datos.reglas);
   const persona = id => datos.empleados.find(e => e.id === id);
   const acciones = [];
   for (const p of datos.planes.filter(x => x.estado === 'activo')) {
@@ -54,7 +55,7 @@ function seguimientoPlanes(datos, hoy) {
 // Revisión programada: qué está frágil y desde cuándo, qué se ha degradado sin que nadie lo avise y qué está pendiente.
 // r = calcular(datos); cambios = comparar(foto anterior, r); historico y alertas = filas de sus hojas.
 function vigilar(datos, r, cambios, historico, alertas, hoy) {
-  const U = UMBRALES_AGENTES;
+  const U = umbralesAutomatizaciones(datos.reglas);
   const nombre = id => datos.empleados.find(e => e.id === id)?.nombre || id;
   // Desde cuándo está cada función en su color actual (racha en el histórico)
   const desde = f => {
@@ -87,7 +88,7 @@ function vigilar(datos, r, cambios, historico, alertas, hoy) {
   const senales = r.senales_rotacion.filter(s => kp.has(s.id) && s.probabilidad !== 'baja');
   const cuenta = r.funciones.reduce((m, f) => ((m[f.semaforo] = (m[f.semaforo] || 0) + 1), m), { rojo: 0, ambar: 0, verde: 0 });
   // A dirección solo le llega "en seguimiento por People", sin el porqué (prompts/informe-direccion.md, regla 3)
-  return { fecha: hoy, cuenta, cambios, fragiles, key_people: r.key_people.map(k => ({ nombre: k.nombre, rol: k.rol, oculta: k.oculta, funciones: k.funciones.map(f => f.funcion), seguimiento: senales.some(s => s.id === k.id) })),
+  return { fecha: hoy, umbrales: U, cuenta, cambios, fragiles, key_people: r.key_people.map(k => ({ nombre: k.nombre, rol: k.rol, oculta: k.oculta, funciones: k.funciones.map(f => f.funcion), seguimiento: senales.some(s => s.id === k.id) })),
     caducadas, planes, pendientes, senales };
 }
 
@@ -100,7 +101,7 @@ function mensajeInforme(h, user) {
     cambios_mes: h.cambios.length ? h.cambios.map(c => `${c.id} ${c.nombre}: ${c.de} → ${c.a} (${c.cambio})`).join('\n') : 'Sin cambios respecto al último recálculo.',
     planes_backup: h.planes.map(p => `${p.plan_id} ${p.empleado} · ${p.skill} (${p.funcion_id}) · revisión ${p.fecha_revision || 'sin fecha'} · ${p.estado}`).join('\n') || 'Ninguno.',
     alertas_mes: [...h.pendientes.map(a => `${a.alerta_id} ${a.accion}: pendiente desde hace ${a.dias} días`),
-      ...(h.caducadas.length ? [`${h.caducadas.length} validaciones de skills con más de ${UMBRALES_AGENTES.mesesValidacion} meses sostienen funciones al límite`] : [])].join('\n') || 'Ninguna.',
+      ...(h.caducadas.length ? [`${h.caducadas.length} validaciones de skills con más de ${h.umbrales.mesesValidacion} meses sostienen funciones al límite`] : [])].join('\n') || 'Ninguna.',
   };
   return user.replace(/\{\{(\w+)\}\}/g, (m, k) => (k in t ? t[k] : m));
 }
@@ -124,7 +125,7 @@ function informePorReglas(h) {
     lin([
       ...p1.filter(f => !f.cubren.length).map(f => `Decidir cómo cubrir **${f.id}**: hoy no la sabe hacer nadie (formar fuera, contratar o apoyo externo).`),
       ...h.pendientes.slice(0, 2).map(a => `Desbloquear ${a.alerta_id} (${a.accion}): ${a.dias} días sin decisión.`),
-      ...(h.caducadas.length ? [`Pedir a los managers que revaliden ${h.caducadas.length} skills con más de ${UMBRALES_AGENTES.mesesValidacion} meses: el mapa vale lo que valga la validación.`] : []),
+      ...(h.caducadas.length ? [`Pedir a los managers que revaliden ${h.caducadas.length} skills con más de ${h.umbrales.mesesValidacion} meses: el mapa vale lo que valga la validación.`] : []),
     ].slice(0, 3)),
   ].join('\n\n');
 }
@@ -146,4 +147,4 @@ function mdAHtml(md) {
   return out.join('\n');
 }
 
-module.exports = { UMBRALES_AGENTES, dias, sumarDias, fechaValida, fechaRevision, seguimientoPlanes, vigilar, mensajeInforme, informePorReglas, mdAHtml };
+module.exports = { umbralesAutomatizaciones, dias, sumarDias, fechaValida, fechaRevision, seguimientoPlanes, vigilar, mensajeInforme, informePorReglas, mdAHtml };

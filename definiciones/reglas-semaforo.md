@@ -1,7 +1,7 @@
 # Reglas del semáforo de cobertura
 
 > Fuente única de las reglas. El cálculo es **determinista**: con los mismos datos, siempre el mismo resultado. La IA no interviene aquí.
-> Los umbrales editables están marcados con ✏️.
+> Los valores marcados con ✏️ y la propia regla del semáforo (sus condiciones, en orden) están en `definiciones/reglas.yaml`, que es lo que lee el motor (D-23). Este documento explica qué significan y por qué.
 
 ## 1. Conceptos
 

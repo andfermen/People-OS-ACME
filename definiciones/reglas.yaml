@@ -1,0 +1,66 @@
+# Reglas del sistema: lo que decide el riesgo y cuándo actúan las automatizaciones (D-23).
+# El motor las lee de aquí (calculo/cobertura.js, calculo/agentes.js); n8n, de salidas/n8n/definiciones.json.
+# Cambiar una regla: editar este archivo → npm run verificar → npm run n8n → commit. Sin tocar ningún flujo.
+# Qué significa cada regla y por qué: reglas-semaforo.md, reglas-senales-rotacion.md, reglas-agentes.md.
+
+# Quién cuenta como cobertura de una skill: persona activa con nivel validado >= nivel mínimo de la función.
+cobertura:
+  backup_a_distancia: 1              # un backup en desarrollo está a este número de niveles del mínimo y tiene un plan activo
+  key_person:
+    cobertura: 1                     # es key person quien es la única cobertura de una skill…
+    criticidades: [critica, importante]   # …en una función de estas criticidades
+  key_person_oculta:
+    niveles_puesto: [junior, intermedio]  # oculta si su puesto es de este nivel, o si sostiene una función de otra área
+
+# Semáforo de cada skill: se aplica la primera regla que se cumple. La función toma el peor color de sus skills.
+# Condiciones: cobertura_minima (un número o "objetivo"), cobertura (exacta), con_backup (hay un backup en desarrollo).
+semaforo:
+  - color: verde
+    si: { cobertura_minima: objetivo }
+  - color: ambar
+    si: { cobertura_minima: 2 }
+  - color: ambar
+    si: { cobertura: 1, con_backup: true }
+  - color: rojo                      # en cualquier otro caso
+
+# Prioridad = puntos del semáforo × puntos de la criticidad. Gana el primer nivel cuyo mínimo se alcanza.
+prioridad:
+  puntos_semaforo: { rojo: 3, ambar: 2, verde: 0 }
+  puntos_criticidad: { critica: 3, importante: 2, soporte: 1 }
+  niveles:
+    - { prioridad: P1, puntos_minimos: 9 }
+    - { prioridad: P2, puntos_minimos: 6 }
+    - { prioridad: P3, puntos_minimos: 3 }
+    - { prioridad: P4, puntos_minimos: 2 }
+
+# Lente AI first: una función con este semáforo e impacto IA se rediseña con IA en lugar de formar un backup.
+rediseno_ia:
+  semaforo: rojo
+  impacto_ia: alto
+
+# Señales de rotación (solo key people y quien cubre funciones en rojo o ámbar). Llevan a una conversación, no a una etiqueta.
+senales_rotacion:
+  compa_ratio_menor_que: 0.9
+  meses_sin_revision_mas_de: 18
+  evaluacion_desde: 4
+  meses_con_manager_hasta: 6
+  probabilidad: { alta_desde: 3, media_desde: 2 }   # número de señales activas
+
+# Anonimato: ningún agregado (encuesta, madurez IA) se publica con menos personas que esto.
+anonimato:
+  n_minimo: 5
+
+# Vacante: perfil del puesto que deja una persona y candidatos internos.
+vacante:
+  nivel_liderazgo: 2                 # liderazgo que se pide si el puesto tiene equipo
+  cumple_minimo: 0.5                 # fracción del perfil que tiene que cumplir un candidato
+  candidatos_max: 3
+
+# Automatizaciones con calendario (escenario 3): seguimiento de planes y centinela.
+automatizaciones:
+  seguimiento:
+    dias_entre_avisos: 7             # si el manager no valida, se le recuerda
+    avisos_antes_de_escalar: 2       # tras estos avisos sin validar, alerta para People
+  centinela:
+    meses_validacion: 6              # una validación más antigua cuenta como caducada
+    dias_decision_pendiente: 7       # una alerta sin decidir más tiempo sale en el informe

@@ -84,5 +84,15 @@ const mad = Object.fromEntries(hoy.madurez_ia.map(m => [m.segmento, m]));
 caso('Madurez IA por área: Ingeniería por encima de CX y ningún grupo publicado con n < 5',
   mad['Ingeniería'].indice > mad['Atención al cliente (CX)'].indice && hoy.madurez_ia.every(m => m.n >= 5));
 
+// Las reglas son datos (definiciones/reglas.yaml, D-23): cambiarlas cambia el resultado sin tocar el motor
+const base0 = cargar();
+const conReglas = cambio => { const r = JSON.parse(JSON.stringify(base0.reglas)); cambio(r); return calcular({ ...base0, reglas: r }); };
+const fnDe = (r, id) => r.funciones.find(f => f.id === id);
+const sinAmbarPorBackup = conReglas(r => { r.semaforo = r.semaforo.filter(x => !(x.si && x.si.con_backup)); });
+const prioridadMasEstricta = conReglas(r => { r.prioridad.niveles.find(n => n.prioridad === 'P1').puntos_minimos = 10; });
+caso('reglas.yaml manda: sin la regla "1 con backup → ámbar", CMP-03 pasa a rojo; con P1 a 10 puntos, CUS-02 deja de ser P1',
+  fnDe(hoy, 'CMP-03').semaforo === 'ambar' && fnDe(sinAmbarPorBackup, 'CMP-03').semaforo === 'rojo'
+  && fnDe(hoy, 'CUS-02').prioridad === 'P1' && fnDe(prioridadMasEstricta, 'CUS-02').prioridad !== 'P1');
+
 console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nTodos los casos de la demo se cumplen');
 process.exit(fallos ? 1 : 0);

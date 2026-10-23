@@ -1,7 +1,7 @@
 # Reglas de señales de rotación
 
 > Aproximan la **probabilidad** de una salida no deseada con señales objetivas. **No es un modelo predictivo ni una puntuación de fuga.** Solo People ve la vista individual, y la salida siempre es una conversación (*stay interview*), nunca una etiqueta.
-> Uso y matriz completa: `docs/usos-mapa-cobertura.md` §1. Umbrales editables ✏️.
+> Uso y matriz completa: `docs/usos-mapa-cobertura.md` §1. Los umbrales ✏️ se cambian en `definiciones/reglas.yaml` (`senales_rotacion`).
 
 ## Señales
 

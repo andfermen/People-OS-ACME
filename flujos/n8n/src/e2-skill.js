@@ -44,7 +44,7 @@ const cuerpo = `<h2>${esc(evento)}</h2>
   ${completados.length ? `<p>Plan(es) de backup completado(s): ${completados.map(p => esc(p.plan_id)).join(', ')}.</p>` : ''}
   ${cambios.length ? `<h3>Cambios en el mapa</h3>${listaCambios(cambios)}` : '<p>El mapa no cambia: el nuevo nivel no cambia la cobertura de ninguna función.</p>'}
   <p><i>El nivel lo ha validado una persona (${esc(manager)}). Completar un curso no sube el nivel por sí solo.</i></p>
-  <p><a href="https://docs.google.com/spreadsheets/d/${cfg.sheet_id}/edit">Ver el mapa</a></p>`;
+  <p><a href="${enlaceHris()}">Ver el mapa</a></p>`;
 return [{ json: { filas, email: {
   para: cfg.email_demo,
   asunto: `[Acme People OS] ${mejoran.length ? 'Riesgo reducido' : 'Skill validada'} · ${e.nombre} · ${skill} ${nivel}`,

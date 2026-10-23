@@ -1,4 +1,4 @@
-// Escenario 3 (agentes) · nodo "Seguimiento": agente de seguimiento de planes de backup (definiciones/reglas-agentes.md §1).
+// Escenario 3 (automatizaciones con calendario) · nodo "Seguimiento": seguimiento de planes de backup (definiciones/reglas-agentes.md §1).
 // Cada lunes, sin que nadie lo pida: a los planes que han llegado a su fecha, avisa al manager con el formulario de validación
 // ya rellenado; si no valida, le recuerda a los 7 días; tras 2 avisos, abre una alerta para People. No sube ningún nivel.
 const cfg = $('Configuración').first().json;
@@ -8,6 +8,7 @@ const base = datosDesde(T, defs);
 const hoy = fechaDe(cfg);
 
 const acciones = seguimientoPlanes(base, hoy);
+const U = umbralesAutomatizaciones(base.reglas);
 const prioridadDe = id => T['cobertura'].filas.find(f => f.funcion_id === id)?.prioridad || '';
 const skill = id => defs.taxonomia.skills.find(s => s.id === id)?.nombre || id;
 const formacion = id => defs.catalogo.find(c => c.id === id);
@@ -31,7 +32,7 @@ for (const a of acciones) {
     };
     filas.push(fila('alertas', al, COLS.alertas));
     emails.push({ para: cfg.email_demo, asunto: `[Acme People OS] People · ${a.plan_id} sin validar · ${al.alerta_id}`, html: html(`
-      <h2>Un plan de backup necesita a People</h2><p>${esc(a.motivo)}. El agente de seguimiento no puede hacer más: decide People.</p>${plan}
+      <h2>Un plan de backup necesita a People</h2><p>${esc(a.motivo)}. El seguimiento automático no puede hacer más: decide People.</p>${plan}
       <p>Queda registrado como <b>${al.alerta_id}</b> en la hoja <code>alertas</code>. Opciones: hablar con el manager, ampliar el plan o cambiar de backup. Decide People.</p>`) });
   } else {
     const q = { empleado_id: a.empleado.id, skill_id: a.skill_id, nivel: a.nivel_objetivo, validado_por: a.manager ? a.manager.id : '' };
@@ -41,7 +42,7 @@ for (const a of acciones) {
       <h2>${a.tipo === 'recordatorio' ? 'Recordatorio: toca' : 'Toca'} revisar un plan de backup</h2>
       <p>Hola, ${esc(quien)}. El plan <b>${esc(a.plan_id)}</b> de tu equipo ha llegado a su fecha de revisión.</p>${plan}
       <p>Si ya tiene el nivel, valídalo aquí (el formulario va rellenado):</p><p>${boton(url, `Validar a ${esc(a.empleado.nombre)}`)}</p>
-      <p><i>Completar la formación no sube el nivel: lo confirmas tú. Si aún no lo tiene, no hagas nada; te lo recordaré en ${UMBRALES_AGENTES.diasEntreAvisos} días y, tras ${UMBRALES_AGENTES.avisosAntesDeEscalar} avisos, People revisará el plan contigo.</i></p>`) });
+      <p><i>Completar la formación no sube el nivel: lo confirmas tú. Si aún no lo tiene, no hagas nada; te lo recordaré en ${U.diasEntreAvisos} días y, tras ${U.avisosAntesDeEscalar} avisos, People revisará el plan contigo.</i></p>`) });
   }
 }
 return [{ json: { hoy, acciones, filas, emails } }];

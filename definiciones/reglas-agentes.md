@@ -1,11 +1,11 @@
-# Reglas de los agentes autónomos
+# Reglas de las automatizaciones con calendario
 
-> Dos agentes que actúan **sin que nadie pulse nada** (D-21). Deciden **cuándo** actuar y **qué** detectar con reglas explícitas; **nunca deciden sobre una persona**: no suben niveles, no cierran planes, no aprueban acciones. Umbrales editables ✏️ (`UMBRALES_AGENTES` en `calculo/agentes.js`).
-> Ejecución: escenario 3 de n8n (`flujos/n8n/E3-agentes-autonomos.json`). En local: `npm run demo -- seguimiento|centinela [fecha]`.
+> Dos automatizaciones que actúan **sin que nadie pulse nada** (D-21). Deciden **cuándo** actuar y **qué** detectar con reglas explícitas; **nunca deciden sobre una persona**: no suben niveles, no cierran planes, no aprueban acciones. No son agentes en sentido estricto: no razonan, aplican reglas (el agente es el asistente, D-25). Los valores ✏️ se cambian en `definiciones/reglas.yaml` (`automatizaciones`).
+> Ejecución: escenario 3 de n8n (`flujos/n8n/E3-automatizaciones-calendario.json`). En local: `npm run demo -- seguimiento|centinela [fecha]`.
 
 ## Qué hace solo y qué no
 
-| | Lo hace el agente, solo | Lo decide una persona |
+| | Lo hace la automatización, sola | Lo decide una persona |
 |---|---|---|
 | **Seguimiento de planes** | Detectar que un plan ha llegado a su fecha, escribir al manager, recordar, abrir una alerta para People | Validar el nivel (manager); replantear o cerrar el plan (People) |
 | **Centinela de riesgo** | Recalcular el mapa, detectar degradaciones y pendientes, redactar el informe para dirección (Claude) | Qué hacer con lo detectado (People y dirección) |
@@ -24,7 +24,7 @@
 | Después de escalar | No vuelve a avisar: el plan lo lleva People |
 | Plan validado | Sale solo: el escenario 2 lo marca `completado` al validar el nivel objetivo |
 
-- El aviso lleva el **formulario del escenario 2 rellenado** (persona, skill, nivel objetivo, manager). El manager confirma o no; el agente no sube niveles.
+- El aviso lleva el **formulario del escenario 2 rellenado** (persona, skill, nivel objetivo, manager). El manager confirma o no; la automatización no sube niveles.
 - El estado del seguimiento vive en `planes-backup`: `avisos` y `ultimo_aviso`.
 
 ## 2. Centinela de riesgo
@@ -46,4 +46,4 @@ Recalcula el mapa, guarda la foto en `historico-semaforo` y detecta:
 
 ## Para la demo
 
-El formulario **Ejecutar un agente ahora** del escenario 3 lanza cualquiera de los dos con el tiempo simulado: **cuándo** = `hoy`, `+12`, `+13` o `+14 semanas` (+12 semanas es cuando el plan de Javier llega a su fecha), o una fecha exacta.
+El formulario **Ejecutar ahora** del escenario 3 lanza cualquiera de los dos con el tiempo simulado: **cuándo** = `hoy`, `+12`, `+13` o `+14 semanas` (+12 semanas es cuando el plan de Javier llega a su fecha), o una fecha exacta.

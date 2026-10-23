@@ -1,6 +1,7 @@
-// Banco de pruebas de los cuatro escenarios de n8n sin n8n: ejecuta el código de los nodos tal cual está en los JSON generados
-// contra un Sheet simulado (los CSV de salidas/sheets/) e imita los nodos nativos de Google Sheets (leer filas;
-// actualizar, añadir o reescribir por clave según ESCRITURAS de comun.js).
+// Banco de pruebas de los workflows de n8n sin n8n: ejecuta el código de los nodos tal cual está en los JSON generados
+// contra un HRIS simulado (los CSV de salidas/sheets/). Imita el subworkflow HRIS (D-24): leer todas las hojas; escribir
+// actualizando, añadiendo o reescribiendo por clave según ESCRITURAS de comun.js; cargar para el reinicio.
+// Las respuestas de Claude se simulan: sin API, para que las pruebas sean deterministas.
 // Recorre la demo dos veces: E1 baja de Elena → aprobar opción B → aprobar backup de Javier → E3 seguimiento (+12 semanas)
 // → E2 Marcos valida a Javier → E3 seguimiento recuerda y escala → E3 centinela.
 // Uso: npm run probar-n8n   (después de npm run n8n)
@@ -10,7 +11,8 @@ const path = require('path');
 const { LECTURAS, ESCRITURAS, HOJAS_INICIALES } = require('./comun');
 const RAIZ = path.join(__dirname, '..', '..', '..');
 const wf = n => JSON.parse(fs.readFileSync(path.join(RAIZ, 'flujos', 'n8n', n), 'utf8'));
-const E0 = wf('E0-panel-y-reinicio.json'), E1 = wf('E1-baja-de-elena.json'), E2 = wf('E2-actualizacion-de-skill.json'), E3 = wf('E3-agentes-autonomos.json');
+const HRIS = wf('HRIS-google-sheets.json'), E0 = wf('E0-panel-y-reinicio.json'), E1 = wf('E1-baja-de-elena.json'), E2 = wf('E2-actualizacion-de-skill.json'),
+  E3 = wf('E3-automatizaciones-calendario.json'), E4 = wf('E4-asistente-people.json');
 const HOJAS = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura', 'key-people', 'historico-semaforo', 'bandeja'];
 
 // ---------- Sheet simulado: { hoja: { cab, filas: [ {col: valor} ] } } ----------
@@ -59,10 +61,11 @@ function ejecutar(w, nombre, salidas) {
   salidas[nombre] = out.map(o => o.json);
   return salidas[nombre];
 }
-// Bloque de escritura: Repartir → ¿A qué hoja? → nodos de Sheets (key-people se vacía antes) · Email
+// Escritura: Repartir → "Escribir en el HRIS" (subworkflow: ¿A qué hoja? → nodos de Sheets; key-people se vacía antes) · Email
 function escribirTodo(w, salidas, email = 'Email') {
   const filas = ejecutar(w, 'Repartir', salidas);
-  const kp = ejecutar(w, 'Filas key-people', salidas);
+  if (filas.some(f => f.operacion !== 'escribir')) throw new Error('Repartir debe pedir al HRIS la operación escribir');
+  const kp = ejecutar(HRIS, 'Filas key-people', { 'Llamada al HRIS': filas });
   if (kp.length) sheet['key-people'].filas = []; // Vaciar key-people (solo si hay filas nuevas)
   filas.forEach(escribir);
   const e = ejecutar(w, email, salidas);
@@ -75,8 +78,13 @@ const accionDe = entrada => new Function('$json', `return (${exprAccion});`)(ent
 const comunes = (entrada = {}) => ({
   'Configuración': [{ ...entrada, ...config, accion: accionDe(entrada) }],
   'Leer definiciones': [{ definiciones: fs.readFileSync(path.join(RAIZ, 'salidas', 'n8n', 'definiciones.json'), 'utf8') }],
-  ...Object.fromEntries(Object.entries(LECTURAS).map(([h, nodo]) => [nodo, leerItems(h)])),
+  'Leer HRIS': leerHris(),
 });
+// "Leer HRIS": lo que devuelve el nodo Tablas del subworkflow HRIS, ejecutado sobre las lecturas simuladas
+function leerHris() {
+  const s = { 'Configuración HRIS': [{ sheet_id: 'TEST' }], ...Object.fromEntries(Object.entries(LECTURAS).map(([h, nodo]) => [nodo, leerItems(h)])) };
+  return ejecutar(HRIS, 'Tablas', s);
+}
 
 let fallos = 0;
 const caso = (txt, ok) => { console.log(`${ok ? '✅' : '❌'} ${txt}`); if (!ok) fallos++; };
@@ -101,15 +109,15 @@ function validar(empleado_id, skill_id, nivel, validado_por) {
   ejecutar(E2, 'Validar skill', s);
   return escribirTodo(E2, s);
 }
-// Escenario 3: se lanza como el formulario "Ejecutar un agente ahora" (agente + fecha simulada)
+// Escenario 3: se lanza como el formulario "Ejecutar ahora" (automatización + tiempo simulado)
 const enDias = n => new Date(Date.now() + n * 864e5).toISOString().slice(0, 10);
 function seguimiento(fecha, cuando) {
-  const s = comunes({ agente: 'seguimiento', fecha, cuando });
+  const s = comunes({ automatizacion: 'seguimiento', fecha, cuando });
   const o = ejecutar(E3, 'Seguimiento', s)[0];
   return { o, emails: escribirTodo(E3, s, 'Emails') };
 }
 function centinela(fecha) {
-  const s = comunes({ agente: 'centinela', fecha });
+  const s = comunes({ automatizacion: 'centinela', fecha });
   ejecutar(E3, 'Centinela', s);
   s.__entrada = [{ error: { message: 'simulado: sin API key' } }];
   const o = ejecutar(E3, 'Informe final', s)[0];
@@ -118,14 +126,16 @@ function centinela(fecha) {
 }
 const plan = id => objetos('planes-backup').find(p => p.plan_id === id);
 // Escenario 0: el panel y el reinicio, como los lanza el navegador
-const urlsE0 = { webhookUrl: 'https://n8n.test/webhook/acme-panel', url_form_baja: 'https://n8n.test/form/baja', url_form_skill: 'https://n8n.test/form/skill', url_form_agentes: 'https://n8n.test/form/agentes', url_video: 'PEGAR_URL_DEL_VIDEO_OPCIONAL', repo: 'https://raw.githubusercontent.com/acme/People-OS-ACME/main' };
+const urlsE0 = { webhookUrl: 'https://n8n.test/webhook/acme-panel', url_form_baja: 'https://n8n.test/form/baja', url_form_skill: 'https://n8n.test/form/skill', url_form_automatizaciones: 'https://n8n.test/form/automatizaciones', url_video: 'PEGAR_URL_DEL_VIDEO_OPCIONAL', repo: 'https://raw.githubusercontent.com/acme/People-OS-ACME/main' };
 const panel = () => ejecutar(E0, 'Panel', comunes(urlsE0))[0].html;
 function reinicioE0() {
   const s = comunes({ ...urlsE0, webhookUrl: 'https://n8n.test/webhook/acme-reiniciar' });
   HOJAS_INICIALES.forEach(h => { s[`CSV ${h}`] = [{ csv: fs.readFileSync(path.join(RAIZ, 'salidas', 'sheets', `${h}.csv`), 'utf8') }]; });
-  ejecutar(E0, 'Filas iniciales', s);
-  [...HOJAS_INICIALES, 'alertas', 'bandeja'].forEach(h => { sheet[h].filas = []; }); // nodos "Vaciar …" (dejan la cabecera)
-  HOJAS_INICIALES.forEach(h => ejecutar(E0, `Solo ${h}`, s).forEach(f => sheet[h].filas.push(Object.fromEntries(sheet[h].cab.map(k => [k, f[k] ?? ''])))));
+  const filas = ejecutar(E0, 'Filas iniciales', s);
+  if (filas.some(f => f.operacion !== 'cargar')) throw new Error('El reinicio debe pedir al HRIS la operación cargar');
+  // Subworkflow HRIS, operación cargar: vaciar las hojas (dejan la cabecera) y escribir cada una
+  [...HOJAS_INICIALES, 'alertas', 'bandeja'].forEach(h => { sheet[h].filas = []; });
+  HOJAS_INICIALES.forEach(h => ejecutar(HRIS, `Solo ${h}`, { 'Llamada al HRIS': filas }).forEach(f => sheet[h].filas.push(Object.fromEntries(sheet[h].cab.map(k => [k, f[k] ?? ''])))));
   return ejecutar(E0, 'Página reiniciada', s)[0].html;
 }
 
@@ -209,6 +219,37 @@ caso('E0 reiniciar: Elena activa, alertas y bandeja vacías, 2 planes, CUS-01 en
   && fn('CUS-01').semaforo === 'verde' && objetos('historico-semaforo').every(h => h.evento === 'inicial') && objetos('skills-empleados').length > 900
   && pr.includes('https://n8n.test/webhook/acme-panel') && /class="ahora[^"]*">[\s\S]*?Registrar la baja/.test(panel()));
 
+// HRIS: los escenarios no tienen nodos de Google Sheets; todo pasa por el subworkflow
+const nodosSheets = w => w.nodes.filter(n => n.type === 'n8n-nodes-base.googleSheets').length;
+const hl = leerHris()[0];
+caso('HRIS (adaptador): solo el subworkflow HRIS tiene nodos de Google Sheets; "leer" devuelve todas las hojas y el enlace',
+  [E0, E1, E2, E3, E4].every(w => nodosSheets(w) === 0) && nodosSheets(HRIS) > 0
+  && Object.keys(LECTURAS).every(h => Array.isArray(hl.tablas[h])) && hl.enlace.includes('TEST'));
+
+// E4 · Asistente de People: un agente. Se simulan dos respuestas de Claude: pide una herramienta y luego responde
+const claudePide = (nombre, input) => ({ stop_reason: 'tool_use', content: [{ type: 'text', text: 'Voy a simular la baja antes de responder.' }, { type: 'tool_use', id: 'tu_1', name: nombre, input }] });
+const claudeResponde = texto => ({ stop_reason: 'end_turn', content: [{ type: 'text', text: texto }] });
+function asistente(pregunta, respuestas) {
+  const s = comunes({ query: { pregunta }, webhookUrl: 'https://n8n.test/webhook/acme-asistente' });
+  let o = ejecutar(E4, 'Preparar', s)[0];
+  for (let k = 1; k <= 4 && o.sigue; k++) { s.__entrada = [respuestas[k - 1] || { error: 'sin respuesta' }]; o = ejecutar(E4, `Herramientas ${k}`, s)[0]; }
+  s.__entrada = [o];
+  return { o, html: ejecutar(E4, 'Respuesta', s)[0].html };
+}
+const as = asistente('¿Qué pasa si se va Carmen?', [claudePide('simular_baja', { empleado_id: 'E011' }), claudeResponde('Si se va Carmen, **CMP-03** se queda sin cobertura.')]);
+caso('E4 asistente (agente): Claude pide simular_baja, el motor la ejecuta y Claude responde; la página enseña la respuesta y cómo ha razonado',
+  as.o.final.includes('CMP-03') && as.o.traza.length === 1 && as.o.traza[0].herramienta === 'simular_baja' && /CMP-03 \w+→rojo/.test(as.o.traza[0].resumen)
+  && as.html.includes('Cómo lo ha razonado') && as.html.includes('simular_baja') && as.html.includes('https://n8n.test/webhook/acme-panel'));
+const { HERRAMIENTAS, ejecutarHerramienta } = require('../../../calculo/asistente');
+const motor = require('../../../calculo/cobertura');
+const datosAs = motor.cargar();
+const salidasAs = HERRAMIENTAS.map(h => JSON.stringify(ejecutarHerramienta(h.name, { texto: 'Elena', empleado_id: 'E007', funcion_id: 'CUS-02' }, datosAs, motor)));
+caso('E4 asistente: las 5 herramientas funcionan y ninguna devuelve salarios, bandas, evaluaciones ni señales de rotación',
+  HERRAMIENTAS.length === 5 && salidasAs.every(t => !t.includes('"error"')) && !salidasAs.some(t => /"(salario[a-z_]*|banda_id|compa_ratio|ultima_evaluacion|senales[a-z_]*|probabilidad|meses_desde_ultima_revision)"s*:|compa-ratio/i.test(t)));
+const sinApi = asistente('¿Dónde somos frágiles?', [{ error: { message: 'simulado: sin API key' } }]);
+caso('E4 asistente sin Claude: lo dice con claridad, sin inventar respuesta',
+  !sinApi.o.final && sinApi.html.includes('Claude no ha respondido'));
+
 // Si el manager ya no está (Elena se va y nadie asume el puesto), el agente no le escribe: escala directamente a People
 reiniciar();
 baja('E007'); aprobar('ALR-003');
@@ -222,5 +263,5 @@ try { validar('E009', 'no-existe', '3', 'E008'); } catch (e) { error = e.message
 caso('E2 entrada inválida: una skill que no está en la taxonomía da un error claro', error.includes('taxonomía'));
 caso('E1 alerta inexistente: lo dice y no escribe nada', aprobar('ALR-999').o.html.includes('No existe'));
 
-console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nLos cuatro escenarios de n8n hacen la demo completa, dos veces seguidas · muestras de los emails en salidas/n8n/');
+console.log(fallos ? `\n${fallos} caso(s) fallan` : '\nLos workflows de n8n hacen la demo completa, dos veces seguidas · muestras de los emails en salidas/n8n/');
 process.exit(fallos ? 1 : 0);

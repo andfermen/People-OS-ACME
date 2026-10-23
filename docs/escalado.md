@@ -4,15 +4,18 @@
 
 | Quiero… | Edito | Comprobación |
 |---|---|---|
+| Cambiar el semáforo, la prioridad o la regla de rediseño con IA | `definiciones/reglas.yaml` → `semaforo`, `prioridad`, `rediseno_ia` | `npm run verificar` |
 | Subir el objetivo de cobertura de una función | `definiciones/funciones.yaml` → `cobertura_objetivo` | `npm run cobertura` |
 | Cambiar la criticidad de una función | `funciones.yaml` → `criticidad` | `npm run cobertura` |
 | Añadir una función o un área | `funciones.yaml` (+ `areas.yaml` si es un área nueva) | `npm run cobertura` |
 | Añadir una skill | `definiciones/taxonomia-skills.yaml` | — |
-| Cambiar un umbral de rotación | `calculo/cobertura.js` → `UMBRALES` y `reglas-senales-rotacion.md` | `npm run verificar` |
-| Cambiar cuándo actúan los agentes | `calculo/agentes.js` → `UMBRALES_AGENTES` y `reglas-agentes.md` | `npm run probar-n8n` |
+| Cambiar un umbral de rotación | `definiciones/reglas.yaml` → `senales_rotacion` | `npm run verificar` |
+| Cambiar cuándo avisan el seguimiento y el centinela | `definiciones/reglas.yaml` → `automatizaciones` | `npm run probar-n8n` |
+| Cambiar qué puede consultar el asistente o cómo responde | `calculo/asistente.js` (herramientas) y `prompts/asistente-people.md` | `npm run probar-n8n` y una pregunta de prueba |
+| Pasar de Google Sheets a otro HRIS | Solo el subworkflow HRIS (`calculo/exportar-n8n.js`, bloque HRIS): mismas operaciones `leer`, `escribir`, `cargar` | `npm run probar-n8n` |
 | Cambiar el tono o las reglas de las propuestas | `prompts/proponer-acciones.md` | Una ejecución de prueba |
 
-Después, para que n8n lo vea: `npm run n8n` (regenera `salidas/n8n/definiciones.json` y el código de los nodos), commit y push. Las definiciones y el prompt n8n los lee de GitHub en la siguiente ejecución; si cambió el código de los nodos (un umbral en `calculo/`), hay que volver a importar el workflow. Si cambian datos iniciales: `npm run sheets` y **Reiniciar** desde el panel.
+Después, para que n8n lo vea: `npm run n8n` (regenera `salidas/n8n/definiciones.json` y el código de los nodos), commit y push. Las definiciones, las reglas y los prompts n8n los lee de GitHub en la siguiente ejecución, sin reimportar nada. Solo si cambia el código de los nodos (`calculo/*.js` o `flujos/n8n/src/`) hay que volver a importar el workflow. Si cambian datos iniciales: `npm run sheets` y **Reiniciar** desde el panel.
 
 ## Añadir un proceso nuevo (receta)
 

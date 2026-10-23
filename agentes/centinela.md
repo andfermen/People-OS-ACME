@@ -1,6 +1,6 @@
 # Centinela de riesgo · construido
 
-**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-agentes-autonomos.json`](../flujos/n8n/E3-agentes-autonomos.json)), nodos **Centinela** → **Claude redacta el informe** → **Informe final**. Lógica en [`calculo/agentes.js`](../calculo/agentes.js) (`vigilar`, `informePorReglas`), reglas en [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md) §2, prompt en [`prompts/informe-direccion.md`](../prompts/informe-direccion.md) (D-21).
+**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-automatizaciones-calendario.json`](../flujos/n8n/E3-automatizaciones-calendario.json)), nodos **Centinela** → **Claude redacta el informe** → **Informe final**. Lógica en [`calculo/agentes.js`](../calculo/agentes.js) (`vigilar`, `informePorReglas`), reglas en [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md) §2, prompt en [`prompts/informe-direccion.md`](../prompts/informe-direccion.md) (D-21).
 
 ## Para qué
 
@@ -18,7 +18,7 @@ El día 1 de cada mes a las 8:00:
 | Funciones frágiles y desde cuándo | P1 y P2, con los días que llevan en su color (racha en el histórico) |
 | Cambios que nadie ha avisado | Comparación con el último recálculo |
 | Validaciones caducadas | Skills validadas hace más de 6 meses que sostienen funciones críticas o importantes al límite |
-| Planes que tocan validar | Las mismas fechas que el agente de seguimiento |
+| Planes que tocan validar | Las mismas fechas que el seguimiento de planes |
 | Decisiones pendientes | Alertas sin decidir desde hace más de 7 días |
 | Key people con señales | Señales de rotación media o alta (**solo para People**) |
 
@@ -41,10 +41,10 @@ En la demo detecta que *Prueba de reservas* sigue sin nadie, que la conversació
 
 ## Cómo se prueba
 
-- **En n8n:** formulario **Ejecutar un agente ahora** → `centinela`, cuándo = `hoy` o `+14 semanas`. El informe aparece en la bandeja del panel.
+- **En n8n:** formulario **Ejecutar ahora** → `centinela`, cuándo = `hoy` o `+14 semanas`. El informe aparece en la bandeja del panel.
 - **En local:** `npm run demo -- centinela +84` (deja el informe en `salidas/demo/`).
 - **Muestra del email:** [`salidas/n8n/muestra-email-centinela.html`](../salidas/n8n/muestra-email-centinela.html).
 
 ## Siguiente paso
 
-Pedir directamente a cada manager que revalide las skills caducadas de su equipo, con el mismo mecanismo de avisos que el agente de seguimiento.
+Pedir directamente a cada manager que revalide las skills caducadas de su equipo, con el mismo mecanismo de avisos que el seguimiento de planes.

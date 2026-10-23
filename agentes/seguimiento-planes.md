@@ -1,10 +1,10 @@
-# Agente de seguimiento de planes · construido
+# Seguimiento de planes · construido (automatización con calendario)
 
-**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-agentes-autonomos.json`](../flujos/n8n/E3-agentes-autonomos.json)), nodo **Seguimiento**. Lógica en [`calculo/agentes.js`](../calculo/agentes.js) (`seguimientoPlanes`), reglas en [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md) §1 (D-21).
+**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-automatizaciones-calendario.json`](../flujos/n8n/E3-automatizaciones-calendario.json)), nodo **Seguimiento**. Lógica en [`calculo/agentes.js`](../calculo/agentes.js) (`seguimientoPlanes`), reglas en [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md) §1 (D-21).
 
 ## Para qué
 
-Un plan de backup solo reduce el riesgo si alguien comprueba, cuando toca, que la persona ha llegado al nivel. Con una sola persona en People, ese "cuando toca" se olvida. Este agente se encarga de que no se olvide: **pregunta al manager en el momento justo, insiste y, si no hay respuesta, se lo pasa a People.**
+Un plan de backup solo reduce el riesgo si alguien comprueba, cuando toca, que la persona ha llegado al nivel. Con una sola persona en People, ese "cuando toca" se olvida. Esta automatización se encarga de que no se olvide: **pregunta al manager en el momento justo, insiste y, si no hay respuesta, se lo pasa a People.**
 
 ## Qué hace, solo
 
@@ -25,7 +25,7 @@ Cada lunes a las 8:00, sin que nadie lo lance:
 
 4. **Anota** su estado en `planes-backup` (`avisos`, `ultimo_aviso`) para no repetirse.
 
-En la demo: Javier llega a las 12 semanas de mentoring → el agente avisa a Marcos → Marcos valida desde el enlace → *Gestión de claves* vuelve a verde. El plan de Marcos nadie lo valida → recordatorio → escalado a People (`ALR-005`).
+En la demo: Javier llega a las 12 semanas de mentoring → la automatización avisa a Marcos → Marcos valida desde el enlace → *Gestión de claves* vuelve a verde. El plan de Marcos nadie lo valida → recordatorio → escalado a People (`ALR-005`).
 
 ## Qué no hace
 
@@ -41,7 +41,7 @@ En la demo: Javier llega a las 12 semanas de mentoring → el agente avisa a Mar
 
 ## Cómo se prueba
 
-- **En n8n:** formulario **Ejecutar un agente ahora** → `seguimiento`, cuándo = `+12 semanas`. O desde el panel de la demo (escenario 0), que guía los pasos.
+- **En n8n:** formulario **Ejecutar ahora** → `seguimiento`, cuándo = `+12 semanas`. O desde el panel de la demo (escenario 0), que guía los pasos.
 - **En local:** `npm run demo -- seguimiento +84`.
 - **Muestra del email:** [`salidas/n8n/muestra-email-seguimiento.html`](../salidas/n8n/muestra-email-seguimiento.html).
 

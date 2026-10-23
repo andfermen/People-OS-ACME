@@ -266,7 +266,7 @@ function formulario(fm, nodo, valores, notas = {}) {
 const lista = xs => `<ul>${xs.map(x => `<li>${x}</li>`).join('')}</ul>`;
 const panel = ({ datos, reglas, calculo, agentes, resultado }) => `<h3>¿Qué ha pasado por debajo?</h3>
   ${datos ? `<h4>Datos consultados</h4>${lista(datos)}` : ''}${reglas ? `<h4>Reglas aplicadas</h4>${lista(reglas)}` : ''}
-  ${calculo ? `<h4>Cálculo</h4>${lista(calculo)}` : ''}${agentes ? `<h4>Agentes</h4>${lista(agentes)}` : ''}
+  ${calculo ? `<h4>Cálculo</h4>${lista(calculo)}` : ''}${agentes ? `<h4>Quién actúa</h4>${lista(agentes)}` : ''}
   ${resultado ? `<h4>Resultado</h4><div class="res">${resultado}</div>` : ''}`;
 const cambioTxt = c => `<b>${c.id}</b> ${esc(c.nombre)}: <span class="sem ${c.de}"></span> ${SEM[c.de]} → <span class="sem ${c.a}"></span> ${SEM[c.a]} (cobertura ${c.cobertura_antes} → ${c.cobertura_despues})`;
 const tipoNodo = t => t === 'googleSheets' ? 'sheets' : t === 'code' ? 'code' : t === 'httpRequest' ? 'http' : t === 'gmail' ? 'gmail' : '';
@@ -284,7 +284,7 @@ const pb = (m, id) => D.planes[m].find(p => p.empleado_id === id && p.origen.sta
 const forma = id => D.nombres.formacion[id];
 
 // ---------- Pasos ----------
-const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida', 'Recalcular el riesgo', 'Propuesta y decisión humana', 'Tres meses después', 'Agentes que trabajan solos', 'Arquitectura y escalabilidad'];
+const ESCENAS = ['Arquitectura', 'Situación inicial', 'Elena comunica su salida', 'Recalcular el riesgo', 'Propuesta y decisión humana', 'Tres meses después', 'Automatizaciones y agente', 'Arquitectura y escalabilidad'];
 const AG = D.agentes, U = AG.umbrales;
 const accionPlan = (sem, plan) => AG.seguimiento[sem].find(x => x.plan_id === plan);
 
@@ -297,20 +297,20 @@ const TODOS = [
   s: 'Las definiciones dicen qué se hace, n8n lo ejecuta, el HRIS guarda los datos y una persona decide.',
   html: () => `<div class="arq">
     <div class="capa aparece" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:24px"><div><div class="k">Definiciones · qué se hace</div><h4>Repositorio GitHub</h4></div>
-      <p><span class="mono">funciones.yaml</span> criticidad, cobertura objetivo, impacto IA · <span class="mono">reglas-semaforo.md</span> · <span class="mono">taxonomia-skills.yaml</span> (${P.skills} skills) · <span class="mono">catalogo-formacion.yaml</span> · <span class="mono">prompts/</span></p></div>
-    <div class="capa aparece d1"><div class="k">HRIS · sistema de registro</div><h4>Google Sheets</h4><ul><li>${P.personas} personas</li><li>${P.skills_validadas} skills validadas por manager</li><li>Planes de backup, alertas, histórico</li></ul><p class="nota">En producción: Factorial, Bizneo u otro. Solo cambian los nodos que leen y escriben.</p></div>
+      <p><span class="mono">reglas.yaml</span> semáforo, prioridad, señales, umbrales · <span class="mono">funciones.yaml</span> criticidad, cobertura objetivo, impacto IA · <span class="mono">taxonomia-skills.yaml</span> (${P.skills} skills) · <span class="mono">catalogo-formacion.yaml</span> · <span class="mono">prompts/</span></p></div>
+    <div class="capa aparece d1"><div class="k">HRIS · sistema de registro</div><h4>Google Sheets</h4><ul><li>${P.personas} personas</li><li>${P.skills_validadas} skills validadas por manager</li><li>Planes de backup, alertas, histórico</li></ul><p class="nota">Solo lo toca el subworkflow <b>HRIS</b> (adaptador). Pasar a Factorial o Bizneo es cambiar ese subworkflow.</p></div>
     <div class="flecha">⇄</div>
-    <div class="capa orq aparece d2"><div class="k">Orquestación · quién lo ejecuta</div><h4>n8n · ${D.n8n.e1.nodos + D.n8n.e2.nodos + D.n8n.e3.nodos} nodos en 3 escenarios</h4>
-      <div class="agentes"><div class="agente"><b>Riesgo</b><small>cobertura, semáforo, key people</small></div><div class="agente"><b>Movilidad</b><small>vacante, candidatos, coste</small></div><div class="agente"><b>Propuesta · Claude</b><small>redacta opciones; no decide</small></div><div class="agente"><b>Skills</b><small>validación del manager</small></div>
-        <div class="agente" style="border-style:dashed"><b>Seguimiento ⏱</b><small>avisa, recuerda, escala · cada lunes</small></div><div class="agente" style="border-style:dashed"><b>Centinela ⏱</b><small>vigila e informa · cada mes</small></div></div>
+    <div class="capa orq aparece d2"><div class="k">Orquestación · quién lo ejecuta</div><h4>n8n · adaptador HRIS + 5 escenarios</h4>
+      <div class="agentes"><div class="agente"><b>Riesgo · Movilidad · Skills</b><small>automatizaciones con reglas</small></div><div class="agente"><b>Seguimiento · Centinela ⏱</b><small>automatizaciones con calendario</small></div>
+        <div class="agente"><b>Propuesta · Informe</b><small>IA que redacta; si falla, reglas</small></div><div class="agente" style="border:2px solid var(--acento)"><b>Asistente</b><small>el agente: Claude decide qué consultar</small></div></div>
       <p class="nota">El nodo de código ejecuta el motor del repo (<span class="mono">calculo/</span>), el mismo que verifica <span class="mono">npm run verificar</span>.</p></div>
     <div class="flecha">⇄</div>
-    <div class="capa humano aparece d3"><div class="k">Decisión · siempre humana</div><h4>People y managers</h4><ul><li>People aprueba desde el email</li><li>El manager valida skills</li><li>Cada decisión queda registrada</li></ul></div>
+    <div class="capa humano aparece d3"><div class="k">Decisión · siempre humana</div><h4>People y managers</h4><ul><li>People aprueba desde el email o el panel</li><li>El manager valida skills</li><li>Cada decisión queda registrada</li></ul></div>
     <div class="lema aparece d4"><b>El riesgo se calcula, no se opina.</b> La IA redacta; la regla decide el riesgo; la persona decide la acción.</div>
   </div>`,
   panel: () => panel({ datos: [`Definiciones: leídas de GitHub en cada ejecución (nodo <code>Leer definiciones</code>)`, `Datos de personas: Google Sheets (nodos <code>Leer empleados</code>, <code>Leer skills</code>…)`],
-    reglas: ['Separar <b>qué</b> se hace (repo) de <b>quién</b> lo ejecuta (n8n)', 'Cambiar un umbral = editar un archivo, no rehacer un flujo'],
-    agentes: ['Riesgo, Movilidad y Skills: reglas deterministas', 'Propuesta: Claude redacta; si falla, propuesta por reglas'] }) },
+    reglas: ['Separar <b>qué</b> se hace (repo) de <b>quién</b> lo ejecuta (n8n)', 'Las reglas y sus umbrales están en <code>reglas.yaml</code>: cambiar una regla es editar un archivo'],
+    agentes: ['Riesgo, Movilidad, Skills, Seguimiento y Centinela: automatizaciones con reglas', 'Propuesta e informe: IA que redacta; si falla, por reglas', 'Asistente: el agente (decide qué consultar; las cifras, del motor)'] }) },
 
 // 2 · Situación inicial
 { e: 1, chip: ['real', 'Resultado real del motor'],
@@ -349,7 +349,7 @@ const TODOS = [
     <div class="ley"><span><i style="background:#1e8e3e"></i>Google Sheets (HRIS)</span><span><i style="background:#e8710a"></i>Motor de reglas del repo</span><span><i style="background:var(--acento)"></i>GitHub / Claude</span><span><i style="background:#d93025"></i>Email a People</span></div>`,
   luego: () => D.n8n.e1.bloques.forEach((_, i) => temporizadores.push(despues(() => document.querySelector(`[data-b="${i}"]`)?.classList.add('on'), 400 + i * 900))),
   panel: () => panel({ datos: ['Definiciones y prompt: GitHub (<code>Leer definiciones</code>)', 'Empleados, skills, planes, alertas, cobertura: Sheet'],
-    agentes: ['<b>Motor</b>: agente de Riesgo + Movilidad (código del repo)', '<b>Claude propone</b>: redacta la propuesta', '<b>Propuesta final</b>: si Claude falla, propuesta por reglas', '<b>Escrituras</b> + <b>¿A qué hoja?</b>: cada fila a su hoja'],
+    agentes: ['<b>Motor</b>: Riesgo + Movilidad (reglas, código del repo)', '<b>Claude propone</b>: redacta la propuesta', '<b>Propuesta final</b>: si Claude falla, propuesta por reglas', '<b>Escrituras</b> + <b>¿A qué hoja?</b>: cada fila a su hoja'],
     resultado: 'Ningún dato vive dentro de n8n: lee, calcula, escribe y avisa.' }) },
 
 // 4 · Recalcular
@@ -363,7 +363,7 @@ const TODOS = [
   panel: () => panel({ datos: ['<code>empleados</code>: E007 → <code>baja</code>', '<code>skills-empleados</code>, <code>planes-backup</code>, <code>funciones.yaml</code>', 'Hoja <code>cobertura</code>: foto anterior para comparar'],
     reglas: ['Solo cuentan personas activas con nivel validado', 'Rojo = cobertura 0, o 1 sin backup en desarrollo', 'Crítica × rojo = P1'],
     calculo: [`CUS-01 · ${esc(sk('gestion-claves'))} ≥ ${gcBaja.nivel_minimo}: ${gcIni.personas.map(esc).join(', ')} → <b>${gcBaja.personas.map(esc).join(', ')}</b> = ${gcBaja.cobertura}, sin backup → rojo P1`, `CUS-02 · ${esc(sk('conciliacion-onchain'))}: ${coIni.cobertura} → 0 → rojo P1`],
-    agentes: ['Agente de Riesgo (nodo <code>Motor</code>)'],
+    agentes: ['Riesgo, con las reglas de <code>reglas.yaml</code> (nodo <code>Motor</code>)'],
     resultado: `${D.cambios.baja.length} funciones empeoran. Mapa: ${D.mapas.baja.cuenta.rojo} · ${D.mapas.baja.cuenta.ambar} · ${D.mapas.baja.cuenta.verde}.` }) },
 
 { largo: true, e: 3, chip: ['real', 'Resultado real del motor'],
@@ -379,7 +379,7 @@ const TODOS = [
     resultado: `Sale ${esc(elena.nombre)}; entra ${esc(marcos.nombre)}.` }) },
 
 // 5 · Propuesta y decisión
-{ e: 4, chip: ['real', 'Resultado real del motor · agente de Movilidad'],
+{ e: 4, chip: ['real', 'Resultado real del motor · Movilidad'],
   t: 'Dos maneras de cubrir el puesto, con su coste',
   s: 'El sistema calcula el perfil del puesto con lo que hacía Elena y busca dentro. No elige: pone el coste encima de la mesa.',
   html: () => `<div class="fila" style="gap:18px">
@@ -389,7 +389,7 @@ const TODOS = [
       <div class="card aparece d3"><div class="etq">Opción B · Mover a ${esc(marcos.nombre)}</div><p style="font-size:14px;margin-top:6px;line-height:1.45">Cumple ${marcos.cumple} de ${marcos.de} skills del puesto.</p><p style="font-size:14px;color:var(--rojo);margin-top:6px">${esc(al('ALR-002').riesgo_si_no)}</p></div></div></div>`,
   panel: () => panel({ datos: ['Skills validadas de Elena (perfil del puesto, calculado con ella aún dentro)', '<code>catalogo-formacion.yaml</code>'],
     reglas: ['Perfil = skills que Elena sostenía en sus funciones + liderazgo del puesto', 'Coste organizativo: ¿el candidato ya es key person?'],
-    agentes: ['Agente de Movilidad (<code>vacante()</code> en <code>calculo/cobertura.js</code>)'],
+    agentes: ['Movilidad (<code>vacante()</code> en <code>calculo/cobertura.js</code>)'],
     resultado: `Candidatos internos: ${D.vacante.candidatos.map(c => `${esc(c.nombre)} (${c.cumple}/${c.de})`).join(', ')}. Key person en: ${marcos.key_person_en.join(', ')}.` }) },
 
 { e: 4, chip: ['real', 'Contenido real · texto por reglas'],
@@ -414,7 +414,7 @@ const TODOS = [
       <div class="col" style="flex:1"><div class="card aparece d2" style="font-size:14px;line-height:1.55"><div class="etq">Se aplica</div>${esc(marcos.nombre)} → <b>${esc(D.marcos002.rol)}</b><br>${D.marcos002.dependen} personas pasan a depender de él<br>Plan <b>${p.plan_id}</b>: ${esc(sk(p.skill_id))} → ${p.nivel_objetivo} con ${p.formacion_id}<br><span class="nota">${esc(forma(p.formacion_id).nombre)}</span></div>
       <div class="card aparece d3" style="font-size:15px;line-height:1.5">El mapa <b>no cambia de color</b>: promover a alguien no crea skills nuevas.</div></div></div>`; },
   panel: () => panel({ datos: ['Botón <b>Aprobar ALR-002</b> del email (webhook de n8n)'], reglas: ['Opciones del mismo grupo son excluyentes: ALR-001 se descarta sola'],
-    agentes: ['<b>Aplicar decisión</b>: cambio de rol, equipo y plan para cerrar la brecha', 'Agente de Riesgo: recalcula'],
+    agentes: ['<b>Aplicar decisión</b>: cambio de rol, equipo y plan para cerrar la brecha', 'Riesgo: recalcula'],
     resultado: `Cambios en el mapa: ${D.cambios.alr002.length || 'ninguno'}.` }) },
 
 { e: 4, chip: ['real', 'Resultado real del motor'],
@@ -431,15 +431,15 @@ const TODOS = [
     resultado: `Mapa: ${D.mapas.alr003.cuenta.rojo} · ${D.mapas.alr003.cuenta.ambar} · ${D.mapas.alr003.cuenta.verde}. Javier aún no cuenta como cobertura: está aprendiendo.` }) },
 
 // 6 · Tres meses después
-{ e: 5, chip: ['real', 'Resultado real del agente de seguimiento'],
-  t: 'Nadie pulsa nada: el agente avisa al manager',
-  s: `Semana 12. Cada lunes, el agente de seguimiento revisa los planes: el de Javier ha llegado a su fecha, así que escribe a su manager con el formulario ya rellenado.`,
+{ e: 5, chip: ['real', 'Resultado real del seguimiento de planes'],
+  t: 'Nadie pulsa nada: el seguimiento avisa al manager',
+  s: `Semana 12. Cada lunes, la automatización de seguimiento revisa los planes: el de Javier ha llegado a su fecha, así que escribe a su manager con el formulario ya rellenado.`,
   html: () => { const x = accionPlan(12, pb('alr003', 'E009').plan_id), f = forma(x.formacion_id);
-    return `<div class="fila" style="gap:18px;align-items:flex-start"><div class="mail aparece" style="flex:1.4;height:auto"><div class="hd"><b>Para ${esc(x.manager.nombre)} (manager) · ¿Ha alcanzado ${esc(x.empleado.nombre)} el nivel ${x.nivel_objetivo}?</b><small>De: Acme People OS · ${esc(AG.semanas[12])} · enviado por el agente, sin intervención de People</small></div>
+    return `<div class="fila" style="gap:18px;align-items:flex-start"><div class="mail aparece" style="flex:1.4;height:auto"><div class="hd"><b>Para ${esc(x.manager.nombre)} (manager) · ¿Ha alcanzado ${esc(x.empleado.nombre)} el nivel ${x.nivel_objetivo}?</b><small>De: Acme People OS · ${esc(AG.semanas[12])} · enviado por el seguimiento automático, sin intervención de People</small></div>
       <div style="padding:16px 20px;font-size:14px;line-height:1.6">Hola, ${esc(corto(x.manager.nombre))}. El plan <b>${x.plan_id}</b> de tu equipo ha llegado a su fecha de revisión.<ul style="margin:8px 0 8px 20px"><li>Persona: <b>${esc(x.empleado.nombre)}</b></li><li>${esc(sk(x.skill_id))}: nivel validado hoy ${x.nivel_actual}, objetivo ${x.nivel_objetivo}</li><li>${x.formacion_id} · ${esc(f.nombre)} (${f.semanas} semanas)</li><li>Función que protege: ${x.funcion_id}</li></ul>
       <span class="aprobar" style="font-size:13px;padding:6px 12px">Validar a ${esc(x.empleado.nombre)}</span><p style="margin-top:10px;font-style:italic;color:var(--texto-2)">Completar la formación no sube el nivel: lo confirmas tú. Si aún no lo tiene, te lo recordaré en ${U.diasEntreAvisos} días.</p></div></div>
-      <div class="col aparece d2" style="flex:1"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">En esa revisión, el agente</div>${AG.seguimiento[12].map(a => `✉ ${a.plan_id} · aviso a <b>${esc(a.manager.nombre)}</b> por ${esc(a.empleado.nombre)}`).join('<br>')}<br><span class="nota">y lo anota en planes-backup (avisos, último aviso)</span></div>
-      <div class="card aparece d3" style="font-size:14.5px;line-height:1.5">Nadie tiene que acordarse de perseguir a nadie. <b>El agente actúa; el nivel lo decide el manager.</b></div></div></div>`; },
+      <div class="col aparece d2" style="flex:1"><div class="card" style="font-size:14px;line-height:1.55"><div class="etq">En esa revisión</div>${AG.seguimiento[12].map(a => `✉ ${a.plan_id} · aviso a <b>${esc(a.manager.nombre)}</b> por ${esc(a.empleado.nombre)}`).join('<br>')}<br><span class="nota">y lo anota en planes-backup (avisos, último aviso)</span></div>
+      <div class="card aparece d3" style="font-size:14.5px;line-height:1.5">Nadie tiene que acordarse de perseguir a nadie. <b>La automatización avisa; el nivel lo decide el manager.</b></div></div></div>`; },
   panel: () => panel({ datos: ['<code>planes-backup</code>: planes activos, avisos, último aviso', 'Catálogo: semanas de cada formación'],
     reglas: ['Revisión = fecha objetivo, o inicio + semanas de la formación', `Recordatorio cada ${U.diasEntreAvisos} días; tras ${U.avisosAntesDeEscalar} avisos, escala a People`],
     agentes: ['Escenario 3 de n8n · disparo <b>Cada lunes 8:00</b> → nodo <code>Seguimiento</code>'],
@@ -451,7 +451,7 @@ const TODOS = [
   html: () => formulario(D.n8n.e2.formulario, 'Formulario skill', { empleado_id: D.javier.id, skill_id: 'gestion-claves', nivel: '3', validado_por: 'E008' },
     { empleado_id: D.javier.nombre, skill_id: sk('gestion-claves'), nivel: 'avanzado', validado_por: marcos.nombre }),
   panel: () => panel({ datos: ['Entrada: persona, skill, nivel y quién valida'], reglas: ['Solo cuentan niveles <b>validados</b> por el manager, nunca los declarados'],
-    agentes: [`Agente de Skills (escenario 2, ${D.n8n.e2.nodos} nodos): actualiza <code>skills-empleados</code>, cierra el plan y recalcula`] }) },
+    agentes: ['Skills (escenario 2): actualiza <code>skills-empleados</code> a través del HRIS, cierra el plan y recalcula'] }) },
 
 { e: 5, chip: ['real', 'Resultado real del motor'],
   t: 'La función vuelve a verde',
@@ -463,13 +463,13 @@ const TODOS = [
   luego: () => transicion('alr003', 'validar'),
   panel: () => panel({ datos: ['<code>skills-empleados</code>: E009 gestion-claves 3, validado por E008', '<code>planes-backup</code>: plan → completado'],
     calculo: [`CUS-01 · ${esc(sk('gestion-claves'))} ≥ ${gcFin.nivel_minimo}: ${gcFin.personas.map(esc).join(', ')} = ${gcFin.cobertura} ≥ objetivo → verde`],
-    agentes: ['Agente de Skills → agente de Riesgo', 'Email de cierre a People: <i>Riesgo reducido</i>'],
+    agentes: ['Skills → Riesgo', 'Email de cierre a People: <i>Riesgo reducido</i>'],
     resultado: `Mapa final: ${D.mapas.validar.cuenta.rojo} · ${D.mapas.validar.cuenta.ambar} · ${D.mapas.validar.cuenta.verde}. Key people: ${D.mapas.validar.key_people.length}.` }) },
 
-// 7 · Agentes que trabajan solos
-{ largo: true, e: 6, chip: ['real', 'Resultado real del agente de seguimiento'],
-  t: 'Si nadie responde, el agente insiste y escala',
-  s: 'Javier ya está validado. El plan de Marcos no: el agente recuerda a su manager y, tras dos avisos, se lo pasa a People.',
+// 7 · Automatizaciones y agente
+{ largo: true, e: 6, chip: ['real', 'Resultado real del seguimiento de planes'],
+  t: 'Si nadie responde, insiste y escala',
+  s: 'Javier ya está validado. El plan de Marcos no: el seguimiento recuerda a su manager y, tras dos avisos, se lo pasa a People.',
   html: () => { const planes = AG.seguimiento[12].map(a => a.plan_id);
     // Javier se valida en la semana 12, justo después del aviso: ahí se marca; después el plan ya no está en seguimiento
     const validado = id => D.planes.validar.find(q => q.plan_id === id)?.estado === 'completado';
@@ -480,7 +480,7 @@ const TODOS = [
     return `<div class="card aparece"><table><tr><th>Plan</th>${[12, 13, 14].map(s => `<th>Semana ${s} · ${esc(AG.semanas[s])}</th>`).join('')}</tr>
       ${planes.map(id => { const a = accionPlan(12, id); return `<tr><td><b>${id}</b><br><span class="nota">${esc(a.empleado.nombre)} · ${esc(a.skill_id)} ${a.nivel_actual} → ${a.nivel_objetivo}</span></td>${[12, 13, 14].map(s => `<td style="font-size:14px">${celda(s, id)}</td>`).join('')}</tr>`; }).join('')}</table></div>
       <div class="fila" style="margin-top:16px"><div class="card aparece d2" style="flex:1.3;font-size:14px;line-height:1.55"><div class="etq">Alerta ${AG.escalado.alerta_id} · hoja alertas · pendiente</div><b>${esc(AG.escalado.accion)}</b><br>${esc(AG.escalado.por_que)}<br><span style="color:var(--rojo)">${esc(AG.escalado.riesgo_si_no)}</span></div>
-      <div class="card aparece d3" style="flex:1;font-size:14.5px;line-height:1.5">El agente <b>no cierra ni cambia el plan</b>: eso lo decide People con el manager. Su trabajo es que nada se quede olvidado.</div></div>`; },
+      <div class="card aparece d3" style="flex:1;font-size:14.5px;line-height:1.5">La automatización <b>no cierra ni cambia el plan</b>: eso lo decide People con el manager. Su trabajo es que nada se quede olvidado.</div></div>`; },
   panel: () => panel({ reglas: [`Recordatorio a los ${U.diasEntreAvisos} días`, `Tras ${U.avisosAntesDeEscalar} avisos sin validar → alerta para People`, 'Un plan ya escalado no se vuelve a avisar', 'Un plan validado sale solo del seguimiento'],
     agentes: ['Seguimiento (escenario 3) → alerta con <code>grupo = SEG-…</code>'], resultado: `Semana 13: ${AG.seguimiento[13].length} recordatorio. Semana 14: ${AG.seguimiento[14].length} escalado (${AG.escalado.alerta_id}).` }) },
 
@@ -498,6 +498,17 @@ const TODOS = [
     agentes: ['Escenario 3 · disparo <b>Día 1 de cada mes</b> → <code>Centinela</code> → <code>Claude redacta el informe</code>'],
     resultado: 'Texto de esta pantalla: informe por reglas (sin API). En n8n lo redacta Claude con los mismos datos; si falla, sale este.' }) },
 
+{ e: 6, chip: ['real', 'Herramientas reales del motor · la respuesta, en el panel'],
+  t: 'Y para preguntar, un agente',
+  s: 'El asistente es lo único que razona: ante una pregunta, Claude decide qué herramientas usar. Las cifras las calcula el motor, y solo lee.',
+  html: () => { const A = D.asistente, b = A.pasos.find(x => x.herramienta === 'simular_baja').resultado;
+    return `<div class="fila" style="gap:18px;align-items:flex-start"><div class="col" style="flex:1.3"><div class="card aparece" style="font-size:20px"><span class="etq">Pregunta de People</span><br>${esc(A.pregunta)}</div>
+      <div class="card aparece d1"><div class="etq">Cómo lo razona: elige las herramientas</div><ol style="margin:10px 0 0 20px;font-size:15px;line-height:1.6">${A.pasos.map(x => `<li><b class="mono" style="border:0;background:none">${esc(x.herramienta)}</b>(${esc(JSON.stringify(x.entrada))})<br><span style="color:var(--texto-2)">→ ${esc(x.resumen)}</span></li>`).join('')}</ol></div></div>
+      <div class="col" style="flex:1"><div class="card aparece d2" style="font-size:14.5px;line-height:1.55"><div class="etq">Lo que le devuelve el motor</div>${b.funciones_que_empeoran.map(f => `<b>${f.id}</b> ${esc(f.nombre)}: <span class="sem ${f.de}"></span> ${SEM[f.de]} → <span class="sem ${f.a}"></span> ${SEM[f.a]} (cobertura ${f.cobertura_antes} → ${f.cobertura_despues})`).join('<br>')}<br>Candidatos internos: ${b.puesto.candidatos_internos.map(x => `${esc(x.nombre)} (${esc(x.cumple)})`).join(', ') || 'ninguno'}</div>
+      <div class="card aparece d3" style="font-size:14.5px;line-height:1.5">Con eso, Claude redacta la respuesta en el panel y propone el siguiente paso, que <b>decide People</b>. Sin salarios ni señales: no tiene herramientas para eso.</div></div></div>`; },
+  panel: () => panel({ datos: ['Todo el HRIS, a través del adaptador; nada se escribe'], reglas: ['Herramientas de solo lectura (<code>calculo/asistente.js</code>)', 'Sin salarios, evaluaciones ni señales: no hay herramienta que los devuelva'],
+    agentes: ['Escenario 4 · bucle <code>Claude razona</code> → <code>Herramientas</code> → ¿sigue?, hasta 4 vueltas'], resultado: 'Las herramientas y sus resultados de esta pantalla son reales. El texto de la respuesta lo escribe Claude en el panel y puede variar; las cifras, no.' }) },
+
 // 8 · Arquitectura y escalabilidad
 { largo: true, e: 7, chip: ['real', 'Archivo real del repo'],
   t: 'Cambiar una regla es editar un archivo',
@@ -506,7 +517,7 @@ const TODOS = [
     <div class="col" style="flex:1"><div class="card aparece d1" style="font-size:14.5px;line-height:1.55"><b>Ejemplo.</b> Si dirección decide que custodia necesita 3 personas, se añade <span class="mono">cobertura_objetivo: 3</span> a CUS-01. Commit, y la siguiente ejecución ya lo aplica.</div>
       <div class="card aparece d2" style="font-size:14.5px;line-height:1.55">Lo mismo con la criticidad, los niveles, el catálogo de formación o el prompt de Claude. <b>El flujo no se toca.</b></div>
       <div class="card aparece d3" style="font-size:14.5px;line-height:1.55">El motor es una sola versión de la lógica, probada antes de cada ensayo: <span class="mono">npm run verificar</span>, <span class="mono">npm run probar-n8n</span>.</div></div></div>`,
-  panel: () => panel({ datos: ['<code>definiciones/</code> y <code>prompts/</code> en GitHub'], reglas: ['<code>reglas-semaforo.md</code>: fuente única de las reglas'], agentes: ['Nodo <code>Leer definiciones</code> (HTTP a GitHub)'], resultado: 'Si mañana el orquestador no es n8n, definiciones y motor sirven igual.' }) },
+  panel: () => panel({ datos: ['<code>definiciones/</code> y <code>prompts/</code> en GitHub'], reglas: ['<code>reglas.yaml</code>: las reglas que lee el motor (explicadas en <code>reglas-semaforo.md</code>)'], agentes: ['Nodo <code>Leer definiciones</code> (HTTP a GitHub)'], resultado: 'Si mañana el orquestador no es n8n, definiciones y motor sirven igual.' }) },
 
 { e: 7, chip: ['diseno', 'Estado según el README · construido y diseñado'],
   t: 'Mismo patrón para el resto de People',

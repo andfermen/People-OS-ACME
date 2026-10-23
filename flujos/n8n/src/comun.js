@@ -1,10 +1,11 @@
-// Utilidades de los nodos de código de n8n: leer las hojas (nodos nativos de Google Sheets) y preparar las filas a escribir.
+// Utilidades de los nodos de código de n8n: leer el HRIS y preparar las filas a escribir.
+// Los escenarios no hablan con Google Sheets: llaman al subworkflow HRIS (D-24), que lee y escribe las hojas.
 // exportar-n8n.js las concatena con el motor (cobertura.js), la propuesta (propuesta.js) y las filas (hojas.js).
 
-// Nodo de lectura de cada hoja. bandas y encuesta no cambian en la demo: vienen de definiciones.json (repo).
+// Hojas del HRIS y el nodo que las lee dentro del subworkflow HRIS. bandas y encuesta no cambian en la demo: vienen de definiciones.json (repo).
 const LECTURAS = { empleados: 'Leer empleados', 'skills-empleados': 'Leer skills', 'planes-backup': 'Leer planes', alertas: 'Leer alertas', cobertura: 'Leer cobertura', 'historico-semaforo': 'Leer histórico',
   'key-people': 'Leer key-people', bandeja: 'Leer bandeja' };
-// Cómo se escribe cada hoja con el nodo nativo: actualizar por clave, añadir o actualizar por clave, añadir, o vaciar y volver a escribir
+// Cómo escribe el HRIS cada hoja (operación escribir): actualizar por clave, añadir o actualizar por clave, añadir, o vaciar y volver a escribir
 const ESCRITURAS = {
   empleados: { op: 'update', clave: 'id' },
   'skills-empleados': { op: 'update', clave: 'row_number' },
@@ -19,7 +20,7 @@ const ESCRITURAS = {
 const hoyISO = () => new Date().toISOString().slice(0, 10);
 // Hojas que el reinicio (escenario 0) vuelve a cargar desde salidas/sheets/; alertas y bandeja se vacían sin más
 const HOJAS_INICIALES = ['empleados', 'skills-empleados', 'planes-backup', 'cobertura', 'key-people', 'historico-semaforo'];
-// Fecha de trabajo de los agentes: la del formulario "Ejecutar un agente ahora" ("+12 semanas" o una fecha exacta) o hoy
+// Fecha de trabajo de las automatizaciones con calendario: la del formulario "Ejecutar ahora" ("+12 semanas" o una fecha exacta) o hoy
 function fechaDe(cfg) {
   const f = String(cfg.fecha || '').trim();
   if (fechaValida(f)) return f;
@@ -27,12 +28,12 @@ function fechaDe(cfg) {
   return s ? sumarDias(hoyISO(), +s[1] * 7) : hoyISO();
 }
 
-// Salida de los nodos de lectura → { hoja: { filas: [{ ...columnas, _fila }] } }. _fila es la fila real (row_number).
+// Lo que devuelve el nodo "Leer HRIS" → { hoja: { filas: [{ ...columnas, _fila }] } }. _fila es la fila real (row_number).
 function tablas() {
+  const crudo = $('Leer HRIS').first().json.tablas || {};
   const t = {};
-  for (const [hoja, nodo] of Object.entries(LECTURAS)) {
-    let items = [];
-    try { items = $(nodo).all().map(i => i.json); } catch (err) { /* este workflow no lee esa hoja */ }
+  for (const hoja of Object.keys(LECTURAS)) {
+    const items = crudo[hoja] || [];
     t[hoja] = { filas: items.filter(o => Object.keys(o).some(k => k !== 'row_number' && o[k] !== '' && o[k] != null)).map(o => {
       const f = { _fila: o.row_number };
       for (const [k, v] of Object.entries(o)) if (k !== 'row_number') f[k] = v == null ? '' : String(v);
@@ -42,10 +43,13 @@ function tablas() {
   return t;
 }
 
+// Enlace para ver el HRIS (en la demo, el Sheet): lo da el propio HRIS al leer
+function enlaceHris() { try { return $('Leer HRIS').first().json.enlace || ''; } catch (err) { return ''; } }
+
 function datosDesde(T, defs) {
   return {
     funciones: defs.funciones, taxonomia: defs.taxonomia, areas: defs.areas, catalogo: defs.catalogo,
-    bandas: defs.bandas, encuesta: defs.encuesta,
+    bandas: defs.bandas, encuesta: defs.encuesta, reglas: defs.reglas,
     empleados: T['empleados'].filas, skills: T['skills-empleados'].filas, planes: T['planes-backup'].filas,
   };
 }

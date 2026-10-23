@@ -16,7 +16,7 @@ Antes de cada ensayo recorre siete comprobaciones y devuelve una lista priorizad
 
 ## Qué no hace
 
-- No arregla nada (solo regenera archivos derivados) ni hace commit o push: Andrea decide.
+- No arregla nada (solo regenera archivos derivados) ni hace commit o push: decide quien lo usa.
 - No inventa cifras: todas salen del motor o de un comando.
 - No ve el Sheet real, n8n ni los emails: lo dice en "Qué no he podido comprobar".
 

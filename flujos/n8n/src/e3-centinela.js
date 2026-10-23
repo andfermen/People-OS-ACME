@@ -1,4 +1,4 @@
-// Escenario 3 (agentes) · nodo "Centinela": centinela de riesgo (definiciones/reglas-agentes.md §2).
+// Escenario 3 (automatizaciones con calendario) · nodo "Centinela": centinela de riesgo (definiciones/reglas-agentes.md §2).
 // El día 1 de cada mes, sin que nadie lo pida: recalcula el mapa, lo compara con el último recálculo, mira desde cuándo
 // está frágil cada función, qué validaciones han caducado, qué planes tocan y qué decisiones siguen pendientes.
 // Prepara la petición a Claude para el informe de dirección (prompts/informe-direccion.md), solo con datos agregados.

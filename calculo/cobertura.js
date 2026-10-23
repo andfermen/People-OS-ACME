@@ -12,10 +12,8 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 const RAIZ = path.join(__dirname, '..');
-const UMBRALES = { compaRatio: 0.9, mesesSinRevision: 18, evaluacionAlta: 4, mesesManagerReciente: 6, nMinimoEncuesta: 5 };
+// Las reglas (semáforo, prioridad, señales, vacante) y sus umbrales viven en definiciones/reglas.yaml (D-23): aquí solo se aplican.
 const ORDEN = { verde: 0, ambar: 1, rojo: 2 };
-const PUNTOS_SEMAFORO = { rojo: 3, ambar: 2, verde: 0 };
-const PUNTOS_CRITICIDAD = { critica: 3, importante: 2, soporte: 1 };
 
 // ---------- Lectura ----------
 function leerCsv(archivo) {
@@ -41,17 +39,33 @@ function cargar(raiz = RAIZ, dirEstado = null) {
     planes: leerCsv(d('datos/planes-backup.csv')),
     bandas: leerCsv(d('datos/bandas-salariales.csv')),
     encuesta: leerCsv(d('datos/encuesta-clima-agregada.csv')),
+    reglas: leerYaml(d('definiciones/reglas.yaml')),
   };
 }
 
 // ---------- Cálculo ----------
-function prioridad(semaforo, criticidad) {
-  const p = PUNTOS_SEMAFORO[semaforo] * PUNTOS_CRITICIDAD[criticidad];
-  return p >= 9 ? 'P1' : p >= 6 ? 'P2' : p >= 3 ? 'P3' : p >= 2 ? 'P4' : '-';
+function prioridad(semaforo, criticidad, reglas) {
+  const R = reglas.prioridad;
+  const p = R.puntos_semaforo[semaforo] * R.puntos_criticidad[criticidad];
+  return (R.niveles.find(n => p >= n.puntos_minimos) || { prioridad: '-' }).prioridad;
+}
+
+// Semáforo de una skill: la primera regla de reglas.yaml (semaforo) que se cumple
+function colorSkill(n, objetivo, conBackup, reglas) {
+  for (const r of reglas.semaforo) {
+    const si = r.si || {};
+    const minimo = si.cobertura_minima === 'objetivo' ? objetivo : si.cobertura_minima;
+    if (minimo != null && n < minimo) continue;
+    if (si.cobertura != null && n !== si.cobertura) continue;
+    if (si.con_backup && !conBackup) continue;
+    return r.color;
+  }
+  throw new Error('reglas.yaml: ninguna regla del semáforo se cumple (la última debería no tener condiciones)');
 }
 
 function calcular(datos) {
-  const { funciones, empleados, skills, planes, catalogo } = datos;
+  const { funciones, empleados, skills, planes, catalogo, reglas } = datos;
+  const R = reglas;
   const objetivoDefecto = funciones.defaults.cobertura_objetivo;
   const activos = new Map(empleados.filter(e => e.estado === 'activo').map(e => [e.id, e]));
   const nivel = new Map(); // "E007|gestion-claves" -> nivel validado
@@ -66,27 +80,27 @@ function calcular(datos) {
     const skillsF = f.skills_requeridas.map(({ skill, nivel: min }) => {
       const cubren = [...activos.keys()].filter(id => nivelDe(id, skill) >= min);
       const backups = planesActivos
-        .filter(p => p.skill_id === skill && nivelDe(p.empleado_id, skill) === min - 1)
+        .filter(p => p.skill_id === skill && nivelDe(p.empleado_id, skill) === min - R.cobertura.backup_a_distancia)
         .map(p => p.empleado_id);
       const n = cubren.length;
-      const semaforo = n >= objetivo ? 'verde' : n >= 2 ? 'ambar' : n === 1 && backups.length ? 'ambar' : 'rojo';
+      const semaforo = colorSkill(n, objetivo, backups.length > 0, R);
       return { skill, nivel_minimo: min, cobertura: n, personas: cubren, backups_en_desarrollo: backups, semaforo };
     });
     const peor = skillsF.reduce((a, b) => (ORDEN[b.semaforo] > ORDEN[a.semaforo] || (b.semaforo === a.semaforo && b.cobertura < a.cobertura) ? b : a));
     // Lente AI first (reglas-semaforo.md §7): en rojo con impacto IA alto no se forma un backup del proceso actual
-    const respuesta = peor.semaforo === 'rojo' && f.impacto_ia === 'alto' ? 'redisenar' : 'cubrir';
+    const respuesta = peor.semaforo === R.rediseno_ia.semaforo && f.impacto_ia === R.rediseno_ia.impacto_ia ? 'redisenar' : 'cubrir';
     return {
       id: f.id, nombre: f.nombre, area: f.area, criticidad: f.criticidad, impacto_ia: f.impacto_ia, objetivo,
       cobertura: Math.min(...skillsF.map(s => s.cobertura)),
-      semaforo: peor.semaforo, prioridad: prioridad(peor.semaforo, f.criticidad), respuesta, skills: skillsF,
+      semaforo: peor.semaforo, prioridad: prioridad(peor.semaforo, f.criticidad, R), respuesta, skills: skillsF,
     };
   });
 
   // 2. Key people: única cobertura de una skill en función crítica o importante
   const keyPeople = new Map();
   for (const f of resultado) {
-    if (f.criticidad === 'soporte') continue;
-    for (const s of f.skills) if (s.cobertura === 1) {
+    if (!R.cobertura.key_person.criticidades.includes(f.criticidad)) continue;
+    for (const s of f.skills) if (s.cobertura === R.cobertura.key_person.cobertura) {
       const id = s.personas[0];
       if (!keyPeople.has(id)) keyPeople.set(id, []);
       keyPeople.get(id).push({ funcion: f.id, skill: s.skill, semaforo: f.semaforo });
@@ -97,7 +111,7 @@ function calcular(datos) {
   for (const f of resultado) for (const s of f.skills) {
     if (s.semaforo === 'verde') continue;
     s.candidatos = [...activos.keys()]
-      .filter(id => nivelDe(id, s.skill) === s.nivel_minimo - 1 && !s.backups_en_desarrollo.includes(id))
+      .filter(id => nivelDe(id, s.skill) === s.nivel_minimo - R.cobertura.backup_a_distancia && !s.backups_en_desarrollo.includes(id))
       .map(id => ({ id, nombre: activos.get(id).nombre, area: activos.get(id).area, con_interes: interes(id).includes(s.skill), es_key_person: keyPeople.has(id) }))
       .sort((a, b) => b.con_interes - a.con_interes || a.es_key_person - b.es_key_person);
     // Un mentoring interno necesita a alguien que ya cubra la skill: con cobertura 0 no se propone
@@ -115,7 +129,7 @@ function calcular(datos) {
       const e = activos.get(id);
       const areaDe = fid => resultado.find(f => f.id === fid).area;
       // Oculta: puesto junior/intermedio, o sostiene una función de otra área (reglas-semaforo.md §3)
-      const oculta = ['junior', 'intermedio'].includes(e.nivel_puesto) || funcs.some(f => areaDe(f.funcion) !== e.area);
+      const oculta = R.cobertura.key_person_oculta.niveles_puesto.includes(e.nivel_puesto) || funcs.some(f => areaDe(f.funcion) !== e.area);
       return { id, nombre: e.nombre, area: e.area, rol: e.rol, nivel_puesto: e.nivel_puesto, oculta, funciones: funcs };
     }),
     senales_rotacion: senales,
@@ -133,12 +147,12 @@ function madurezIa(datos) {
   const grupos = new Map();
   const cuenta = activos.reduce((m, e) => ((m[e.area] = (m[e.area] || 0) + 1), m), {});
   for (const e of activos) {
-    const seg = cuenta[e.area] >= UMBRALES.nMinimoEncuesta ? e.area : `${datos.areas[e.area]} (áreas pequeñas)`;
+    const seg = cuenta[e.area] >= datos.reglas.anonimato.n_minimo ? e.area : `${datos.areas[e.area]} (áreas pequeñas)`;
     if (!grupos.has(seg)) grupos.set(seg, []);
     grupos.get(seg).push(e.id);
   }
   const media = ids => Object.fromEntries(skillsIa.map(s => [s, +(ids.reduce((t, id) => t + (nivel.get(`${id}|${s}`) || 0), 0) / ids.length).toFixed(1)]));
-  return [...grupos].filter(([, ids]) => ids.length >= UMBRALES.nMinimoEncuesta).map(([segmento, ids]) => {
+  return [...grupos].filter(([, ids]) => ids.length >= datos.reglas.anonimato.n_minimo).map(([segmento, ids]) => {
     const m = media(ids);
     return { segmento, n: ids.length, ...m, indice: +(skillsIa.reduce((t, s) => t + m[s], 0) / skillsIa.length).toFixed(1) };
   }).sort((a, b) => b.indice - a.indice);
@@ -146,7 +160,7 @@ function madurezIa(datos) {
 
 function climaDe(area, datos) {
   const enc = datos.encuesta;
-  const fila = (tipo, seg) => enc.find(r => r.segmento_tipo === tipo && r.segmento === seg && r.publicable === 'si' && +r.n >= UMBRALES.nMinimoEncuesta);
+  const fila = (tipo, seg) => enc.find(r => r.segmento_tipo === tipo && r.segmento === seg && r.publicable === 'si' && +r.n >= datos.reglas.anonimato.n_minimo);
   return fila('area', area) || fila('division', datos.areas[area]) || null;
 }
 
@@ -155,13 +169,14 @@ function senalesRotacion(e, datos) {
   const compa = +(e.salario_ficticio / banda.medio).toFixed(2);
   const media = +datos.encuesta.find(r => r.segmento_tipo === 'compania').engagement;
   const clima = climaDe(e.area, datos);
+  const U = datos.reglas.senales_rotacion;
   const activas = [];
-  if (compa < UMBRALES.compaRatio) activas.push(`S1 compa-ratio ${compa}`);
-  if (+e.meses_desde_ultima_revision > UMBRALES.mesesSinRevision) activas.push(`S2 ${e.meses_desde_ultima_revision} meses sin revisión`);
+  if (compa < U.compa_ratio_menor_que) activas.push(`S1 compa-ratio ${compa}`);
+  if (+e.meses_desde_ultima_revision > U.meses_sin_revision_mas_de) activas.push(`S2 ${e.meses_desde_ultima_revision} meses sin revisión`);
   if (clima && +clima.engagement < media) activas.push(`S3 clima ${clima.segmento} ${clima.engagement} < ${media}`);
-  if (+e.ultima_evaluacion >= UMBRALES.evaluacionAlta) activas.push(`S4 evaluación ${e.ultima_evaluacion}`);
-  if (+e.meses_con_manager_actual <= UMBRALES.mesesManagerReciente) activas.push(`S5 ${e.meses_con_manager_actual} meses con su manager`);
-  const probabilidad = activas.length >= 3 ? 'alta' : activas.length === 2 ? 'media' : 'baja';
+  if (+e.ultima_evaluacion >= U.evaluacion_desde) activas.push(`S4 evaluación ${e.ultima_evaluacion}`);
+  if (+e.meses_con_manager_actual <= U.meses_con_manager_hasta) activas.push(`S5 ${e.meses_con_manager_actual} meses con su manager`);
+  const probabilidad = activas.length >= U.probabilidad.alta_desde ? 'alta' : activas.length >= U.probabilidad.media_desde ? 'media' : 'baja';
   return { compa_ratio: compa, senales: activas, probabilidad };
 }
 
@@ -177,7 +192,6 @@ function simularBackup(datos, empleado, skill, funcion) {
 // ---------- Vacante y movilidad interna (reglas-semaforo.md §9) ----------
 // Perfil del puesto que deja una persona: las skills que cubría en alguna función, con el nivel mínimo más alto
 // que le pedían, y liderazgo si tenía equipo. Candidatos internos: quien cumple al menos la mitad del perfil.
-const NIVEL_LIDERAZGO_VACANTE = 2;
 function vacante(datos, id, despues = calcular(simularBaja(datos, id))) {
   const sale = datos.empleados.find(e => e.id === id);
   const nivel = new Map(datos.skills.filter(s => s.nivel_validado).map(s => [`${s.empleado_id}|${s.skill_id}`, +s.nivel_validado]));
@@ -186,7 +200,7 @@ function vacante(datos, id, despues = calcular(simularBaja(datos, id))) {
   for (const f of datos.funciones.funciones) for (const s of f.skills_requeridas)
     if (niv(id, s.skill) >= s.nivel && (!req.has(s.skill) || s.nivel > req.get(s.skill).nivel)) req.set(s.skill, { skill: s.skill, nivel: s.nivel, funcion: f.id });
   const equipo = datos.empleados.filter(e => e.manager_id === id && e.estado === 'activo').map(e => e.id);
-  if (equipo.length) req.set('liderazgo', { skill: 'liderazgo', nivel: NIVEL_LIDERAZGO_VACANTE, funcion: '' });
+  if (equipo.length) req.set('liderazgo', { skill: 'liderazgo', nivel: datos.reglas.vacante.nivel_liderazgo, funcion: '' });
   const perfil = [...req.values()];
 
   const cobertura = skill => datos.empleados.filter(e => e.estado === 'activo' && e.id !== id && niv(e.id, skill) >= (req.get(skill)?.nivel || 1)).length;
@@ -198,9 +212,9 @@ function vacante(datos, id, despues = calcular(simularBaja(datos, id))) {
         && !(c.tipo === 'mentoring-interno' && cobertura(p.skill) === 0)).map(c => c.id),
     }));
     return { id: e.id, nombre: e.nombre, rol: e.rol, area: e.area, cumple: perfil.length - brechas.length, de: perfil.length, brechas, key_person_en: keyPeople.get(e.id) || [] };
-  }).filter(c => c.cumple >= Math.ceil(c.de / 2))
+  }).filter(c => c.cumple >= Math.ceil(c.de * datos.reglas.vacante.cumple_minimo))
     .sort((a, b) => b.cumple - a.cumple || a.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0) - b.brechas.reduce((t, x) => t + x.necesita - x.tiene, 0))
-    .slice(0, 3);
+    .slice(0, datos.reglas.vacante.candidatos_max);
   return { id, nombre: sale.nombre, rol: sale.rol, area: sale.area, equipo: equipo.length, perfil, candidatos };
 }
 

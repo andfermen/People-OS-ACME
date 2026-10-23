@@ -6,7 +6,7 @@
 //   npm run demo -- baja E007                          -> pasos 1-6: recálculo, comparación, propuesta, alertas, email
 //   npm run demo -- aprobar ALR-002                    -> pasos 7-8: aprobación (opción de vacante, backup…) → recálculo
 //   npm run demo -- validar E009 gestion-claves 3 E008 -> opcional: el manager valida el nuevo nivel → recálculo
-//   npm run demo -- seguimiento [AAAA-MM-DD | +días]    -> agente de seguimiento de planes (D-21): avisa, recuerda, escala
+//   npm run demo -- seguimiento [AAAA-MM-DD | +días]    -> seguimiento de planes (D-21): avisa, recuerda, escala
 //   npm run demo -- centinela [AAAA-MM-DD | +días]      -> centinela de riesgo (D-21): revisión e informe para dirección
 // La fecha simula el paso del tiempo (por defecto, hoy).
 //
@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { cargar, calcular, comparar, vacante, aplicarMovilidad } = require('./cobertura');
 const { contexto, propuestaPorReglas, mensajeClaude } = require('./propuesta');
-const { UMBRALES_AGENTES, fechaValida, sumarDias, seguimientoPlanes, vigilar, informePorReglas } = require('./agentes');
+const { fechaValida, sumarDias, seguimientoPlanes, vigilar, informePorReglas } = require('./agentes');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -209,7 +209,7 @@ function validar(empleado, skill, nivel, manager) {
   }
 }
 
-// ---------- Agentes autónomos (D-21): en n8n los dispara el calendario; aquí, el comando ----------
+// ---------- Automatizaciones con calendario (D-21): en n8n las dispara el calendario; aquí, el comando ----------
 function seguimiento(fecha) {
   const datos = estado();
   const acciones = seguimientoPlanes(datos, fecha);
@@ -242,7 +242,7 @@ function centinela(fecha) {
   foto(r, `Revisión programada (centinela) · ${fecha}`, fecha);
   const md = informePorReglas(h);
   fs.writeFileSync(f(`informe-direccion-${fecha}.md`), md + '\n');
-  console.log(`[Centinela · ${fecha}] Mapa ${h.cuenta.rojo}·${h.cuenta.ambar}·${h.cuenta.verde} · ${h.fragiles.length} P1/P2 · ${h.pendientes.length} decisión(es) pendiente(s) · ${h.caducadas.length} validación(es) de más de ${UMBRALES_AGENTES.mesesValidacion} meses`);
+  console.log(`[Centinela · ${fecha}] Mapa ${h.cuenta.rojo}·${h.cuenta.ambar}·${h.cuenta.verde} · ${h.fragiles.length} P1/P2 · ${h.pendientes.length} decisión(es) pendiente(s) · ${h.caducadas.length} validación(es) de más de ${h.umbrales.mesesValidacion} meses`);
   console.log(`Informe para dirección (por reglas) en salidas/demo/informe-direccion-${fecha}.md\n`);
   console.log(md.split('\n').map(l => '   │ ' + l).join('\n'));
   return h;
