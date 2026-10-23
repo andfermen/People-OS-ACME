@@ -1,4 +1,4 @@
-// Comprueba que los datos ficticios producen los casos obligatorios de la demo (CLAUDE.md §6).
+// Comprueba que los datos ficticios producen los casos obligatorios de la demo (los que cuenta README.md, parte 2).
 // Ejecutar antes de cada ensayo: npm run verificar
 const { cargar, calcular, simularBaja, simularBackup, comparar, vacante, aplicarMovilidad } = require('./cobertura');
 
@@ -48,13 +48,13 @@ caso('Opcional nueva skill: Javier validado en nivel 3 pasa CUS-01 de ámbar a v
 caso('Sin falsas alertas: tras la baja, ninguna función que sigue en verde aparece como "empeora"',
   cambios.every(c => c.a !== 'verde'));
 
-// Vacante de Elena: buscar fuera o mover a Marcos (movilidad interna, CLAUDE.md §5 salida 4)
+// Vacante de Elena: buscar fuera o mover a Marcos (movilidad interna, D-15)
 const vac = vacante(base, 'E007');
 const marcos = vac.candidatos[0];
 caso('Vacante de Elena: Marcos es el primer candidato interno, le falta conciliación (FOR-04, sin el mentoring de Elena) y es key person de CUS-01',
   marcos?.id === 'E008' && marcos.brechas.some(b => b.skill === 'conciliacion-onchain' && b.formacion.join() === 'FOR-04') && marcos.key_person_en.includes('CUS-01'));
 
-const movido = aplicarMovilidad(simularBaja(base, 'E007').empleados, vac, 'E008', '2026-10-21', 'TEST');
+const movido = aplicarMovilidad(simularBaja(base, 'E007').empleados, vac, 'E008', '2026-10-21', 'TEST', base.reglas);
 const tras = { ...simularBaja(base, 'E007'), empleados: movido.empleados, planes: [...base.planes, ...movido.planes] };
 caso('Opción B aprobada: Marcos pasa a responsable de custodia, el equipo depende de él y tiene plan en conciliación; CUS-02 sigue en rojo (cobertura 0)',
   movido.empleados.find(x => x.id === 'E008').rol === 'Responsable de custodia' && movido.empleados.find(x => x.id === 'E009').manager_id === 'E008'
@@ -63,7 +63,7 @@ caso('Opción B aprobada: Marcos pasa a responsable de custodia, el equipo depen
 caso('Opción B + backup de Javier: CUS-01 pasa de rojo a ámbar',
   fn(calcular(simularBackup(tras, 'E009', 'gestion-claves', 'CUS-01')), 'CUS-01').semaforo === 'ambar');
 
-// Escala y lente AI first (CLAUDE.md §6)
+// Escala y lente AI first (D-13, D-14)
 const activos = base.empleados.filter(x => x.estado === 'activo').length;
 caso(`Plantilla a escala de la compañía: ${activos} personas activas (~160)`, activos >= 150 && activos <= 170);
 

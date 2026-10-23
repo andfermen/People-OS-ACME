@@ -11,7 +11,7 @@
 // Escenario 4 · Asistente de People (D-25): un agente que razona con herramientas del motor, en solo lectura.
 //
 // El código de los nodos sale de los mismos módulos que verifica `npm run verificar` (cobertura.js, propuesta.js, hojas.js,
-// agentes.js, asistente.js) más flujos/n8n/src/. Así hay una sola versión del cálculo, y las reglas salen de definiciones/reglas.yaml.
+// automatizaciones.js, asistente.js) más flujos/n8n/src/. Así hay una sola versión del cálculo, y las reglas salen de definiciones/reglas.yaml.
 
 const fs = require('fs');
 const path = require('path');
@@ -37,7 +37,7 @@ fs.writeFileSync(path.join(RAIZ, 'salidas', 'n8n', 'definiciones.json'),
 const cob = leer(path.join(__dirname, 'cobertura.js'));
 const motor = cob.slice(cob.indexOf('// Las reglas (semáforo'), cob.indexOf('// ---------- Lectura')) + cob.slice(cob.indexOf('// ---------- Cálculo'), cob.indexOf('module.exports'));
 const LIB = ['// ===== Generado por calculo/exportar-n8n.js. No editar aquí: editar calculo/ y flujos/n8n/src/ =====',
-  motor, ...['propuesta.js', 'hojas.js', 'agentes.js', 'asistente.js'].map(f => sinModulo(leer(path.join(__dirname, f)))),
+  motor, ...['propuesta.js', 'hojas.js', 'automatizaciones.js', 'asistente.js'].map(f => sinModulo(leer(path.join(__dirname, f)))),
   sinModulo(leer(path.join(SRC, 'comun.js')))].join('\n');
 const codigo = archivo => `${LIB}\n// ===== Nodo =====\n${leer(path.join(SRC, archivo))}`;
 

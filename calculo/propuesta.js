@@ -17,7 +17,7 @@ function contexto(r, cambios, evento, vac, datos) {
     vac.candidatos.forEach(c => { c.compa_en_puesto = +(datos.empleados.find(e => e.id === c.id).salario_ficticio / banda.medio).toFixed(2); c.banda_puesto = banda.banda_id; });
   }
   return {
-    evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people, vacante: vac,
+    evento, cambios, funciones_afectadas: afectadas, key_people: r.key_people, vacante: vac, reglas: datos.reglas,
     senales: r.senales_rotacion.filter(s => implicadas.has(s.id)),
     catalogo: datos.catalogo.filter(c => formaciones.has(c.id)),
   };
@@ -57,7 +57,7 @@ function propuestaPorReglas(ctx) {
     else if (cand && s.cobertura > 0) acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'backup', accion: `Plan de backup: ${cand.nombre} en ${s.skill} (${s.nivel_minimo - 1} → ${s.nivel_minimo})`, empleado_id: cand.id, skill_id: s.skill, formacion_id: form?.id || '', por_que: `Cobertura ${s.cobertura}. ${cand.nombre} está a un nivel${cand.con_interes ? ' y tiene interés declarado' : ''}.`, riesgo_si_no: `La función ${fn.nombre} depende de ${s.cobertura} persona.` });
     else if (enVacante(s.skill)) { /* la cubre la decisión de la vacante (opciones A/B) */ }
     else acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'contratar', accion: `Abrir vacante con ${s.skill} nivel ${s.nivel_minimo}`, empleado_id: '', skill_id: s.skill, formacion_id: '', por_que: `Cobertura ${s.cobertura} y ningún candidato interno llega a tiempo.`, riesgo_si_no: `${fn.nombre} queda sin nadie que pueda sostenerla.` });
-    if (s.cobertura === 1) {
+    if (s.cobertura === ctx.reglas.cobertura.key_person.cobertura) { // única cobertura: key person (reglas.yaml)
       const kp = s.personas[0];
       acciones.push({ prioridad: fn.prioridad, funcion_id: fn.id, tipo: 'retencion', accion: `Conversación de permanencia con ${ctx.key_people.find(k => k.id === kp)?.nombre || kp}`, empleado_id: kp, skill_id: s.skill, formacion_id: '', por_que: 'Es la única cobertura de la skill.', riesgo_si_no: 'Una segunda salida deja la función sin cobertura.' });
     }

@@ -1,7 +1,7 @@
 # Reglas del sistema: lo que decide el riesgo y cuándo actúan las automatizaciones (D-23).
-# El motor las lee de aquí (calculo/cobertura.js, calculo/agentes.js); n8n, de salidas/n8n/definiciones.json.
+# El motor las lee de aquí (calculo/cobertura.js, calculo/automatizaciones.js); n8n, de salidas/n8n/definiciones.json.
 # Cambiar una regla: editar este archivo → npm run verificar → npm run n8n → commit. Sin tocar ningún flujo.
-# Qué significa cada regla y por qué: reglas-semaforo.md, reglas-senales-rotacion.md, reglas-agentes.md.
+# Qué significa cada regla y por qué: reglas-semaforo.md, reglas-senales-rotacion.md, reglas-automatizaciones.md.
 
 # Quién cuenta como cobertura de una skill: persona activa con nivel validado >= nivel mínimo de la función.
 cobertura:

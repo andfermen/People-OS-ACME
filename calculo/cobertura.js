@@ -219,14 +219,14 @@ function vacante(datos, id, despues = calcular(simularBaja(datos, id))) {
 }
 
 // Aprobar la opción interna: el candidato asume el puesto (rol, nivel, manager), el equipo pasa a depender de él
-// y se abre un plan por cada brecha de un nivel que tenga formación en el catálogo. Devuelve filas nuevas, no escribe nada.
-function aplicarMovilidad(empleados, vac, candidatoId, fecha, origen) {
+// y se abre un plan por cada brecha a un nivel (reglas.yaml: backup_a_distancia) que tenga formación en el catálogo. Devuelve filas nuevas, no escribe nada.
+function aplicarMovilidad(empleados, vac, candidatoId, fecha, origen, reglas) {
   const sale = empleados.find(e => e.id === vac.id);
   const nuevos = empleados.map(e =>
     e.id === candidatoId ? { ...e, rol: sale.rol, nivel_puesto: sale.nivel_puesto, manager_id: sale.manager_id, meses_con_manager_actual: '0' }
       : e.manager_id === vac.id && e.estado === 'activo' ? { ...e, manager_id: candidatoId, meses_con_manager_actual: '0' } : e);
   const c = vac.candidatos.find(x => x.id === candidatoId);
-  const planes = c.brechas.filter(b => b.necesita - b.tiene === 1 && b.formacion.length).map(b => ({
+  const planes = c.brechas.filter(b => b.necesita - b.tiene === reglas.cobertura.backup_a_distancia && b.formacion.length).map(b => ({
     empleado_id: candidatoId, skill_id: b.skill, nivel_objetivo: b.necesita, funcion_id: b.funcion, formacion_id: b.formacion[0],
     fecha_inicio: fecha, fecha_objetivo: '', estado: 'activo', origen,
   }));

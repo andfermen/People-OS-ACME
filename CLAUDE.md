@@ -31,7 +31,7 @@ Un sistema de People para una compañía de 160 personas, gestionado por una sol
 definiciones/   reglas.yaml (semáforo, prioridad, señales, vacante, automatizaciones) · funciones.yaml · taxonomia-skills.yaml
                 catalogo-formacion.yaml · areas.yaml · empresa.md · reglas-*.md (qué significa cada regla y por qué)
 prompts/        proponer-acciones.md · informe-direccion.md · asistente-people.md · normalizar-skills.md
-calculo/        cobertura.js (motor) · propuesta.js · agentes.js (seguimiento y centinela) · asistente.js (herramientas del agente)
+calculo/        cobertura.js (motor) · propuesta.js · automatizaciones.js (seguimiento y centinela) · asistente.js (herramientas del agente)
                 hojas.js · demo.js · verificar-casos.js · cifras.js · exportar-*.js · generar-plantilla.js
 datos/          CSV de origen (ficticios)
 salidas/        sheets/ (lo que carga el HRIS) · n8n/definiciones.json (lo que lee n8n) · muestras de emails y panel

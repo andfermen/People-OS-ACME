@@ -1,5 +1,5 @@
 // Automatizaciones con calendario (D-21): seguimiento de planes de backup y centinela de riesgo. No son agentes: aplican reglas.
-// Implementa definiciones/reglas-agentes.md con los umbrales de definiciones/reglas.yaml (automatizaciones). Deterministas: deciden CUÁNDO actuar y QUÉ detectar; nunca deciden sobre una persona.
+// Implementa definiciones/reglas-automatizaciones.md con los umbrales de definiciones/reglas.yaml (automatizaciones). Deterministas: deciden CUÁNDO actuar y QUÉ detectar; nunca deciden sobre una persona.
 // Sin dependencias: lo usan la demo local (demo.js), el vídeo (exportar-video.js) y los nodos de código de n8n (exportar-n8n.js).
 
 // Umbrales con nombres cortos, leídos de reglas.yaml (automatizaciones): seguimiento y centinela
@@ -22,7 +22,7 @@ function fechaRevision(plan, catalogo) {
 }
 
 // ---------- Seguimiento de planes ----------
-// Para cada plan activo que ha llegado a su fecha: avisa al manager, le recuerda cada 7 días y, tras 2 avisos, escala a People.
+// Para cada plan activo que ha llegado a su fecha: avisa al manager, le recuerda y, tras varios avisos, escala a People (plazos en reglas.yaml).
 // Devuelve las acciones; no escribe nada. avisos y ultimo_aviso viven en la hoja planes-backup.
 function seguimientoPlanes(datos, hoy) {
   const U = umbralesAutomatizaciones(datos.reglas);

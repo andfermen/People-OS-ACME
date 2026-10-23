@@ -28,12 +28,12 @@ Arrancan con un evento: una baja, una aprobación o una validación.
 | **Movilidad** | Ante una vacante, calcula el perfil del puesto con lo que hacía la persona, busca candidatos internos, sus brechas, la formación que las cierra y el **coste organizativo** de moverlos | Elegir candidato: pone dos opciones con su coste | Nodo **Motor** · `calculo/cobertura.js` (`vacante`) | **Construido** |
 | **Skills** | El manager valida un nivel → actualiza el HRIS, cierra el plan de backup si se alcanza el objetivo y recalcula | Subir un nivel por haber completado un curso | Escenario 2, nodo **Validar skill** | **Construido** |
 
-Arrancan con el calendario, sin que nadie pulse nada (D-21). Reglas: [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md).
+Arrancan con el calendario, sin que nadie pulse nada (D-21). Reglas: [`definiciones/reglas-automatizaciones.md`](../definiciones/reglas-automatizaciones.md).
 
 | Pieza | Qué hace | Qué no hace | Dónde vive | Estado |
 |---|---|---|---|---|
-| [Seguimiento de planes](seguimiento-planes.md) | Cada lunes: plan de backup que llega a su fecha → escribe al manager con el formulario de validación rellenado → recuerda a los 7 días → tras 2 avisos, alerta para People | Subir niveles, cerrar o cambiar planes | Escenario 3 · `calculo/agentes.js` | **Construido** |
-| [Centinela de riesgo](centinela.md) | Día 1 de cada mes: recalcula, detecta funciones frágiles y desde cuándo, validaciones de más de 6 meses y decisiones pendientes; Claude redacta el informe para dirección | Decidir qué hacer con lo detectado; contar a dirección señales individuales | Escenario 3 · `calculo/agentes.js` | **Construido** |
+| [Seguimiento de planes](seguimiento-planes.md) | Cada lunes: plan de backup que llega a su fecha → escribe al manager con el formulario de validación rellenado → recuerda a los 7 días → tras 2 avisos, alerta para People | Subir niveles, cerrar o cambiar planes | Escenario 3 · `calculo/automatizaciones.js` | **Construido** |
+| [Centinela de riesgo](centinela.md) | Día 1 de cada mes: recalcula, detecta funciones frágiles y desde cuándo, validaciones de más de 6 meses y decisiones pendientes; Claude redacta el informe para dirección | Decidir qué hacer con lo detectado; contar a dirección señales individuales | Escenario 3 · `calculo/automatizaciones.js` | **Construido** |
 
 ## IA que redacta
 

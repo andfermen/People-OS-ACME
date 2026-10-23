@@ -44,7 +44,7 @@ flowchart LR
 
 Cómo está montado en n8n (adaptador HRIS; escenario 0 · panel y reinicio; 1 · baja de Elena; 2 · actualización de skill; 3 · automatizaciones con calendario; 4 · asistente): `flujos/n8n/LEEME.md`, D-16, D-18, D-21, D-22, D-24 y D-25.
 
-Segundo disparador (escenario 3, D-21): el calendario. Cada lunes, el **seguimiento de planes** avisa, recuerda y escala; el día 1 de cada mes, el **centinela** recalcula, detecta degradaciones y envía el informe para dirección (`prompts/informe-direccion.md`). Reglas: `definiciones/reglas-agentes.md`.
+Segundo disparador (escenario 3, D-21): el calendario. Cada lunes, el **seguimiento de planes** avisa, recuerda y escala; el día 1 de cada mes, el **centinela** recalcula, detecta degradaciones y envía el informe para dirección (`prompts/informe-direccion.md`). Reglas: `definiciones/reglas-automatizaciones.md`.
 
 ## Dónde está la IA y dónde no
 

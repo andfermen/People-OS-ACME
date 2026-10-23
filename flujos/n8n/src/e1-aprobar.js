@@ -34,7 +34,7 @@ if (a.tipo_accion === 'backup') {
 }
 if (a.tipo_accion === 'movilidad') {
   const vac = vacante(base, a.grupo.replace('VAC-', ''));
-  const mov = aplicarMovilidad(base.empleados, vac, a.empleado_id, hoy, alertaId);
+  const mov = aplicarMovilidad(base.empleados, vac, a.empleado_id, hoy, alertaId, base.reglas);
   const antes = new Map(base.empleados.map(e => [e.id, e]));
   // Solo las columnas que cambian: rol, nivel y manager del candidato; manager del equipo
   mov.empleados.forEach(e => {

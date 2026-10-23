@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const { cargar, calcular, comparar, vacante, aplicarMovilidad } = require('./cobertura');
 const { contexto, propuestaPorReglas, mensajeClaude } = require('./propuesta');
-const { fechaValida, sumarDias, seguimientoPlanes, vigilar, informePorReglas } = require('./agentes');
+const { fechaValida, sumarDias, seguimientoPlanes, vigilar, informePorReglas } = require('./automatizaciones');
 
 const RAIZ = path.join(__dirname, '..');
 const EST = path.join(RAIZ, 'salidas', 'demo');
@@ -179,7 +179,7 @@ function aprobar(id) {
 function mover(a) {
   const vac = vacante(estado(), a.grupo.replace('VAC-', ''));
   const e = leer('empleados.csv');
-  const { empleados, planes } = aplicarMovilidad(e.filas, vac, a.empleado_id, hoy(), a.alerta_id);
+  const { empleados, planes } = aplicarMovilidad(e.filas, vac, a.empleado_id, hoy(), a.alerta_id, estado().reglas);
   escribir('empleados.csv', e.cols, empleados);
   const p = leer('planes-backup.csv');
   const nuevos = planes.map((x, i) => ({ plan_id: `PB-${String(p.filas.length + i + 1).padStart(3, '0')}`, ...x }));

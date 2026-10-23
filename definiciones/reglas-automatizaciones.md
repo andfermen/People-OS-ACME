@@ -29,7 +29,7 @@
 
 ## 2. Centinela de riesgo
 
-**Cuándo:** el día 1 de cada mes a las 8:00. Es el "segundo disparador" del flujo principal (CLAUDE.md §5).
+**Cuándo:** el día 1 de cada mes a las 8:00. Es el "segundo disparador" del flujo principal: el calendario en lugar de un evento.
 
 Recalcula el mapa, guarda la foto en `historico-semaforo` y detecta:
 

@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { cargar, calcular, comparar, vacante } = require('./cobertura');
-const { umbralesAutomatizaciones, sumarDias, seguimientoPlanes, vigilar, informePorReglas, mdAHtml } = require('./agentes');
+const { umbralesAutomatizaciones, sumarDias, seguimientoPlanes, vigilar, informePorReglas, mdAHtml } = require('./automatizaciones');
 const { ejecutarHerramienta, resumenResultado } = require('./asistente');
 
 const RAIZ = path.join(__dirname, '..');

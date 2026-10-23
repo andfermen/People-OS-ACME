@@ -29,6 +29,6 @@ People describe cómo se hace hoy un proceso (onboarding, evaluación del desemp
 
 ## Esfuerzo y riesgo
 
-- **Esfuerzo:** medio día (definición del agente + una prueba con el onboarding de CLAUDE.md §8).
+- **Esfuerzo:** medio día (definición del agente + una prueba con el onboarding de `docs/escalado.md`).
 - **Riesgo:** ninguno: no forma parte de la demo.
 - **Recomendación:** siguiente paso, aplicado primero al onboarding.

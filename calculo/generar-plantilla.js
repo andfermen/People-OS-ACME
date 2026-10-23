@@ -1,5 +1,5 @@
 // Amplía la plantilla ficticia a ~160 personas sin tocar los casos de la demo.
-// - E001-E046 están hechos a mano (los casos de CLAUDE.md §6) y se conservan tal cual.
+// - E001-E046 están hechos a mano (los casos de la demo que comprueba verificar-casos.js) y se conservan tal cual.
 // - E047 en adelante se generan con una semilla fija: siempre salen las mismas personas.
 // - Las skills de IA (ia-*) se generan para toda la plantilla, según la madurez de cada área.
 // Las personas generadas tienen topes de nivel en las skills de los casos de la demo, para no cambiar

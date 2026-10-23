@@ -1,6 +1,6 @@
 # Centinela de riesgo · construido
 
-**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-automatizaciones-calendario.json`](../flujos/n8n/E3-automatizaciones-calendario.json)), nodos **Centinela** → **Claude redacta el informe** → **Informe final**. Lógica en [`calculo/agentes.js`](../calculo/agentes.js) (`vigilar`, `informePorReglas`), reglas en [`definiciones/reglas-agentes.md`](../definiciones/reglas-agentes.md) §2, prompt en [`prompts/informe-direccion.md`](../prompts/informe-direccion.md) (D-21).
+**Dónde vive:** n8n, escenario 3 ([`flujos/n8n/E3-automatizaciones-calendario.json`](../flujos/n8n/E3-automatizaciones-calendario.json)), nodos **Centinela** → **Claude redacta el informe** → **Informe final**. Lógica en [`calculo/automatizaciones.js`](../calculo/automatizaciones.js) (`vigilar`, `informePorReglas`), reglas en [`definiciones/reglas-automatizaciones.md`](../definiciones/reglas-automatizaciones.md) §2, prompt en [`prompts/informe-direccion.md`](../prompts/informe-direccion.md) (D-21).
 
 ## Para qué
 

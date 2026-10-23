@@ -1,35 +1,14 @@
-# Prueba n8n vs Make (miércoles a mediodía, máx. 1 h)
+# Prueba de captura de skills (D-04)
 
-**Objetivo:** decidir el orquestador (D-04). Si este workflow funciona en ~1 h → n8n. Si no → Make.
+`test-captura-skills.json` es el primer workflow que se construyó: sirvió para elegir n8n como orquestador (D-04) y deja probada la **captura** de skills, que está diseñada pero no forma parte de la demo.
 
-## Antes de empezar
-- Cuenta n8n cloud (prueba gratuita) y la cuenta Google de la demo.
-- Una **API key de Claude** (console.anthropic.com → API Keys).
-- El Sheet de la demo (ya montado, con la hoja `captura-pendiente` y su cabecera:
-  `empleado_id,skill_id,nivel_declarado,nivel_validado,validado_por,fecha,evidencia,confianza,pregunta_para_manager,intereses`).
-- Los últimos commits subidos a GitHub (`git push`): el flujo lee la taxonomía de la rama `main` del remoto, no de tu ordenador.
-- El flujo lee la taxonomía y el prompt desde GitHub. **Ahora el repo es privado**, así que elige una opción:
-  - **A (recomendada, todos los datos son ficticios):** GitHub → *Settings → General → Change visibility → Public*.
-  - **B:** dejarlo privado. Crea un token en GitHub (*Settings → Developer settings → Fine-grained tokens*, solo lectura de *Contents* de este repo) y, en los dos nodos *Leer …*, añade una credencial **Header Auth** con Name `Authorization` y Value `Bearer <token>`.
+**Qué hace:** un formulario recibe el id de una persona y un texto libre sobre lo que hace → Claude lo normaliza contra `definiciones/taxonomia-skills.yaml` con `prompts/normalizar-skills.md` (skill, nivel propuesto, evidencia, pregunta para el manager) → las filas se guardan en la hoja `captura-pendiente` con `validado_por = pendiente`. El nivel no cuenta hasta que lo valida el manager.
 
-## Pasos
-1. En n8n: **Workflows → ⋯ → Import from file** → `flujos/n8n/test-captura-skills.json`.
-2. Nodo **Claude normaliza** → *Credential* → *Create new* → **Header Auth**: Name `x-api-key`, Value = tu API key. Guarda.
-3. Nodo **Guardar en Sheet** → *Credential* → *Create new* → **Google Sheets OAuth2** → inicia sesión con la cuenta de la demo. En *Document* cambia `PEGAR_ID_DEL_SHEET` por el ID del Sheet.
-4. Pulsa **Test workflow**. Se abre el formulario. Rellénalo:
-   - `empleado_id`: `E009`
-   - `texto`: el ejemplo 1 de `prompts/normalizar-skills.md` (operador de custodia).
-5. Comprueba que en `captura-pendiente` aparecen ~3 filas (`operativa-wallets`, `gestion-claves`, `analisis-blockchain`) con `validado_por = pendiente`.
+**Para probarlo:**
+1. En n8n: *Workflows → ⋯ → Import from file* → `flujos/n8n/test-captura-skills.json`.
+2. Nodo **Claude normaliza** → credencial **Header Auth** (`x-api-key` = la clave de API de Claude).
+3. Nodo **Guardar en Sheet** → credencial de Google Sheets; en *Document*, cambia `PEGAR_ID_DEL_SHEET` por el ID del Sheet. La hoja `captura-pendiente` lleva la cabecera `empleado_id,skill_id,nivel_declarado,nivel_validado,validado_por,fecha,evidencia,confianza,pregunta_para_manager,intereses`.
+4. **Test workflow** → en el formulario, `empleado_id` = `E009` y como texto el ejemplo 1 de `prompts/normalizar-skills.md`.
+5. En `captura-pendiente` aparecen unas 3 filas (`operativa-wallets`, `gestion-claves`, `analisis-blockchain`) pendientes de validar.
 
-## Criterio
-| Resultado | Decisión |
-|---|---|
-| Funciona en ≤ 1 h | **n8n**. El cálculo va en un nodo de código con `calculo/cobertura.js` |
-| Se atasca en credenciales o nodos | **Make**. El cálculo va en fórmulas de Sheets, contrastadas con `npm run verificar` |
-
-Apunta lo que pase (tiempo y dónde te atascaste) y Claude lo registra en `docs/decisiones.md`.
-
-## Si falla
-- **401 en Claude:** la cabecera debe llamarse exactamente `x-api-key`.
-- **404 al leer el repo:** el repo es privado o la rama no es `main`.
-- **El JSON de Claude no se parsea:** revisa la salida del nodo *Claude normaliza*. El nodo siguiente recorta el texto entre la primera `{` y la última `}`.
+Este workflow no usa el adaptador HRIS (D-24) porque es anterior; si la captura entrara en la demo, escribiría a través de él.

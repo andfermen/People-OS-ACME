@@ -48,7 +48,7 @@
 
 ## 7 · Automatizaciones y agente
 
-Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos automatizaciones que arrancan con el calendario. Y para preguntar, un agente."* Reglas: `definiciones/reglas-agentes.md` (D-21).
+Hasta aquí, todo empieza con un clic. *"Lo que una persona sola no puede hacer es acordarse de todo. Eso lo hacen dos automatizaciones que arrancan con el calendario. Y para preguntar, un agente."* Reglas: `definiciones/reglas-automatizaciones.md` (D-21).
 
 1. **Seguimiento de planes · "tres meses después".** En n8n arranca solo cada lunes. En la demo: formulario **Ejecutar ahora** → `seguimiento`, cuándo = `+12 semanas`. Llegan dos avisos sin que People haga nada: a Marcos por el plan de Javier, y a Sergio (CEO de Acme) por el de Marcos. En `planes-backup`, `avisos = 1`.
 2. En el aviso a Marcos → **Validar a Javier**: el formulario del escenario 2 llega rellenado (`E009`, `gestion-claves`, `3`, `E008`). Enviar → email *Riesgo reducido*: **CUS-01 pasa de 🟡 a 🟢**. *"Completar un curso no es tener la skill: el agente pregunta, la valida una persona."*

@@ -1,6 +1,6 @@
-// Escenario 3 (automatizaciones con calendario) · nodo "Seguimiento": seguimiento de planes de backup (definiciones/reglas-agentes.md §1).
+// Escenario 3 (automatizaciones con calendario) · nodo "Seguimiento": seguimiento de planes de backup (definiciones/reglas-automatizaciones.md §1).
 // Cada lunes, sin que nadie lo pida: a los planes que han llegado a su fecha, avisa al manager con el formulario de validación
-// ya rellenado; si no valida, le recuerda a los 7 días; tras 2 avisos, abre una alerta para People. No sube ningún nivel.
+// ya rellenado; si no valida, le recuerda; tras los avisos que fija reglas.yaml, abre una alerta para People. No sube ningún nivel.
 const cfg = $('Configuración').first().json;
 const T = tablas();
 const defs = JSON.parse($('Leer definiciones').first().json.definiciones);
