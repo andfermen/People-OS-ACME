@@ -118,7 +118,7 @@ const bloqueCus01 = yamlFunciones.match(/  - id: CUS-01\n(    .*\n)+/)[0].trimEn
 // Nodos reales de los escenarios de n8n, agrupados por las notas del lienzo
 function bloquesN8n(archivo) {
   const w = JSON.parse(fs.readFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), 'utf8'));
-  const notas = w.nodes.filter(n => n.type.endsWith('stickyNote')).sort((a, b) => a.position[0] - b.position[0]);
+  const notas = w.nodes.filter(n => n.type.endsWith('stickyNote') && !n.parameters.content.startsWith('## En producción')).sort((a, b) => a.position[0] - b.position[0]);
   const bloques = notas.map(n => ({ titulo: n.parameters.content.split('\n')[0].replace(/^#+\s*/, ''), nodos: [] }));
   for (const n of w.nodes.filter(n => !n.type.endsWith('stickyNote')).sort((a, b) => a.position[0] - b.position[0] || a.position[1] - b.position[1])) {
     let i = 0;

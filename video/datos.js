@@ -1,6 +1,6 @@
 // Generado por `npm run video` (calculo/exportar-video.js). No editar a mano.
 window.DEMO = {
- "generado": "2026-10-23",
+ "generado": "2026-10-24",
  "origen": "npm run video · calculo/demo.js (propuesta por reglas, sin API)",
  "plantilla": {
   "personas": 160,
@@ -5286,7 +5286,7 @@ window.DEMO = {
   "alertas": [
    {
     "alerta_id": "ALR-001",
-    "fecha": "2026-10-23",
+    "fecha": "2026-10-24",
     "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
     "funcion_id": "",
     "prioridad": "P1",
@@ -5305,7 +5305,7 @@ window.DEMO = {
    },
    {
     "alerta_id": "ALR-002",
-    "fecha": "2026-10-23",
+    "fecha": "2026-10-24",
     "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
     "funcion_id": "CUS-02",
     "prioridad": "P1",
@@ -5324,7 +5324,7 @@ window.DEMO = {
    },
    {
     "alerta_id": "ALR-003",
-    "fecha": "2026-10-23",
+    "fecha": "2026-10-24",
     "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
     "funcion_id": "CUS-01",
     "prioridad": "P1",
@@ -5343,7 +5343,7 @@ window.DEMO = {
    },
    {
     "alerta_id": "ALR-004",
-    "fecha": "2026-10-23",
+    "fecha": "2026-10-24",
     "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
     "funcion_id": "CUS-01",
     "prioridad": "P1",
@@ -5366,7 +5366,7 @@ window.DEMO = {
  "alertas002": [
   {
    "alerta_id": "ALR-001",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "",
    "prioridad": "P1",
@@ -5380,12 +5380,12 @@ window.DEMO = {
    "riesgo_si_no": "Proceso de 2-3 meses; mientras tanto, 7 personas sin responsable.",
    "decision": "descartada",
    "decidido_por": "People",
-   "fecha_decision": "2026-10-23",
+   "fecha_decision": "2026-10-24",
    "grupo": "VAC-E007"
   },
   {
    "alerta_id": "ALR-002",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-02",
    "prioridad": "P1",
@@ -5399,12 +5399,12 @@ window.DEMO = {
    "riesgo_si_no": "Coste organizativo: ya es la única cobertura de CUS-01; asumir el puesto concentra el riesgo en una persona.",
    "decision": "aprobada",
    "decidido_por": "People",
-   "fecha_decision": "2026-10-23",
+   "fecha_decision": "2026-10-24",
    "grupo": "VAC-E007"
   },
   {
    "alerta_id": "ALR-003",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-01",
    "prioridad": "P1",
@@ -5423,7 +5423,7 @@ window.DEMO = {
   },
   {
    "alerta_id": "ALR-004",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-01",
    "prioridad": "P1",
@@ -5444,7 +5444,7 @@ window.DEMO = {
  "alertas003": [
   {
    "alerta_id": "ALR-001",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "",
    "prioridad": "P1",
@@ -5458,12 +5458,12 @@ window.DEMO = {
    "riesgo_si_no": "Proceso de 2-3 meses; mientras tanto, 7 personas sin responsable.",
    "decision": "descartada",
    "decidido_por": "People",
-   "fecha_decision": "2026-10-23",
+   "fecha_decision": "2026-10-24",
    "grupo": "VAC-E007"
   },
   {
    "alerta_id": "ALR-002",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-02",
    "prioridad": "P1",
@@ -5477,12 +5477,12 @@ window.DEMO = {
    "riesgo_si_no": "Coste organizativo: ya es la única cobertura de CUS-01; asumir el puesto concentra el riesgo en una persona.",
    "decision": "aprobada",
    "decidido_por": "People",
-   "fecha_decision": "2026-10-23",
+   "fecha_decision": "2026-10-24",
    "grupo": "VAC-E007"
   },
   {
    "alerta_id": "ALR-003",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-01",
    "prioridad": "P1",
@@ -5496,12 +5496,12 @@ window.DEMO = {
    "riesgo_si_no": "La función Gestión de claves y ceremonias de firma depende de 1 persona.",
    "decision": "aprobada",
    "decidido_por": "People",
-   "fecha_decision": "2026-10-23",
+   "fecha_decision": "2026-10-24",
    "grupo": ""
   },
   {
    "alerta_id": "ALR-004",
-   "fecha": "2026-10-23",
+   "fecha": "2026-10-24",
    "evento": "Baja de Elena Prieto Marín (Responsable de custodia)",
    "funcion_id": "CUS-01",
    "prioridad": "P1",
@@ -5560,7 +5560,7 @@ window.DEMO = {
     "nivel_objetivo": "3",
     "funcion_id": "CUS-02",
     "formacion_id": "FOR-04",
-    "fecha_inicio": "2026-10-23",
+    "fecha_inicio": "2026-10-24",
     "fecha_objetivo": "",
     "estado": "activo",
     "origen": "ALR-002",
@@ -5604,7 +5604,7 @@ window.DEMO = {
     "nivel_objetivo": "3",
     "funcion_id": "CUS-02",
     "formacion_id": "FOR-04",
-    "fecha_inicio": "2026-10-23",
+    "fecha_inicio": "2026-10-24",
     "fecha_objetivo": "",
     "estado": "activo",
     "origen": "ALR-002",
@@ -5618,7 +5618,7 @@ window.DEMO = {
     "nivel_objetivo": "3",
     "funcion_id": "CUS-01",
     "formacion_id": "FOR-01",
-    "fecha_inicio": "2026-10-23",
+    "fecha_inicio": "2026-10-24",
     "fecha_objetivo": "",
     "estado": "activo",
     "origen": "ALR-003",
@@ -5662,12 +5662,12 @@ window.DEMO = {
     "nivel_objetivo": "3",
     "funcion_id": "CUS-02",
     "formacion_id": "FOR-04",
-    "fecha_inicio": "2026-10-23",
+    "fecha_inicio": "2026-10-24",
     "fecha_objetivo": "",
     "estado": "activo",
     "origen": "ALR-002",
     "avisos": "1",
-    "ultimo_aviso": "2027-01-15"
+    "ultimo_aviso": "2027-01-16"
    },
    {
     "plan_id": "PB-004",
@@ -5676,12 +5676,12 @@ window.DEMO = {
     "nivel_objetivo": "3",
     "funcion_id": "CUS-01",
     "formacion_id": "FOR-01",
-    "fecha_inicio": "2026-10-23",
+    "fecha_inicio": "2026-10-24",
     "fecha_objetivo": "",
     "estado": "completado",
     "origen": "ALR-003",
     "avisos": "1",
-    "ultimo_aviso": "2027-01-15"
+    "ultimo_aviso": "2027-01-16"
    }
   ]
  },
@@ -5908,11 +5908,11 @@ window.DEMO = {
    "mesesValidacion": 6,
    "diasDecisionPendiente": 7
   },
-  "hoy": "2026-10-23",
+  "hoy": "2026-10-24",
   "semanas": {
-   "12": "2027-01-15",
-   "13": "2027-01-22",
-   "14": "2027-01-29"
+   "12": "2027-01-16",
+   "13": "2027-01-23",
+   "14": "2027-01-30"
   },
   "seguimiento": {
    "12": [
@@ -5933,7 +5933,7 @@ window.DEMO = {
       "id": "E001",
       "nombre": "Sergio Navarro Gil"
      },
-     "fecha_revision": "2026-11-20",
+     "fecha_revision": "2026-11-21",
      "dias_desde_revision": 56,
      "avisos": 1,
      "motivo": "Sergio Navarro Gil ha recibido 0 avisos y no ha validado el nivel"
@@ -5955,7 +5955,7 @@ window.DEMO = {
       "id": "E008",
       "nombre": "Marcos Fuentes Rey"
      },
-     "fecha_revision": "2027-01-15",
+     "fecha_revision": "2027-01-16",
      "dias_desde_revision": 0,
      "avisos": 1,
      "motivo": "Marcos Fuentes Rey ha recibido 0 avisos y no ha validado el nivel"
@@ -5979,7 +5979,7 @@ window.DEMO = {
       "id": "E001",
       "nombre": "Sergio Navarro Gil"
      },
-     "fecha_revision": "2026-11-20",
+     "fecha_revision": "2026-11-21",
      "dias_desde_revision": 63,
      "avisos": 2,
      "motivo": "Sergio Navarro Gil ha recibido 1 avisos y no ha validado el nivel"
@@ -6003,7 +6003,7 @@ window.DEMO = {
       "id": "E001",
       "nombre": "Sergio Navarro Gil"
      },
-     "fecha_revision": "2026-11-20",
+     "fecha_revision": "2026-11-21",
      "dias_desde_revision": 70,
      "avisos": 3,
      "motivo": "Sergio Navarro Gil ha recibido 2 avisos y no ha validado el nivel"
@@ -6012,7 +6012,7 @@ window.DEMO = {
   },
   "escalado": {
    "alerta_id": "ALR-005",
-   "fecha": "2027-01-29",
+   "fecha": "2027-01-30",
    "evento": "Seguimiento de planes · PB-003",
    "funcion_id": "CUS-02",
    "prioridad": "",
@@ -6022,7 +6022,7 @@ window.DEMO = {
    "empleado_id": "E008",
    "skill_id": "conciliacion-onchain",
    "formacion_id": "FOR-04",
-   "por_que": "La revisión era el 2026-11-20. Sergio Navarro Gil ha recibido 2 avisos y no ha validado el nivel.",
+   "por_que": "La revisión era el 2026-11-21. Sergio Navarro Gil ha recibido 2 avisos y no ha validado el nivel.",
    "riesgo_si_no": "CUS-02 sigue dependiendo de un backup que nadie confirma.",
    "decision": "pendiente",
    "decidido_por": "",
@@ -6030,7 +6030,7 @@ window.DEMO = {
    "grupo": "SEG-PB-003"
   },
   "centinela": {
-   "fecha": "2027-01-29",
+   "fecha": "2027-01-30",
    "umbrales": {
     "diasEntreAvisos": 7,
     "avisosAntesDeEscalar": 2,
@@ -6052,7 +6052,7 @@ window.DEMO = {
      "prioridad": "P1",
      "cobertura": 0,
      "objetivo": 2,
-     "desde": "2026-10-23",
+     "desde": "2026-10-24",
      "dias": 98,
      "cubren": []
     },
@@ -6064,7 +6064,7 @@ window.DEMO = {
      "prioridad": "P2",
      "cobertura": 1,
      "objetivo": 2,
-     "desde": "2026-10-23",
+     "desde": "2026-10-24",
      "dias": 98,
      "cubren": [
       "Carmen Vega Herrera"
@@ -6078,7 +6078,7 @@ window.DEMO = {
      "prioridad": "P2",
      "cobertura": 1,
      "objetivo": 2,
-     "desde": "2026-10-23",
+     "desde": "2026-10-24",
      "dias": 98,
      "cubren": [
       "Lucía Benítez Mora"
@@ -6092,7 +6092,7 @@ window.DEMO = {
      "prioridad": "P2",
      "cobertura": 2,
      "objetivo": 3,
-     "desde": "2026-10-23",
+     "desde": "2026-10-24",
      "dias": 98,
      "cubren": [
       "Fernando Aguilar Cortés",
@@ -6107,7 +6107,7 @@ window.DEMO = {
      "prioridad": "P2",
      "cobertura": 1,
      "objetivo": 2,
-     "desde": "2026-10-23",
+     "desde": "2026-10-24",
      "dias": 98,
      "cubren": [
       "Fernando Aguilar Cortés"
@@ -6207,7 +6207,7 @@ window.DEMO = {
      "empleado": "Lucía Benítez Mora",
      "validado_por": "E020",
      "fecha": "2026-06-30",
-     "meses": 6
+     "meses": 7
     },
     {
      "funcion_id": "SEG-01",
@@ -6333,7 +6333,7 @@ window.DEMO = {
      "skill": "conciliacion-onchain",
      "funcion_id": "CUS-02",
      "formacion_id": "FOR-04",
-     "fecha_revision": "2026-11-20",
+     "fecha_revision": "2026-11-21",
      "estado": "toca validar",
      "avisos": 3
     }
@@ -6343,13 +6343,13 @@ window.DEMO = {
      "alerta_id": "ALR-004",
      "accion": "Conversación de permanencia con Marcos Fuentes Rey",
      "prioridad": "P1",
-     "fecha": "2026-10-23",
+     "fecha": "2026-10-24",
      "dias": 98
     }
    ],
    "senales": 1
   },
-  "informe_html": "<h4>En una frase</h4>\n<p>4 funciones en rojo, 3 en ámbar y 17 en verde; 1 de prioridad 1.</p>\n<h4>Dónde somos frágiles</h4>\n<ul>\n<li><b>CUS-02 Prueba de reservas y conciliación on-chain</b> (Custodia): P1, cobertura 0 de 2, 98 días en rojo. Hoy no la cubre nadie</li>\n<li><b>CMP-03 Comunicación de operaciones sospechosas</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en ambar. Depende de: Carmen Vega Herrera</li>\n<li><b>CMP-04 Reporting regulatorio AML</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Lucía Benítez Mora</li>\n<li><b>SEG-01 Detección y respuesta a incidentes</b> (Seguridad): P2, cobertura 2 de 3, 98 días en ambar. Depende de: Fernando Aguilar Cortés, Eva Ruiz Montero</li>\n<li><b>SEG-02 Seguridad de aplicaciones</b> (Seguridad): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Fernando Aguilar Cortés</li>\n</ul>\n<h4>Qué ha cambiado</h4>\n<p>Nada desde el último recálculo.</p>\n<h4>Dependencia de personas</h4>\n<ul>\n<li>Carmen Vega Herrera (Directora de compliance (MLRO)): CMP-03</li>\n<li>Lucía Benítez Mora (Analista de datos): CMP-04 · <b>oculta</b> · en seguimiento por People</li>\n<li>Fernando Aguilar Cortés (CISO): SEG-02</li>\n<li>Inés Robles Gómez (Responsable de contabilidad): FIN-01</li>\n</ul>\n<h4>Qué estamos haciendo</h4>\n<ul>\n<li>Plan PB-001: Diego Ramos Iglesias en normativa-pbc (CMP-03), en curso, revisión 2027-03-31</li>\n<li>Plan PB-002: Víctor Salas Prieto en contabilidad-cripto (FIN-01), en curso, revisión 2027-06-30</li>\n<li>Plan PB-003: Marcos Fuentes Rey en conciliacion-onchain (CUS-02), toca validar, revisión 2026-11-20</li>\n</ul>\n<h4>Qué necesitamos de dirección</h4>\n<ul>\n<li>Decidir cómo cubrir <b>CUS-02</b>: hoy no la sabe hacer nadie (formar fuera, contratar o apoyo externo).</li>\n<li>Desbloquear ALR-004 (Conversación de permanencia con Marcos Fuentes Rey): 98 días sin decisión.</li>\n<li>Pedir a los managers que revaliden 19 skills con más de 6 meses: el mapa vale lo que valga la validación.</li>\n</ul>"
+  "informe_html": "<h4>En una frase</h4>\n<p>4 funciones en rojo, 3 en ámbar y 17 en verde; 1 de prioridad 1.</p>\n<h4>Dónde somos frágiles</h4>\n<ul>\n<li><b>CUS-02 Prueba de reservas y conciliación on-chain</b> (Custodia): P1, cobertura 0 de 2, 98 días en rojo. Hoy no la cubre nadie</li>\n<li><b>CMP-03 Comunicación de operaciones sospechosas</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en ambar. Depende de: Carmen Vega Herrera</li>\n<li><b>CMP-04 Reporting regulatorio AML</b> (Compliance AML/KYC): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Lucía Benítez Mora</li>\n<li><b>SEG-01 Detección y respuesta a incidentes</b> (Seguridad): P2, cobertura 2 de 3, 98 días en ambar. Depende de: Fernando Aguilar Cortés, Eva Ruiz Montero</li>\n<li><b>SEG-02 Seguridad de aplicaciones</b> (Seguridad): P2, cobertura 1 de 2, 98 días en rojo. Depende de: Fernando Aguilar Cortés</li>\n</ul>\n<h4>Qué ha cambiado</h4>\n<p>Nada desde el último recálculo.</p>\n<h4>Dependencia de personas</h4>\n<ul>\n<li>Carmen Vega Herrera (Directora de compliance (MLRO)): CMP-03</li>\n<li>Lucía Benítez Mora (Analista de datos): CMP-04 · <b>oculta</b> · en seguimiento por People</li>\n<li>Fernando Aguilar Cortés (CISO): SEG-02</li>\n<li>Inés Robles Gómez (Responsable de contabilidad): FIN-01</li>\n</ul>\n<h4>Qué estamos haciendo</h4>\n<ul>\n<li>Plan PB-001: Diego Ramos Iglesias en normativa-pbc (CMP-03), en curso, revisión 2027-03-31</li>\n<li>Plan PB-002: Víctor Salas Prieto en contabilidad-cripto (FIN-01), en curso, revisión 2027-06-30</li>\n<li>Plan PB-003: Marcos Fuentes Rey en conciliacion-onchain (CUS-02), toca validar, revisión 2026-11-21</li>\n</ul>\n<h4>Qué necesitamos de dirección</h4>\n<ul>\n<li>Decidir cómo cubrir <b>CUS-02</b>: hoy no la sabe hacer nadie (formar fuera, contratar o apoyo externo).</li>\n<li>Desbloquear ALR-004 (Conversación de permanencia con Marcos Fuentes Rey): 98 días sin decisión.</li>\n<li>Pedir a los managers que revaliden 19 skills con más de 6 meses: el mapa vale lo que valga la validación.</li>\n</ul>"
  },
  "definiciones": {
   "cus01": "  - id: CUS-01\n    nombre: Gestión de claves y ceremonias de firma\n    area: Custodia\n    criticidad: critica\n    impacto_ia: bajo\n    skills_requeridas: [{ skill: gestion-claves, nivel: 3 }, { skill: operativa-wallets, nivel: 2 }]"
@@ -6511,18 +6511,14 @@ window.DEMO = {
  },
  "n8n": {
   "e1": {
-   "nodos": 17,
+   "nodos": 13,
    "bloques": [
     {
-     "titulo": "1 · Entradas",
+     "titulo": "1 · Entrada",
      "nodos": [
       {
        "nombre": "Formulario baja",
        "tipo": "formTrigger"
-      },
-      {
-       "nombre": "Botón Aprobar",
-       "tipo": "webhook"
       }
      ]
     },
@@ -6551,24 +6547,12 @@ window.DEMO = {
      "titulo": "3 · Calcula (reglas) y propone (Claude)",
      "nodos": [
       {
-       "nombre": "¿Qué se ha pedido?",
-       "tipo": "switch"
-      },
-      {
        "nombre": "Motor",
-       "tipo": "code"
-      },
-      {
-       "nombre": "Aplicar decisión",
        "tipo": "code"
       },
       {
        "nombre": "Claude propone",
        "tipo": "httpRequest"
-      },
-      {
-       "nombre": "Responder",
-       "tipo": "respondToWebhook"
       },
       {
        "nombre": "Propuesta final",

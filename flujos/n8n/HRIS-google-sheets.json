@@ -1460,6 +1460,22 @@
           "handlingExtraData": "ignoreIt"
         }
       }
+    },
+    {
+      "id": "24978c1a-970c-a48e-4769-7f89b0522934",
+      "name": "Nota · ## En producción",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        2040
+      ],
+      "parameters": {
+        "content": "## En producción\n- Este adaptador hablaría con la API del HRIS (Factorial, Bizneo) con las mismas tres operaciones y la misma forma de respuesta: los escenarios no cambian.\n- Credencial de servicio con permisos mínimos. Señales de rotación y salarios, en un almacén aparte que solo lee People.\n- `cargar` (vaciar y volver a escribir) no existe fuera de la demo.\n\nDemo frente a producción, capa por capa: docs/produccion.md",
+        "width": 2420,
+        "height": 240,
+        "color": 1
+      }
     }
   ],
   "connections": {

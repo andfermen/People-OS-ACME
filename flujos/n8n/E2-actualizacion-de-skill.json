@@ -259,6 +259,22 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "id": "10eb51e6-e514-e710-3bdd-2be172c543a5",
+      "name": "Nota · ## En producción",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -40,
+        680
+      ],
+      "parameters": {
+        "content": "## En producción\n- Valida el manager identificado y solo para su equipo; queda registrado quién validó.\n- La evidencia (curso del LMS, proyecto) acompaña a la validación, pero no la sustituye.\n\nDemo frente a producción, capa por capa: docs/produccion.md",
+        "width": 1740,
+        "height": 200,
+        "color": 1
+      }
     }
   ],
   "connections": {

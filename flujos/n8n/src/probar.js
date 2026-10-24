@@ -11,7 +11,7 @@ const path = require('path');
 const { LECTURAS, ESCRITURAS, HOJAS_INICIALES } = require('./comun');
 const RAIZ = path.join(__dirname, '..', '..', '..');
 const wf = n => JSON.parse(fs.readFileSync(path.join(RAIZ, 'flujos', 'n8n', n), 'utf8'));
-const HRIS = wf('HRIS-google-sheets.json'), E0 = wf('E0-panel-y-reinicio.json'), E1 = wf('E1-baja-de-elena.json'), E2 = wf('E2-actualizacion-de-skill.json'),
+const HRIS = wf('HRIS-google-sheets.json'), E0 = wf('E0-panel-y-reinicio.json'), E1 = wf('E1-baja-de-elena.json'), E1b = wf('E1b-aprobar-decision.json'), E2 = wf('E2-actualizacion-de-skill.json'),
   E3 = wf('E3-automatizaciones-calendario.json'), E4 = wf('E4-asistente-people.json');
 const HOJAS = ['empleados', 'skills-empleados', 'planes-backup', 'alertas', 'cobertura', 'key-people', 'historico-semaforo', 'bandeja'];
 
@@ -73,10 +73,8 @@ function escribirTodo(w, salidas, email = 'Email') {
 }
 
 const config = { sheet_id: 'TEST', email_demo: 'demo@acme.example', url_aprobar: 'https://n8n.test/webhook/acme-aprobar', url_formulario_skill: 'https://n8n.test/form/skill', modelo: 'claude-sonnet-5-5' };
-const exprAccion = E1.nodes.find(n => n.name === 'Configuración').parameters.assignments.assignments.find(x => x.name === 'accion').value.replace(/^=\{\{|\}\}$/g, '');
-const accionDe = entrada => new Function('$json', `return (${exprAccion});`)(entrada);
 const comunes = (entrada = {}) => ({
-  'Configuración': [{ ...entrada, ...config, accion: accionDe(entrada) }],
+  'Configuración': [{ ...entrada, ...config }],
   'Leer definiciones': [{ definiciones: fs.readFileSync(path.join(RAIZ, 'salidas', 'n8n', 'definiciones.json'), 'utf8') }],
   'Leer HRIS': leerHris(),
 });
@@ -88,6 +86,7 @@ function leerHris() {
 
 let fallos = 0;
 const caso = (txt, ok) => { console.log(`${ok ? '✅' : '❌'} ${txt}`); if (!ok) fallos++; };
+const tipos = w => new Set(w.nodes.map(n => n.type));
 const fn = id => objetos('cobertura').find(f => f.funcion_id === id);
 
 function baja(id) {
@@ -101,8 +100,8 @@ function baja(id) {
 }
 function aprobar(alerta) {
   const s = comunes({ query: { alerta }, headers: {}, webhookUrl: 'https://n8n.test/webhook/acme-aprobar' });
-  const o = ejecutar(E1, 'Aplicar decisión', s)[0];
-  return { o, email: escribirTodo(E1, s) };
+  const o = ejecutar(E1b, 'Aplicar decisión', s)[0];
+  return { o, email: escribirTodo(E1b, s) };
 }
 function validar(empleado_id, skill_id, nivel, validado_por) {
   const s = comunes({ empleado_id, skill_id, nivel, validado_por });
@@ -142,8 +141,9 @@ function reinicioE0() {
 for (const vuelta of [1, 2]) {
   reiniciar();
   const v = `[ensayo ${vuelta}]`;
-  if (vuelta === 1) caso('Desvío del Escenario 1: formulario de baja → baja; botón Aprobar → aprobar',
-    accionDe({ empleado_id: 'E007' }) === 'baja' && accionDe({ query: { alerta: 'ALR-002' }, headers: {} }) === 'aprobar');
+  if (vuelta === 1) caso('Escenarios 1 y 1b separados: el formulario de baja no convive con "Respond to Webhook"; el botón Aprobar (/webhook/acme-aprobar) vive en 1b',
+    tipos(E1).has('n8n-nodes-base.formTrigger') && !tipos(E1).has('n8n-nodes-base.respondToWebhook') && !tipos(E1).has('n8n-nodes-base.webhook')
+    && E1b.nodes.some(n => n.name === 'Botón Aprobar' && n.parameters.path === 'acme-aprobar') && !tipos(E1b).has('n8n-nodes-base.formTrigger'));
 
   const b = baja('e007');
   caso(`${v} E1 baja: empeoran CUS-01 y CUS-02; sin Claude usa las reglas (ALR-001…004, A/B en el mismo grupo)`,
@@ -223,8 +223,13 @@ caso('E0 reiniciar: Elena activa, alertas y bandeja vacías, 2 planes, CUS-01 en
 const nodosSheets = w => w.nodes.filter(n => n.type === 'n8n-nodes-base.googleSheets').length;
 const hl = leerHris()[0];
 caso('HRIS (adaptador): solo el subworkflow HRIS tiene nodos de Google Sheets; "leer" devuelve todas las hojas y el enlace',
-  [E0, E1, E2, E3, E4].every(w => nodosSheets(w) === 0) && nodosSheets(HRIS) > 0
+  [E0, E1, E1b, E2, E3, E4].every(w => nodosSheets(w) === 0) && nodosSheets(HRIS) > 0
   && Object.keys(LECTURAS).every(h => Array.isArray(hl.tablas[h])) && hl.enlace.includes('TEST'));
+const pm = panel();
+caso('E0 panel: "Estado del montaje" en verde con todo configurado, y "Qué hay detrás" con las capas y cómo serían en producción',
+  pm.includes('todo conectado') && !pm.includes('por revisar') && pm.includes('Qué hay detrás') && (pm.match(/En producción:/g) || []).length === 6);
+caso('Cada workflow lleva en el lienzo su nota "En producción"',
+  [HRIS, E0, E1, E1b, E2, E3, E4].every(w => w.nodes.some(n => n.type.endsWith('stickyNote') && n.parameters.content.startsWith('## En producción'))));
 
 // E4 · Asistente de People: un agente. Se simulan dos respuestas de Claude: pide una herramienta y luego responde
 const claudePide = (nombre, input) => ({ stop_reason: 'tool_use', content: [{ type: 'text', text: 'Voy a simular la baja antes de responder.' }, { type: 'tool_use', id: 'tu_1', name: nombre, input }] });

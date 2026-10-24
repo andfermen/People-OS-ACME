@@ -38,7 +38,7 @@ salidas/        sheets/ (lo que carga el HRIS) · n8n/definiciones.json (lo que 
 flujos/n8n/     HRIS-google-sheets.json (adaptador) · E0 panel y reinicio · E1 baja · E2 skill · E3 automatizaciones con calendario
                 E4 asistente · src/ (código de los nodos + probar.js) · LEEME.md (montaje)
 agentes/        qué hace cada pieza, qué no hace y dónde vive
-docs/           arquitectura · decisiones (D-01…) · escalado · visión 360º · usos del mapa · plan AI first · guion
+docs/           arquitectura · decisiones (D-01…) · escalado · producción · visión 360º · usos del mapa · plan AI first · guion
 video/          reproductor de la demo, datos y guion de locución
 ```
 
@@ -49,6 +49,8 @@ video/          reproductor de la demo, datos y guion de locución
 | `npm run verificar` | Los datos y las reglas producen los casos de la demo, y cambiar `reglas.yaml` cambia el resultado |
 | `npm run probar-n8n` | Ejecuta el código de todos los workflows contra un HRIS simulado, dos vueltas, con Claude simulado |
 | `npm run n8n` | Genera los workflows y `salidas/n8n/definiciones.json` (después: commit y push; n8n lo lee de GitHub) |
+| `npm run desplegar` | Sube los workflows a n8n por su API y rellena sus Configuraciones (`-- --simular` para verlo antes) |
+| `npm run ensayar` | Recorre la demo entera en la instancia real de n8n, comprueba el panel en cada paso y reinicia al final (`-- 3` para tres vueltas) |
 | `npm run sheets -- --fecha 2026-09-30` | Genera las hojas iniciales del HRIS en `salidas/sheets/` |
 | `npm run demo -- <comando>` | El ciclo entero en local, sin n8n: `reset`, `baja`, `aprobar`, `validar`, `seguimiento`, `centinela` |
 | `npm run video` | Datos del reproductor y guion del vídeo |
@@ -59,7 +61,7 @@ video/          reproductor de la demo, datos y guion de locución
 - **Una regla o un umbral** (semáforo, prioridad, señales, vacante, cuándo avisan las automatizaciones): `definiciones/reglas.yaml` → `npm run verificar` → `npm run n8n` → commit y push. Sin tocar flujos.
 - **Una función, su criticidad o su cobertura objetivo:** `definiciones/funciones.yaml`, mismo camino.
 - **El HRIS** (de Google Sheets a Factorial o Bizneo): solo el subworkflow HRIS (`calculo/exportar-n8n.js`, bloque HRIS). Los escenarios no hablan con Sheets.
-- **El código de un nodo:** `calculo/` o `flujos/n8n/src/`, nunca el JSON generado → `npm run n8n` → `npm run probar-n8n` → volver a importar el workflow en n8n.
+- **El código de un nodo:** `calculo/` o `flujos/n8n/src/`, nunca el JSON generado → `npm run n8n` → `npm run probar-n8n` → `npm run desplegar` (o volver a importar el workflow en n8n).
 - Cada decisión relevante se registra en `docs/decisiones.md` (qué, alternativas, por qué).
 
 ## 7. Convenciones

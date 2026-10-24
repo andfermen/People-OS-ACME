@@ -5,7 +5,8 @@
 //   leer (todas las hojas), escribir (cada fila a su hoja) o cargar (vaciar y volver a escribir, para el reinicio).
 //   Pasar de Sheets a Factorial o Bizneo es cambiar este workflow.
 // Escenario 0 · Panel y reinicio (D-22): la página de entrada para quien prueba la demo, sin instalar nada.
-// Escenario 1 · Baja de Elena: formulario de baja y botón Aprobar del email, con la misma lectura y la misma escritura.
+// Escenario 1 · Baja de Elena: formulario de baja → recálculo → propuesta → email a People con los botones Aprobar.
+// Escenario 1b · Aprobar decisión: el botón Aprobar (email y panel) aplica la decisión y responde con una página.
 // Escenario 2 · Actualización de skill: el manager valida un nivel nuevo → recálculo → email de cierre.
 // Escenario 3 · Automatizaciones con calendario (D-21): seguimiento de planes (cada lunes) y centinela (día 1 de cada mes).
 // Escenario 4 · Asistente de People (D-25): un agente que razona con herramientas del motor, en solo lectura.
@@ -75,7 +76,7 @@ const fijar = (wf, name, campo, valor, pos) => nodo(wf, name, 'n8n-nodes-base.se
   assignments: { assignments: [{ id: uid(wf + name), name: campo, value: valor, type: 'string' }] }, includeOtherFields: true, options: {},
 }, pos);
 const claude = (wf, name, pos) => nodo(wf, name, 'n8n-nodes-base.httpRequest', 4.2, {
-  method: 'POST', url: 'https://api.anthropic.com/v1/messages', authentication: 'genericCredentialType', genericAuthType: 'httpHeaderAuth',
+  method: 'POST', url: 'https://api.anthropic.com/v1/messages', authentication: 'predefinedCredentialType', nodeCredentialType: 'anthropicApi', // credencial «Anthropic» de n8n (pone la cabecera x-api-key)
   sendHeaders: true, headerParameters: { parameters: [{ name: 'anthropic-version', value: '2023-06-01' }, { name: 'content-type', value: 'application/json' }] },
   sendBody: true, specifyBody: 'json', jsonBody: '={{ JSON.stringify($json.body) }}', options: { timeout: 120000 },
 }, pos, { onError: 'continueRegularOutput' });
@@ -89,7 +90,31 @@ const desvio = (wf, name, campo, valores, pos) => nodo(wf, name, 'n8n-nodes-base
 const a = (nodeName, index = 0) => ({ node: nodeName, type: 'main', index });
 const cadena = nombres => Object.fromEntries(nombres.slice(0, -1).map((n, i) => [n, { main: [[a(nombres[i + 1])]] }]));
 const workflow = (name, nodes, connections) => ({ name, nodes, connections, settings: { executionOrder: 'v1' } });
-const guardar = (archivo, wf) => { fs.writeFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), JSON.stringify(wf, null, 2) + '\n'); console.log(`flujos/n8n/${archivo} (${wf.nodes.filter(n => !n.type.endsWith('stickyNote')).length} nodos)`); };
+// Nota gris "En producción" bajo cada lienzo: qué cambiaría fuera de la demo (detalle en docs/produccion.md)
+const PRODUCCION = {
+  'HRIS-google-sheets.json': ['Este adaptador hablaría con la API del HRIS (Factorial, Bizneo) con las mismas tres operaciones y la misma forma de respuesta: los escenarios no cambian.',
+    'Credencial de servicio con permisos mínimos. Señales de rotación y salarios, en un almacén aparte que solo lee People.', '`cargar` (vaciar y volver a escribir) no existe fuera de la demo.'],
+  'E0-panel-y-reinicio.json': ['El panel sería una vista de la herramienta interna, con login (SSO) y por rol: People ve todo; dirección, el mapa sin señales individuales; el manager, su equipo.',
+    'Sin "Reiniciar" ni "Qué hacer ahora", y sin bandeja: cada email llega a su destinatario.'],
+  'E1-baja-de-elena.json': ['La baja no entra por un formulario: la dispara el evento del HRIS (webhook de cambio de estado).',
+    'Claude sin retención de datos en el proveedor, y solo con lo que necesita para redactar. Si falla, la propuesta sale por reglas (ya es así).', 'Un workflow de errores de n8n avisa a People si algo se rompe.'],
+  'E1b-aprobar-decision.json': ['Aprobar exige identificarse: aprobar dentro de la herramienta con SSO, o un enlace firmado, de un solo uso y con caducidad.',
+    'Registro de auditoría: quién aprobó qué, cuándo y con qué información delante.', 'El doble clic ya está controlado (se mira la decisión antes de aplicarla). Con varias personas, además, bloqueo por alerta.'],
+  'E2-actualizacion-de-skill.json': ['Valida el manager identificado y solo para su equipo; queda registrado quién validó.', 'La evidencia (curso del LMS, proyecto) acompaña a la validación, pero no la sustituye.'],
+  'E3-automatizaciones-calendario.json': ['Solo el calendario real: sin "Ejecutar ahora" ni tiempo simulado.', 'Los avisos van a cada manager, tomado del HRIS en ese momento.',
+    'Si una ejecución falla, se reintenta y se avisa. No se repiten avisos (ya es así: avisos y ultimo_aviso).'],
+  'E4-asistente-people.json': ['Dentro de la herramienta, solo para People, con SSO.', 'Registro de preguntas, herramientas usadas y respuestas, para revisar calidad y sesgos.',
+    'Batería de preguntas de prueba antes de cambiar el prompt o el modelo. Límite de gasto y de vueltas (ya: 4).'],
+};
+const conNotaProduccion = (archivo, wf) => {
+  const puntos = PRODUCCION[archivo];
+  if (!puntos) return wf;
+  const fondo = Math.max(...wf.nodes.map(n => n.position[1] + (n.type.endsWith('stickyNote') ? n.parameters.height : 100)));
+  const xs = wf.nodes.map(n => n.position[0]), x0 = Math.min(...xs), ancho = Math.max(700, Math.max(...xs) - x0 + 240);
+  const texto = `## En producción\n${puntos.map(p => `- ${p}`).join('\n')}\n\nDemo frente a producción, capa por capa: docs/produccion.md`;
+  return { ...wf, nodes: [...wf.nodes, nodo(archivo, 'Nota · ## En producción', 'n8n-nodes-base.stickyNote', 1, { content: texto, width: ancho, height: 120 + puntos.length * 40, color: 1 }, [x0, fondo + 60])] };
+};
+const guardar = (archivo, w) => { const wf = conNotaProduccion(archivo, w); fs.writeFileSync(path.join(RAIZ, 'flujos', 'n8n', archivo), JSON.stringify(wf, null, 2) + '\n'); console.log(`flujos/n8n/${archivo} (${wf.nodes.filter(n => !n.type.endsWith('stickyNote')).length} nodos)`); };
 
 // ---------- Llamadas al HRIS desde los escenarios ----------
 // "Leer HRIS" devuelve un item { tablas, enlace }; "Escribir en el HRIS" recibe las filas con _hoja y operacion
@@ -167,44 +192,65 @@ const EMAILS = fuentes => `let o = null;\nfor (const n of ${JSON.stringify(fuent
 }
 
 // ---------- Escenario 1 · Baja de Elena (pasos 1-8) ----------
+// El botón Aprobar va en su propio workflow (1b): n8n no admite un nodo "Respond to Webhook" en un workflow con Form Trigger.
 {
   const wf = 'E1';
-  const accion = "={{ $json.query && $json.query.alerta ? 'aprobar' : 'baja' }}";
   const nodes = [
-    nota(wf, '## 1 · Entradas\nFormulario de baja (E007) o botón Aprobar del email de People', [-40, 120], 260, 520, 4),
-    nota(wf, '## 2 · Lee\nDefiniciones y reglas (repo) y todo el HRIS (subworkflow HRIS)', [260, 220], 900, 300, 7),
-    nota(wf, '## 3 · Calcula (reglas) y propone (Claude)\nArriba, la baja. Abajo, la decisión aprobada', [1180, 60], 760, 620, 6),
-    nota(wf, '## 4 · Escribe en el HRIS y avisa\nLas filas van al subworkflow HRIS; un email a People', [1960, 60], 560, 780, 5),
+    nota(wf, '## 1 · Entrada\nFormulario de baja (E007)', [-40, 120], 260, 360, 4),
+    nota(wf, '## 2 · Lee\nDefiniciones y reglas (repo) y todo el HRIS (subworkflow HRIS)', [260, 120], 860, 360, 7),
+    nota(wf, '## 3 · Calcula (reglas) y propone (Claude)\nSi Claude falla, la propuesta sale por reglas', [1140, 120], 800, 360, 6),
+    nota(wf, '## 4 · Escribe en el HRIS y avisa\nLas filas van al subworkflow HRIS; un email a People con los botones Aprobar (escenario 1b)', [1960, 60], 560, 620, 5),
     formulario(wf, 'Formulario baja', 'Acme · Registrar una baja', 'Indica el id de la persona que deja la compañía (por ejemplo, E007). El sistema recalcula el mapa y avisa a People.',
-      [{ fieldLabel: 'empleado_id', placeholder: 'E007', requiredField: true }], [0, 260]),
-    nodo(wf, 'Botón Aprobar', 'n8n-nodes-base.webhook', 2, { httpMethod: 'GET', path: 'acme-aprobar', responseMode: 'responseNode', options: {} }, [0, 480], { webhookId: uid(wf + 'webhook') }),
-    configuracion(wf, [300, 370], [['url_aprobar', 'PEGAR_PRODUCTION_URL_DEL_NODO_BOTON_APROBAR'], ['accion', accion]]),
-    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [520, 370]),
-    pedirLectura(wf, [740, 370]),
-    llamarHris(wf, 'Leer HRIS', [940, 370]),
-    desvio(wf, '¿Qué se ha pedido?', `={{ ${cfg}.accion }}`, ['baja', 'aprobar'], [1140, 370]),
-    code(wf, 'Motor', 'e1-motor.js', [1240, 200]),
-    claude(wf, 'Claude propone', [1440, 200]),
-    code(wf, 'Propuesta final', 'e1-propuesta.js', [1620, 200]),
-    code(wf, 'Escrituras', 'e1-escrituras.js', [1800, 200]),
-    code(wf, 'Aplicar decisión', 'e1-aprobar.js', [1240, 540]),
-    responder(wf, 'Responder', [1460, 640]),
-    code(wf, 'Repartir', REPARTIR(['Escrituras', 'Aplicar decisión']), [2000, 300]),
-    llamarHris(wf, 'Escribir en el HRIS', [2220, 300]),
-    code(wf, 'Email', EMAILS(['Escrituras', 'Aplicar decisión']), [2000, 560]),
-    gmail(wf, 'Enviar email', [2220, 560]),
+      [{ fieldLabel: 'empleado_id', placeholder: 'E007', requiredField: true }], [0, 300]),
+    configuracion(wf, [300, 300], [['url_aprobar', 'PEGAR_PRODUCTION_URL_DEL_BOTON_APROBAR_E1B']]),
+    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [520, 300]),
+    pedirLectura(wf, [740, 300]),
+    llamarHris(wf, 'Leer HRIS', [940, 300]),
+    code(wf, 'Motor', 'e1-motor.js', [1200, 300]),
+    claude(wf, 'Claude propone', [1400, 300]),
+    code(wf, 'Propuesta final', 'e1-propuesta.js', [1600, 300]),
+    code(wf, 'Escrituras', 'e1-escrituras.js', [1800, 300]),
+    code(wf, 'Repartir', REPARTIR(['Escrituras']), [2000, 240]),
+    llamarHris(wf, 'Escribir en el HRIS', [2220, 240]),
+    code(wf, 'Email', EMAILS(['Escrituras']), [2000, 480]),
+    gmail(wf, 'Enviar email', [2220, 480]),
   ];
   const connections = {
-    'Formulario baja': { main: [[a('Configuración')]] }, 'Botón Aprobar': { main: [[a('Configuración')]] },
-    ...cadena(['Configuración', 'Leer definiciones', 'Pedir lectura', 'Leer HRIS', '¿Qué se ha pedido?']),
-    '¿Qué se ha pedido?': { main: [[a('Motor')], [a('Aplicar decisión')]] },
-    ...cadena(['Motor', 'Claude propone', 'Propuesta final', 'Escrituras']),
+    ...cadena(['Formulario baja', 'Configuración', 'Leer definiciones', 'Pedir lectura', 'Leer HRIS', 'Motor', 'Claude propone', 'Propuesta final', 'Escrituras']),
     'Escrituras': { main: [[a('Repartir'), a('Email')]] },
-    'Aplicar decisión': { main: [[a('Responder'), a('Repartir'), a('Email')]] },
     'Repartir': { main: [[a('Escribir en el HRIS')]] },
     'Email': { main: [[a('Enviar email')]] },
   };
   guardar('E1-baja-de-elena.json', workflow('Acme People OS · Escenario 1 · Baja de Elena', nodes, connections));
+}
+
+// ---------- Escenario 1b · Aprobar decisión (botón Aprobar del email y del panel) ----------
+{
+  const wf = 'E1b';
+  const nodes = [
+    nota(wf, '## 1 · Entrada\nBotón Aprobar del email de People o del panel', [-40, 120], 260, 360, 4),
+    nota(wf, '## 2 · Lee\nDefiniciones y reglas (repo) y todo el HRIS (subworkflow HRIS)', [260, 120], 860, 360, 7),
+    nota(wf, '## 3 · Aplica la decisión (reglas)\nAprueba, descarta la otra opción, recalcula y responde con una página', [1140, 120], 460, 480, 6),
+    nota(wf, '## 4 · Escribe en el HRIS y avisa\nLas filas van al subworkflow HRIS; un email a People', [1620, 60], 560, 620, 5),
+    webhook(wf, 'Botón Aprobar', 'acme-aprobar', [0, 300]),
+    configuracion(wf, [300, 300]),
+    leerTexto(wf, 'Leer definiciones', 'salidas/n8n/definiciones.json', 'definiciones', [520, 300]),
+    pedirLectura(wf, [740, 300]),
+    llamarHris(wf, 'Leer HRIS', [940, 300]),
+    code(wf, 'Aplicar decisión', 'e1-aprobar.js', [1200, 300]),
+    responder(wf, 'Responder', [1400, 460]),
+    code(wf, 'Repartir', REPARTIR(['Aplicar decisión']), [1660, 240]),
+    llamarHris(wf, 'Escribir en el HRIS', [1880, 240]),
+    code(wf, 'Email', EMAILS(['Aplicar decisión']), [1660, 480]),
+    gmail(wf, 'Enviar email', [1880, 480]),
+  ];
+  const connections = {
+    ...cadena(['Botón Aprobar', 'Configuración', 'Leer definiciones', 'Pedir lectura', 'Leer HRIS', 'Aplicar decisión']),
+    'Aplicar decisión': { main: [[a('Responder'), a('Repartir'), a('Email')]] },
+    'Repartir': { main: [[a('Escribir en el HRIS')]] },
+    'Email': { main: [[a('Enviar email')]] },
+  };
+  guardar('E1b-aprobar-decision.json', workflow('Acme People OS · Escenario 1b · Aprobar decisión', nodes, connections));
 }
 
 // ---------- Escenario 2 · Actualización de skill (ámbar → verde) ----------

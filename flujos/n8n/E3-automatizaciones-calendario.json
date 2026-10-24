@@ -432,8 +432,8 @@
       "parameters": {
         "method": "POST",
         "url": "https://api.anthropic.com/v1/messages",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -537,6 +537,22 @@
         }
       },
       "onError": "continueRegularOutput"
+    },
+    {
+      "id": "f836d894-c135-61b5-d187-d9b0ef1b3053",
+      "name": "Nota · ## En producción",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        900
+      ],
+      "parameters": {
+        "content": "## En producción\n- Solo el calendario real: sin \"Ejecutar ahora\" ni tiempo simulado.\n- Los avisos van a cada manager, tomado del HRIS en ese momento.\n- Si una ejecución falla, se reintenta y se avisa. No se repiten avisos (ya es así: avisos y ultimo_aviso).\n\nDemo frente a producción, capa por capa: docs/produccion.md",
+        "width": 2660,
+        "height": 240,
+        "color": 1
+      }
     }
   ],
   "connections": {

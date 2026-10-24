@@ -143,7 +143,7 @@ El caso: **Elena, responsable de custodia, se va.** Era la única persona que sa
 
 ### La historia, paso a paso
 
-**Escenario 1 · La baja** *(en n8n: escenario 1).*
+**Escenario 1 · La baja** *(en n8n: escenario 1; el botón Aprobar, escenario 1b).*
 1. Se registra la baja de Elena (en la demo, un formulario; en producción, el evento lo dispara el HRIS).
 2. **Riesgo** recalcula: *Gestión de claves* pasa de verde a rojo, *Prueba de reservas* se queda sin nadie. Marcos pasa a ser key person: ahora es el único que firma claves.
 3. **Movilidad** calcula el perfil del puesto que queda libre y busca candidatos internos.
@@ -152,7 +152,7 @@ El caso: **Elena, responsable de custodia, se va.** Era la única persona que sa
    - **Opción B**, mover a Marcos: cumple 3 de 5 skills del puesto. Coste: si asume el puesto, todo el riesgo de custodia se concentra en él.
    - Además: plan de backup para Javier (a un nivel y con interés declarado) y conversación de permanencia con Marcos.
    - Solo para People, en un bloque aparte: si Marcos asume el puesto con su salario actual, su compa-ratio en la banda sería 0,76. La opción B exige revisar condiciones.
-5. **People decide** desde el email. La otra opción se descarta sola, el cambio se aplica y Riesgo recalcula.
+5. **People decide** desde el email o el panel. La otra opción se descarta sola, el cambio se aplica y Riesgo recalcula.
 
 **Escenario 2 · Tres meses después** *(en n8n: escenario 3, seguimiento → escenario 2, validación).* **Seguimiento de planes** detecta que el plan de Javier ha llegado a su fecha y escribe a Marcos con el formulario de validación rellenado. Marcos valida el nivel. **Skills** actualiza el registro y cierra el plan, Riesgo devuelve *Gestión de claves* a verde y llega el email "Riesgo reducido". Completar un curso no sube el nivel: lo valida una persona.
 
@@ -188,6 +188,8 @@ Con el **enlace del panel** que va en el mensaje de la prueba. Es una página qu
 - el **asistente**, para hacerle preguntas;
 - un botón para **reiniciar** la demo y empezar de cero.
 
+**No hace falta cuenta, email ni clave de API:** la demo corre en el n8n de la autora, con su Sheet y su clave de Claude, y cada email que genera se ve en la bandeja del panel.
+
 Detrás no hay nada simulado salvo dos cosas: el paso del tiempo (el campo *Cuándo* de las automatizaciones con calendario adelanta el calendario, por ejemplo "+12 semanas") y los destinatarios (todos los emails van a la bandeja de la demo, no a cada persona). El resto son los escenarios de n8n trabajando sobre el Sheet a través del adaptador HRIS. Si dos personas la prueban a la vez comparten datos; se arregla con *Reiniciar*.
 
 ---
@@ -199,8 +201,8 @@ Detrás no hay nada simulado salvo dos cosas: el paso del tiempo (el campo *Cuá
 ```mermaid
 flowchart LR
   DEF["definiciones/ · prompts/<br/>qué se hace"] -->|se leen en cada ejecución<br/>desde GitHub| N8N
-  CALC["calculo/<br/>motor de referencia"] -->|npm run n8n genera<br/>el código de los nodos| N8N
-  N8N["n8n · 5 escenarios<br/>panel · baja · skill · calendario · asistente"] <-->|leer · escribir · cargar| HRIS["Subworkflow HRIS<br/>adaptador"]
+  CALC["calculo/<br/>motor de referencia"] -->|npm run n8n genera los workflows<br/>npm run desplegar los sube| N8N
+  N8N["n8n · 6 escenarios<br/>panel · baja · aprobar · skill · calendario · asistente"] <-->|leer · escribir · cargar| HRIS["Subworkflow HRIS<br/>adaptador"]
   HRIS <--> SHEET[("Google Sheets<br/>hace de HRIS")]
   N8N --> CLAUDE["API de Claude<br/>redacta y, en el asistente, razona"]
   N8N --> EMAIL["Email y bandeja<br/>People y managers"]
@@ -211,11 +213,11 @@ flowchart LR
 |---|---|
 | `definiciones/` | Qué se hace: `reglas.yaml` (semáforo, prioridad, señales, vacante, automatizaciones), funciones y criticidad, taxonomía, catálogo de formación, contexto de Acme, y qué significa cada regla |
 | `prompts/` | Lo que se le pide a Claude: proponer acciones, informe a dirección, el asistente, normalizar skills |
-| `calculo/` | Motor de cálculo, automatizaciones con calendario, herramientas del asistente, verificación y demo local |
-| `flujos/n8n/` | El adaptador HRIS y los cinco escenarios exportados (panel y reinicio, baja, skill, automatizaciones con calendario, asistente) y su código fuente |
+| `calculo/` | Motor de cálculo, automatizaciones con calendario, herramientas del asistente, verificación, demo local, y el despliegue y el ensayo en n8n |
+| `flujos/n8n/` | Los siete workflows: el adaptador HRIS y los escenarios (panel y reinicio, baja, aprobar, skill, automatizaciones con calendario, asistente), su código fuente y cómo montarlos |
 | `datos/`, `salidas/` | Datos ficticios de origen y hojas calculadas (lo que carga el Sheet) |
 | `agentes/` | Qué hace cada pieza, qué no hace y dónde vive: tabla de todas y ficha de las principales |
-| `docs/` | Arquitectura, decisiones, escalado, guion de la demo, usos del mapa, plan AI first |
+| `docs/` | Arquitectura, decisiones, escalado, paso a producción, guion de la demo, usos del mapa, plan AI first |
 | `video/` | Reproductor de la demo, alimentado por el motor |
 
 ### Dónde está la IA y dónde no
@@ -237,24 +239,47 @@ Registro completo con alternativas: [`docs/decisiones.md`](docs/decisiones.md). 
 - **Un agente de verdad, acotado** (D-25). El asistente razona con herramientas del motor: el modelo elige qué consultar y las cifras las calcula el motor. Solo lee, no ve salarios ni señales y, si Claude falla, lo dice. Es el único sitio donde el modelo decide algo, porque ahí no se decide sobre ninguna persona.
 - **Un adaptador para el HRIS** (D-24). Solo el subworkflow HRIS habla con Google Sheets, con tres operaciones (leer, escribir, cargar). Pasar a Factorial o Bizneo es cambiar ese workflow.
 - **Se prueba sin instalar nada** (D-22). El panel solo enseña lo que ya está en el Sheet, así que no puede contradecir a los flujos. La bandeja quita la dependencia de un buzón.
+- **El repo manda, n8n se despliega desde él** (D-10, D-28). Nadie edita los workflows en el lienzo: `npm run n8n` los genera, `npm run desplegar` los sube por la API de n8n con su configuración, y `npm run ensayar` recorre la demo entera en la instancia real y comprueba cada paso.
 - **Lo confidencial, separado** (D-19). El resumen para dirección no lleva señales individuales ni salarios; eso va en un bloque solo para People. Los managers nunca ven señales de rotación.
 
-### Cómo reproducirlo y verificarlo
+### Cómo usarlo si te descargas el repo
+
+Hay tres maneras, de menos a más trabajo:
+
+| Quiero… | Necesito | ¿Mi email? | ¿Mi clave de Claude? |
+|---|---|---|---|
+| **Probar la demo** | Solo el enlace del panel | No | No |
+| **Comprobar la lógica en mi ordenador** | [Node.js](https://nodejs.org) 18 o superior | No: los emails se guardan como archivos en `salidas/demo/` | Opcional: sin ella, la propuesta sale por reglas |
+| **Montarla en mi propio n8n** | Cuenta de n8n (con su API), cuenta de Google y clave de API de Claude | **Sí:** el buzón al que llegan los emails (`email_demo`) | **Sí**, como credencial de n8n. Sin ella, la propuesta y el informe salen por reglas y el asistente no responde |
+
+**En tu ordenador, sin n8n.** Todo funciona sin red y sin claves:
 
 ```bash
 npm install
-npm run verificar    # datos y reglas producen los casos de la demo; cambiar reglas.yaml cambia el resultado (19 comprobaciones)
+npm run verificar    # datos y reglas producen los casos de la demo; cambiar reglas.yaml cambia el resultado
 npm run probar-n8n   # el código de todos los workflows (adaptador HRIS incluido) contra un HRIS simulado y con Claude simulado, dos vueltas
 npm run cifras       # las cifras que citan los documentos, calculadas por el motor
 
-# El ciclo entero en local, sin n8n ni red
+# El ciclo entero de la demo
 npm run demo -- reset && npm run demo -- baja E007
 npm run demo -- aprobar ALR-002 && npm run demo -- aprobar ALR-003
 npm run demo -- seguimiento +84
 npm run demo -- centinela +84
 ```
 
-Montarlo en n8n (el adaptador HRIS y cinco escenarios, tres credenciales, una vez): [`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md).
+Para que la propuesta la redacte Claude, define la clave antes de `baja`: `export ANTHROPIC_API_KEY=sk-ant-…` (en PowerShell: `$env:ANTHROPIC_API_KEY="sk-ant-…"`). La clave se queda en tu terminal y no se guarda en ningún archivo.
+
+**En tu propio n8n** (unos 15 minutos, una vez):
+
+1. **El HRIS:** un Google Sheet con una pestaña por cada CSV de `salidas/sheets/` ([cómo](salidas/sheets/LEEME.md)).
+2. **En n8n:** tres credenciales (Google Sheets, Gmail y Claude, de tipo *Anthropic*) y una clave de la API de n8n (*Settings → n8n API*).
+3. **En tu terminal:** `npx @n8n/cli login` (la URL de tu instancia y esa clave; se guardan en tu perfil, no en el repo) y un archivo `.n8n-demo.json` en la raíz con `{ "sheet_id": "…", "email_demo": "tu buzón" }` (Git lo ignora).
+4. `npm run desplegar`: sube los siete workflows, rellena sus Configuraciones, asigna las credenciales, los activa y te da el enlace del panel. Con `-- --simular` enseña antes lo que hará.
+5. `npm run ensayar`: recorre la demo entera en tu n8n y comprueba el panel en cada paso. Al terminar, la deja reiniciada.
+
+Sin la API de n8n se puede montar a mano: importar los workflows y rellenar los campos `PEGAR_…` ([`flujos/n8n/LEEME.md`](flujos/n8n/LEEME.md)).
+
+n8n lee las reglas, los prompts y los datos iniciales de este repositorio en GitHub (campo `repo` de cada Configuración). Para cambiar una regla en tu copia, apunta ese campo a tu *fork*.
 
 ### Cómo se añade un proceso nuevo
 
@@ -269,7 +294,7 @@ Receta completa con el ejemplo de onboarding: [`docs/escalado.md`](docs/escalado
 
 ### Límites y qué no está hecho
 
-- **No es producción.** Los botones de aprobar son enlaces sin identificación y el formulario de skill no comprueba que quien valida sea el manager. En producción: login de People y del manager, y registro de quién aprobó qué.
+- **No es producción.** Los botones de aprobar son enlaces sin identificación y el formulario de skill no comprueba que quien valida sea el manager. En producción: login de People y del manager, y registro de quién aprobó qué. Qué cambiaría, capa por capa: [`docs/produccion.md`](docs/produccion.md).
 - **Sheets llega hasta unas 200 personas.** Después, base de datos o directamente el HRIS. Las definiciones y las reglas no cambian.
 - **El asistente no es determinista.** Sus cifras sí (salen del motor), pero qué consulta y cómo lo redacta varía. Por eso solo lee, enseña sus pasos y no tiene herramientas sobre salarios ni señales.
 - **El mapa vale lo que valga la validación de skills.** Solo cuentan las validadas por el manager. El centinela ya señala cada mes las validaciones antiguas que sostienen funciones críticas. Es el límite número 1.
