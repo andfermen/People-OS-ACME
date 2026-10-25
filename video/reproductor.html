@@ -288,7 +288,7 @@ const ESCENAS = ['Qué es People OS', 'Arquitectura', 'Situación inicial', 'Ele
 const AG = D.agentes, U = AG.umbrales;
 const accionPlan = (sem, plan) => AG.seguimiento[sem].find(x => x.plan_id === plan);
 
-// Versión corta por defecto (~5 min); ?completo enseña también los pasos marcados como largo
+// Versión corta por defecto (15 pasos); ?completo enseña también los pasos marcados como largo
 const COMPLETO = location.search.includes('completo');
 const TODOS = [
 // 0 · Qué es People OS

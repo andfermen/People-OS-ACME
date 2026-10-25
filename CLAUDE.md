@@ -38,8 +38,8 @@ salidas/        sheets/ (lo que carga el HRIS) · n8n/definiciones.json (lo que 
 flujos/n8n/     HRIS-google-sheets.json (adaptador) · E0 panel y reinicio · E1 baja · E2 skill · E3 automatizaciones con calendario
                 E4 asistente · src/ (código de los nodos + probar.js) · LEEME.md (montaje)
 agentes/        qué hace cada pieza, qué no hace y dónde vive
-docs/           arquitectura · decisiones (D-01…) · escalado · producción · visión 360º · usos del mapa · plan AI first · guion
-video/          reproductor de la demo, datos y guion de locución
+docs/           arquitectura · decisiones (D-01…) · escalado · producción · visión 360º · usos del mapa · plan AI first
+video/          reproductor de la demo (sobre él se grabó el vídeo) y sus datos
 ```
 
 ## 5. Comandos
@@ -53,7 +53,7 @@ video/          reproductor de la demo, datos y guion de locución
 | `npm run ensayar` | Recorre la demo entera en la instancia real de n8n, comprueba el panel en cada paso y reinicia al final (`-- 3` para tres vueltas) |
 | `npm run sheets -- --fecha 2026-09-30` | Genera las hojas iniciales del HRIS en `salidas/sheets/` |
 | `npm run demo -- <comando>` | El ciclo entero en local, sin n8n: `reset`, `baja`, `aprobar`, `validar`, `seguimiento`, `centinela` |
-| `npm run video` | Datos del reproductor y guion del vídeo |
+| `npm run video` | Datos del reproductor del vídeo (`video/datos.js`) |
 | `npm run cifras` | Cifras que citan los documentos, calculadas por el motor |
 
 ## 6. Cómo se cambia algo

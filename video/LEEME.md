@@ -1,6 +1,6 @@
-# Vídeo de la demo (unos 6 minutos)
+# Reproductor de la demo
 
-`reproductor.html` es un reproductor de la demo para grabarlo en vídeo: 9 escenas, 15 pasos (21 en la versión completa), 16:9. No sustituye a n8n: enseña **qué pasa** (el mapa, el email, las decisiones) y **por qué** (datos, reglas, cálculo) sin saltar entre el Sheet, GitHub, n8n y Gmail (D-20).
+El vídeo de la demo (unos 2:40) está grabado sobre `reproductor.html`. El reproductor sirve también para recorrer la demo a tu ritmo: 9 escenas, 15 pasos (21 en la versión completa), 16:9. No sustituye a n8n: enseña **qué pasa** (el mapa, el email, las decisiones) y **por qué** (datos, reglas, cálculo) sin saltar entre el Sheet, GitHub, n8n y Gmail (D-20).
 
 ## De dónde salen los datos
 
@@ -23,4 +23,4 @@ Una diferencia con n8n, dicha en la propia pantalla del email: el **texto** de l
 3. **→ / espacio** siguiente · **←** anterior · **D** abre y cierra el panel *¿Qué ha pasado por debajo?* · **R** repite la animación del paso.
 4. `reproductor.html#6` abre directamente el paso 6. `?captura` muestra cada paso sin animaciones (para capturas); `?panel` empieza con el panel abierto.
 
-La versión larga (21 pasos, unos 9 minutos) sigue disponible: `reproductor.html?completo` añade el flujo de nodos de n8n, las key people antes y después, la aprobación de la opción B, el formulario de validación, el escalado del seguimiento y el archivo `funciones.yaml`.
+La versión larga (21 pasos) sigue disponible: `reproductor.html?completo` añade el flujo de nodos de n8n, las key people antes y después, la aprobación de la opción B, el formulario de validación, el escalado del seguimiento y el archivo `funciones.yaml`.
