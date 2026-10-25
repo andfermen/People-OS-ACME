@@ -1,0 +1,113 @@
+{
+  "name": "TEST · Captura de skills (formulario → Claude → Sheet)",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Acme · Cuéntanos qué haces",
+        "formDescription": "Describe con tus palabras tu trabajo y lo que te gustaría aprender. Tu manager validará el resultado.",
+        "formFields": {
+          "values": [
+            { "fieldLabel": "empleado_id", "requiredField": true },
+            { "fieldLabel": "texto", "fieldType": "textarea", "requiredField": true }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000001",
+      "name": "Formulario",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [0, 0],
+      "webhookId": "acme-captura-skills"
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/andfermen/People-OS-ACME/main/definiciones/taxonomia-skills.yaml",
+        "options": { "response": { "response": { "responseFormat": "text", "outputPropertyName": "taxonomia" } } }
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000002",
+      "name": "Leer taxonomía (repo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://raw.githubusercontent.com/andfermen/People-OS-ACME/main/prompts/normalizar-skills.md",
+        "options": { "response": { "response": { "responseFormat": "text", "outputPropertyName": "prompt" } } }
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000003",
+      "name": "Leer prompt (repo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Monta la petición a Claude con el prompt y la taxonomía del repo\nconst form = $('Formulario').first().json;\nconst taxonomia = $('Leer taxonomía (repo)').first().json.taxonomia;\nconst md = $('Leer prompt (repo)').first().json.prompt;\nconst system = md.split('## System')[1].split('## User')[0].trim();\nconst user = `Taxonomía:\\n${taxonomia}\\n\\nTexto del empleado:\\n${form.texto}`;\nreturn [{ json: { empleado_id: form.empleado_id, body: { model: 'claude-sonnet-5-5', max_tokens: 2000, system, messages: [{ role: 'user', content: user }] } } }];"
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000004",
+      "name": "Preparar petición",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 0]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body) }}",
+        "options": {}
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000005",
+      "name": "Claude normaliza",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Convierte la respuesta de Claude en filas pendientes de validar por el manager\nconst empleado_id = $('Preparar petición').first().json.empleado_id;\nconst texto = $json.content[0].text;\nconst r = JSON.parse(texto.slice(texto.indexOf('{'), texto.lastIndexOf('}') + 1));\nconst fecha = new Date().toISOString().slice(0, 10);\nreturn r.skills.map(s => ({ json: {\n  empleado_id, skill_id: s.skill_id, nivel_declarado: s.nivel_propuesto, nivel_validado: '', validado_por: 'pendiente',\n  fecha, evidencia: s.evidencia, confianza: s.confianza, pregunta_para_manager: s.pregunta_para_manager || '',\n  intereses: (r.intereses_detectados || []).join(';')\n} }));"
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000006",
+      "name": "Filas para validar",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 0]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": { "__rl": true, "mode": "id", "value": "PEGAR_ID_DEL_SHEET" },
+        "sheetName": { "__rl": true, "mode": "name", "value": "captura-pendiente" },
+        "columns": { "mappingMode": "autoMapInputData", "value": {} },
+        "options": {}
+      },
+      "id": "a1f0c001-0000-4000-8000-000000000007",
+      "name": "Guardar en Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1320, 0]
+    }
+  ],
+  "connections": {
+    "Formulario": { "main": [[{ "node": "Leer taxonomía (repo)", "type": "main", "index": 0 }]] },
+    "Leer taxonomía (repo)": { "main": [[{ "node": "Leer prompt (repo)", "type": "main", "index": 0 }]] },
+    "Leer prompt (repo)": { "main": [[{ "node": "Preparar petición", "type": "main", "index": 0 }]] },
+    "Preparar petición": { "main": [[{ "node": "Claude normaliza", "type": "main", "index": 0 }]] },
+    "Claude normaliza": { "main": [[{ "node": "Filas para validar", "type": "main", "index": 0 }]] },
+    "Filas para validar": { "main": [[{ "node": "Guardar en Sheet", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

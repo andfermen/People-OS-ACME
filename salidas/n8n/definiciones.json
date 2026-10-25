@@ -1,0 +1,1349 @@
+{
+ "funciones": {
+  "defaults": {
+   "cobertura_objetivo": 2
+  },
+  "funciones": [
+   {
+    "id": "TRD-01",
+    "nombre": "Ejecución y operativa de mercados",
+    "area": "Exchange y trading",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "trading-mercados",
+      "nivel": 3
+     },
+     {
+      "skill": "gestion-riesgo-mercado",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "TRD-02",
+    "nombre": "Gestión de liquidez y market making",
+    "area": "Exchange y trading",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "market-making",
+      "nivel": 3
+     },
+     {
+      "skill": "sql-analitica",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "TRD-03",
+    "nombre": "Riesgo de mercado y límites",
+    "area": "Exchange y trading",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-riesgo-mercado",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "CUS-01",
+    "nombre": "Gestión de claves y ceremonias de firma",
+    "area": "Custodia",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-claves",
+      "nivel": 3
+     },
+     {
+      "skill": "operativa-wallets",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CUS-02",
+    "nombre": "Prueba de reservas y conciliación on-chain",
+    "area": "Custodia",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "conciliacion-onchain",
+      "nivel": 3
+     },
+     {
+      "skill": "analisis-blockchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CUS-03",
+    "nombre": "Operativa diaria de wallets",
+    "area": "Custodia",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "operativa-wallets",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-01",
+    "nombre": "Alta y verificación de clientes (KYC/KYB)",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "kyc-onboarding",
+      "nivel": 2
+     },
+     {
+      "skill": "normativa-pbc",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-02",
+    "nombre": "Monitorización de transacciones",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "monitorizacion-transacciones",
+      "nivel": 3
+     },
+     {
+      "skill": "analisis-blockchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CMP-03",
+    "nombre": "Comunicación de operaciones sospechosas",
+    "area": "Compliance AML/KYC",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "normativa-pbc",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "CMP-04",
+    "nombre": "Reporting regulatorio AML",
+    "area": "Compliance AML/KYC",
+    "criticidad": "importante",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "sql-analitica",
+      "nivel": 3
+     },
+     {
+      "skill": "normativa-pbc",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "LEG-01",
+    "nombre": "Licencia MiCA y relación con el supervisor",
+    "area": "Legal y regulatorio",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "regulacion-mica",
+      "nivel": 3
+     },
+     {
+      "skill": "gestion-stakeholders",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "LEG-02",
+    "nombre": "Contratos y protección de datos",
+    "area": "Legal y regulatorio",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "contratos-mercantil",
+      "nivel": 3
+     },
+     {
+      "skill": "proteccion-datos",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "SEG-01",
+    "nombre": "Detección y respuesta a incidentes",
+    "area": "Seguridad",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "respuesta-incidentes",
+      "nivel": 3
+     },
+     {
+      "skill": "ciberseguridad-defensiva",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "SEG-02",
+    "nombre": "Seguridad de aplicaciones",
+    "area": "Seguridad",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "seguridad-aplicaciones",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "ING-01",
+    "nombre": "Desarrollo de plataforma",
+    "area": "Ingeniería",
+    "criticidad": "importante",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "desarrollo-backend",
+      "nivel": 3
+     },
+     {
+      "skill": "desarrollo-frontend",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "ING-02",
+    "nombre": "Infraestructura y disponibilidad",
+    "area": "Ingeniería",
+    "criticidad": "critica",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "infraestructura-cloud",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "ING-03",
+    "nombre": "Integración de redes blockchain y nodos",
+    "area": "Ingeniería",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "nodos-blockchain",
+      "nivel": 3
+     },
+     {
+      "skill": "desarrollo-backend",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "PRD-01",
+    "nombre": "Gestión de producto",
+    "area": "Producto",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-producto",
+      "nivel": 3
+     },
+     {
+      "skill": "diseno-ux",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CX-01",
+    "nombre": "Atención al cliente",
+    "area": "Atención al cliente (CX)",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "cobertura_objetivo": 3,
+    "skills_requeridas": [
+     {
+      "skill": "atencion-cliente",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "CX-02",
+    "nombre": "Soporte técnico de segundo nivel",
+    "area": "Atención al cliente (CX)",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "atencion-cliente-tecnica",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "MKT-01",
+    "nombre": "Marketing y comunicación comercial regulada",
+    "area": "Marketing",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "marketing-digital",
+      "nivel": 3
+     },
+     {
+      "skill": "comunicacion-regulada",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "FIN-01",
+    "nombre": "Contabilidad y fiscalidad de criptoactivos",
+    "area": "Finanzas",
+    "criticidad": "importante",
+    "impacto_ia": "medio",
+    "skills_requeridas": [
+     {
+      "skill": "contabilidad-cripto",
+      "nivel": 3
+     }
+    ]
+   },
+   {
+    "id": "FIN-02",
+    "nombre": "Tesorería y salvaguarda de fondos de clientes",
+    "area": "Finanzas",
+    "criticidad": "critica",
+    "impacto_ia": "bajo",
+    "skills_requeridas": [
+     {
+      "skill": "tesoreria",
+      "nivel": 3
+     },
+     {
+      "skill": "conciliacion-onchain",
+      "nivel": 2
+     }
+    ]
+   },
+   {
+    "id": "PEO-01",
+    "nombre": "Gestión de personas",
+    "area": "People",
+    "criticidad": "soporte",
+    "impacto_ia": "alto",
+    "skills_requeridas": [
+     {
+      "skill": "gestion-personas",
+      "nivel": 3
+     }
+    ]
+   }
+  ]
+ },
+ "taxonomia": {
+  "niveles": {
+   "1": {
+    "nombre": "Básico",
+    "descripcion": "Conoce los conceptos. Ejecuta con supervisión."
+   },
+   "2": {
+    "nombre": "Autónomo",
+    "descripcion": "Hace las tareas habituales sin supervisión."
+   },
+   "3": {
+    "nombre": "Avanzado",
+    "descripcion": "Resuelve casos complejos o no habituales. Puede sostener la función solo."
+   },
+   "4": {
+    "nombre": "Referente",
+    "descripcion": "Define cómo se hace, forma a otros y es referencia dentro y fuera."
+   }
+  },
+  "skills": [
+   {
+    "id": "trading-mercados",
+    "tipo": "hard",
+    "nombre": "Operativa de mercados cripto",
+    "descripcion": "Ejecución de órdenes, libro de órdenes, incidencias de mercado."
+   },
+   {
+    "id": "market-making",
+    "tipo": "hard",
+    "nombre": "Gestión de liquidez y market making",
+    "descripcion": "Provisión de liquidez, spreads, proveedores de liquidez."
+   },
+   {
+    "id": "gestion-riesgo-mercado",
+    "tipo": "hard",
+    "nombre": "Riesgo de mercado y límites",
+    "descripcion": "Exposición, límites, stress tests de posiciones propias."
+   },
+   {
+    "id": "gestion-claves",
+    "tipo": "hard",
+    "nombre": "Gestión de claves criptográficas",
+    "descripcion": "MPC/multifirma, HSM, ceremonias de firma, recuperación de claves."
+   },
+   {
+    "id": "operativa-wallets",
+    "tipo": "hard",
+    "nombre": "Operativa de wallets hot/cold",
+    "descripcion": "Movimientos entre wallets, umbrales, retiradas de clientes."
+   },
+   {
+    "id": "conciliacion-onchain",
+    "tipo": "hard",
+    "nombre": "Conciliación on-chain y prueba de reservas",
+    "descripcion": "Cuadrar saldos on-chain con el registro interno y demostrar reservas."
+   },
+   {
+    "id": "analisis-blockchain",
+    "tipo": "hard",
+    "nombre": "Análisis on-chain",
+    "descripcion": "Trazar transacciones y usar herramientas de análisis de blockchain."
+   },
+   {
+    "id": "normativa-pbc",
+    "tipo": "hard",
+    "nombre": "Prevención de blanqueo (PBC/FT)",
+    "descripcion": "Normativa, análisis de casos y comunicación de operaciones sospechosas."
+   },
+   {
+    "id": "kyc-onboarding",
+    "tipo": "hard",
+    "nombre": "Verificación KYC/KYB",
+    "descripcion": "Alta y verificación de clientes particulares y empresas."
+   },
+   {
+    "id": "monitorizacion-transacciones",
+    "tipo": "hard",
+    "nombre": "Monitorización de transacciones",
+    "descripcion": "Reglas de alerta, revisión de alertas, escalado."
+   },
+   {
+    "id": "regulacion-mica",
+    "tipo": "hard",
+    "nombre": "Regulación MiCA",
+    "descripcion": "Requisitos de la licencia de servicios de criptoactivos y relación con el supervisor."
+   },
+   {
+    "id": "proteccion-datos",
+    "tipo": "hard",
+    "nombre": "Protección de datos (RGPD)",
+    "descripcion": "Bases legales, registro de actividades, derechos de los interesados."
+   },
+   {
+    "id": "contratos-mercantil",
+    "tipo": "hard",
+    "nombre": "Contratos y derecho mercantil",
+    "descripcion": "Redacción y negociación de contratos con clientes y proveedores."
+   },
+   {
+    "id": "desarrollo-backend",
+    "tipo": "hard",
+    "nombre": "Desarrollo backend",
+    "descripcion": "Servicios, APIs y bases de datos de la plataforma."
+   },
+   {
+    "id": "desarrollo-frontend",
+    "tipo": "hard",
+    "nombre": "Desarrollo frontend",
+    "descripcion": "Web y app de clientes."
+   },
+   {
+    "id": "infraestructura-cloud",
+    "tipo": "hard",
+    "nombre": "Infraestructura cloud y SRE",
+    "descripcion": "Despliegue, disponibilidad, observabilidad."
+   },
+   {
+    "id": "nodos-blockchain",
+    "tipo": "hard",
+    "nombre": "Nodos e integración de redes blockchain",
+    "descripcion": "Operar nodos, integrar nuevas redes y tokens."
+   },
+   {
+    "id": "ciberseguridad-defensiva",
+    "tipo": "hard",
+    "nombre": "Ciberseguridad defensiva",
+    "descripcion": "Monitorización de seguridad, detección de amenazas."
+   },
+   {
+    "id": "respuesta-incidentes",
+    "tipo": "hard",
+    "nombre": "Respuesta a incidentes de seguridad",
+    "descripcion": "Contención, investigación y comunicación de incidentes."
+   },
+   {
+    "id": "seguridad-aplicaciones",
+    "tipo": "hard",
+    "nombre": "Seguridad de aplicaciones",
+    "descripcion": "Código seguro, pentesting, gestión de vulnerabilidades."
+   },
+   {
+    "id": "sql-analitica",
+    "tipo": "hard",
+    "nombre": "Análisis de datos y SQL",
+    "descripcion": "Consultas, modelos de datos e informes a partir de las bases de datos."
+   },
+   {
+    "id": "gestion-producto",
+    "tipo": "hard",
+    "nombre": "Gestión de producto",
+    "descripcion": "Descubrimiento, priorización y roadmap."
+   },
+   {
+    "id": "diseno-ux",
+    "tipo": "hard",
+    "nombre": "Diseño UX/UI",
+    "descripcion": "Investigación de usuarios, prototipos, sistema de diseño."
+   },
+   {
+    "id": "atencion-cliente",
+    "tipo": "hard",
+    "nombre": "Atención al cliente",
+    "descripcion": "Consultas de primer nivel por chat y email."
+   },
+   {
+    "id": "atencion-cliente-tecnica",
+    "tipo": "hard",
+    "nombre": "Soporte técnico de segundo nivel",
+    "descripcion": "Incidencias de depósitos y retiradas, transacciones atascadas."
+   },
+   {
+    "id": "contabilidad-cripto",
+    "tipo": "hard",
+    "nombre": "Contabilidad y fiscalidad de criptoactivos",
+    "descripcion": "Registro contable, valoración y fiscalidad de activos digitales."
+   },
+   {
+    "id": "tesoreria",
+    "tipo": "hard",
+    "nombre": "Tesorería y salvaguarda de fondos",
+    "descripcion": "Liquidez en euros, segregación de fondos de clientes, bancos."
+   },
+   {
+    "id": "reporting-financiero",
+    "tipo": "hard",
+    "nombre": "Reporting financiero",
+    "descripcion": "Cierres, cuentas anuales, informes a dirección."
+   },
+   {
+    "id": "marketing-digital",
+    "tipo": "hard",
+    "nombre": "Marketing digital",
+    "descripcion": "Captación, campañas, métricas de adquisición."
+   },
+   {
+    "id": "comunicacion-regulada",
+    "tipo": "hard",
+    "nombre": "Comunicación comercial regulada",
+    "descripcion": "Publicidad de criptoactivos conforme a la normativa (avisos de riesgo, mensajes permitidos)."
+   },
+   {
+    "id": "gestion-personas",
+    "tipo": "hard",
+    "nombre": "Gestión de personas",
+    "descripcion": "Selección, onboarding, desempeño, relaciones laborales."
+   },
+   {
+    "id": "compensacion",
+    "tipo": "hard",
+    "nombre": "Compensación y beneficios",
+    "descripcion": "Bandas, revisión salarial, igualdad retributiva."
+   },
+   {
+    "id": "liderazgo",
+    "tipo": "soft",
+    "nombre": "Liderazgo de equipos",
+    "descripcion": "Dirigir, desarrollar y dar feedback a un equipo."
+   },
+   {
+    "id": "comunicacion",
+    "tipo": "soft",
+    "nombre": "Comunicación",
+    "descripcion": "Explicar con claridad, por escrito y oralmente."
+   },
+   {
+    "id": "gestion-stakeholders",
+    "tipo": "soft",
+    "nombre": "Gestión de stakeholders",
+    "descripcion": "Relación con el supervisor, socios y dirección; negociación."
+   },
+   {
+    "id": "resolucion-problemas",
+    "tipo": "soft",
+    "nombre": "Resolución de problemas",
+    "descripcion": "Analizar causas y decidir con información incompleta."
+   },
+   {
+    "id": "ia-uso-diario",
+    "tipo": "ia",
+    "nombre": "Uso de IA en el trabajo diario",
+    "descripcion": "1 la prueba de vez en cuando · 2 la usa a diario en sus tareas · 3 rediseña su forma de trabajar con IA · 4 enseña a otros y define buenas prácticas."
+   },
+   {
+    "id": "ia-automatizacion",
+    "tipo": "ia",
+    "nombre": "Automatización y agentes",
+    "descripcion": "1 entiende qué se puede automatizar · 2 monta automatizaciones simples con herramientas aprobadas · 3 diseña flujos con agentes e integra sistemas · 4 referente de la compañía."
+   },
+   {
+    "id": "ia-criterio",
+    "tipo": "ia",
+    "nombre": "Criterio y verificación de resultados de IA",
+    "descripcion": "1 sabe que la IA se equivoca · 2 revisa y contrasta lo que produce · 3 diseña controles y sabe cuándo no usarla · 4 define el gobierno de uso (datos, privacidad, AI Act)."
+   }
+  ]
+ },
+ "areas": {
+  "Exchange y trading": "Mercados",
+  "Custodia": "Mercados",
+  "Compliance AML/KYC": "Riesgo y cumplimiento",
+  "Legal y regulatorio": "Riesgo y cumplimiento",
+  "Seguridad": "Riesgo y cumplimiento",
+  "Ingeniería": "Tecnología y producto",
+  "Producto": "Tecnología y producto",
+  "Atención al cliente (CX)": "Cliente y negocio",
+  "Marketing": "Cliente y negocio",
+  "Finanzas": "Corporativo",
+  "People": "Corporativo",
+  "Dirección": "Corporativo"
+ },
+ "catalogo": [
+  {
+   "id": "FOR-01",
+   "skill": "gestion-claves",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Mentoring en ceremonias de firma con la persona de referencia",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-02",
+   "skill": "gestion-claves",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Custodia de activos digitales: MPC y HSM",
+   "semanas": 6,
+   "coste_eur": 2400
+  },
+  {
+   "id": "FOR-03",
+   "skill": "conciliacion-onchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Acompañar el cierre mensual de prueba de reservas (3 cierres)",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-04",
+   "skill": "conciliacion-onchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Prueba de reservas y auditoría on-chain",
+   "semanas": 4,
+   "coste_eur": 1800
+  },
+  {
+   "id": "FOR-05",
+   "skill": "normativa-pbc",
+   "de": 2,
+   "a": 3,
+   "tipo": "certificacion",
+   "nombre": "Certificación en prevención de blanqueo de capitales",
+   "semanas": 16,
+   "coste_eur": 1500
+  },
+  {
+   "id": "FOR-06",
+   "skill": "normativa-pbc",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Coanálisis de expedientes de operaciones sospechosas",
+   "semanas": 12,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-07",
+   "skill": "sql-analitica",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "SQL avanzado y modelado de datos",
+   "semanas": 6,
+   "coste_eur": 900
+  },
+  {
+   "id": "FOR-08",
+   "skill": "sql-analitica",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Pair-working en el reporting regulatorio con Datos",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-09",
+   "skill": "contabilidad-cripto",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Contabilidad y fiscalidad de criptoactivos",
+   "semanas": 8,
+   "coste_eur": 1200
+  },
+  {
+   "id": "FOR-10",
+   "skill": "seguridad-aplicaciones",
+   "de": 2,
+   "a": 3,
+   "tipo": "certificacion",
+   "nombre": "Certificación en pentesting de aplicaciones web",
+   "semanas": 12,
+   "coste_eur": 1600
+  },
+  {
+   "id": "FOR-11",
+   "skill": "respuesta-incidentes",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Gestión de incidentes y análisis forense",
+   "semanas": 6,
+   "coste_eur": 2000
+  },
+  {
+   "id": "FOR-12",
+   "skill": "respuesta-incidentes",
+   "de": 2,
+   "a": 3,
+   "tipo": "rotacion",
+   "nombre": "Entrar en la rotación de guardias con un senior como sombra",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-13",
+   "skill": "gestion-personas",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Gestión de personas para managers",
+   "semanas": 6,
+   "coste_eur": 800
+  },
+  {
+   "id": "FOR-14",
+   "skill": "nodos-blockchain",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Integrar una red nueva con el equipo blockchain",
+   "semanas": 10,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-15",
+   "skill": "gestion-riesgo-mercado",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "Riesgo de mercado en activos digitales",
+   "semanas": 6,
+   "coste_eur": 1500
+  },
+  {
+   "id": "FOR-16",
+   "skill": "atencion-cliente-tecnica",
+   "de": 2,
+   "a": 3,
+   "tipo": "rotacion",
+   "nombre": "Rotación en soporte de segundo nivel",
+   "semanas": 6,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-17",
+   "skill": "regulacion-mica",
+   "de": 2,
+   "a": 3,
+   "tipo": "curso-externo",
+   "nombre": "MiCA en la práctica: obligaciones del proveedor",
+   "semanas": 4,
+   "coste_eur": 1100
+  },
+  {
+   "id": "FOR-18",
+   "skill": "comunicacion-regulada",
+   "de": 1,
+   "a": 2,
+   "tipo": "mentoring-interno",
+   "nombre": "Revisión conjunta de campañas con Legal",
+   "semanas": 6,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-19",
+   "skill": "ia-uso-diario",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "IA en el día a día: herramientas aprobadas y buenas prácticas",
+   "semanas": 3,
+   "coste_eur": 300
+  },
+  {
+   "id": "FOR-20",
+   "skill": "ia-automatizacion",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "Automatizar procesos con IA sin programar",
+   "semanas": 6,
+   "coste_eur": 900
+  },
+  {
+   "id": "FOR-21",
+   "skill": "ia-automatizacion",
+   "de": 2,
+   "a": 3,
+   "tipo": "mentoring-interno",
+   "nombre": "Diseñar un flujo con agentes junto a Ingeniería",
+   "semanas": 8,
+   "coste_eur": 0
+  },
+  {
+   "id": "FOR-22",
+   "skill": "ia-criterio",
+   "de": 1,
+   "a": 2,
+   "tipo": "curso-externo",
+   "nombre": "Verificar resultados de IA: errores, sesgos y AI Act",
+   "semanas": 3,
+   "coste_eur": 400
+  }
+ ],
+ "bandas": [
+  {
+   "banda_id": "TEC-1",
+   "familia": "Técnica",
+   "nivel": "junior",
+   "minimo": "28000",
+   "medio": "34000",
+   "maximo": "40000"
+  },
+  {
+   "banda_id": "TEC-2",
+   "familia": "Técnica",
+   "nivel": "intermedio",
+   "minimo": "38000",
+   "medio": "46000",
+   "maximo": "54000"
+  },
+  {
+   "banda_id": "TEC-3",
+   "familia": "Técnica",
+   "nivel": "senior",
+   "minimo": "50000",
+   "medio": "60000",
+   "maximo": "70000"
+  },
+  {
+   "banda_id": "TEC-4",
+   "familia": "Técnica",
+   "nivel": "lead",
+   "minimo": "62000",
+   "medio": "75000",
+   "maximo": "88000"
+  },
+  {
+   "banda_id": "TEC-5",
+   "familia": "Técnica",
+   "nivel": "head",
+   "minimo": "80000",
+   "medio": "97000",
+   "maximo": "115000"
+  },
+  {
+   "banda_id": "GEN-1",
+   "familia": "General",
+   "nivel": "junior",
+   "minimo": "24000",
+   "medio": "28000",
+   "maximo": "33000"
+  },
+  {
+   "banda_id": "GEN-2",
+   "familia": "General",
+   "nivel": "intermedio",
+   "minimo": "30000",
+   "medio": "36000",
+   "maximo": "42000"
+  },
+  {
+   "banda_id": "GEN-3",
+   "familia": "General",
+   "nivel": "senior",
+   "minimo": "40000",
+   "medio": "48000",
+   "maximo": "56000"
+  },
+  {
+   "banda_id": "GEN-4",
+   "familia": "General",
+   "nivel": "lead",
+   "minimo": "52000",
+   "medio": "62000",
+   "maximo": "72000"
+  },
+  {
+   "banda_id": "GEN-5",
+   "familia": "General",
+   "nivel": "head",
+   "minimo": "70000",
+   "medio": "85000",
+   "maximo": "100000"
+  },
+  {
+   "banda_id": "DIR-1",
+   "familia": "Dirección",
+   "nivel": "CEO",
+   "minimo": "120000",
+   "medio": "150000",
+   "maximo": "180000"
+  }
+ ],
+ "encuesta": [
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "compania",
+   "segmento": "Acme",
+   "n": "137",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "17",
+   "carga_sostenible": "3.3",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.4",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "division",
+   "segmento": "Mercados",
+   "n": "17",
+   "publicable": "si",
+   "engagement": "3.3",
+   "enps": "-6",
+   "carga_sostenible": "2.9",
+   "intencion_permanencia": "3.4",
+   "desarrollo": "3.2",
+   "relacion_manager": "3.7"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "division",
+   "segmento": "Riesgo y cumplimiento",
+   "n": "30",
+   "publicable": "si",
+   "engagement": "3.8",
+   "enps": "21",
+   "carga_sostenible": "3.2",
+   "intencion_permanencia": "3.9",
+   "desarrollo": "3.5",
+   "relacion_manager": "4.0"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "division",
+   "segmento": "Tecnología y producto",
+   "n": "46",
+   "publicable": "si",
+   "engagement": "3.9",
+   "enps": "26",
+   "carga_sostenible": "3.5",
+   "intencion_permanencia": "3.9",
+   "desarrollo": "3.6",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "division",
+   "segmento": "Cliente y negocio",
+   "n": "35",
+   "publicable": "si",
+   "engagement": "3.6",
+   "enps": "12",
+   "carga_sostenible": "3.1",
+   "intencion_permanencia": "3.7",
+   "desarrollo": "3.1",
+   "relacion_manager": "4.0"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "division",
+   "segmento": "Corporativo",
+   "n": "9",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "15",
+   "carga_sostenible": "3.2",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.3",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Exchange y trading",
+   "n": "10",
+   "publicable": "si",
+   "engagement": "3.4",
+   "enps": "0",
+   "carga_sostenible": "3.0",
+   "intencion_permanencia": "3.5",
+   "desarrollo": "3.4",
+   "relacion_manager": "3.8"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Custodia",
+   "n": "7",
+   "publicable": "si",
+   "engagement": "3.2",
+   "enps": "-14",
+   "carga_sostenible": "2.7",
+   "intencion_permanencia": "3.2",
+   "desarrollo": "2.9",
+   "relacion_manager": "3.6"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Compliance AML/KYC",
+   "n": "17",
+   "publicable": "si",
+   "engagement": "3.8",
+   "enps": "20",
+   "carga_sostenible": "3.1",
+   "intencion_permanencia": "3.9",
+   "desarrollo": "3.5",
+   "relacion_manager": "4.0"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Legal y regulatorio",
+   "n": "6",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "17",
+   "carga_sostenible": "3.3",
+   "intencion_permanencia": "3.9",
+   "desarrollo": "3.4",
+   "relacion_manager": "4.1"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Seguridad",
+   "n": "7",
+   "publicable": "si",
+   "engagement": "3.8",
+   "enps": "29",
+   "carga_sostenible": "3.2",
+   "intencion_permanencia": "3.9",
+   "desarrollo": "3.6",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Ingeniería",
+   "n": "36",
+   "publicable": "si",
+   "engagement": "3.9",
+   "enps": "28",
+   "carga_sostenible": "3.6",
+   "intencion_permanencia": "4.0",
+   "desarrollo": "3.6",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Producto",
+   "n": "10",
+   "publicable": "si",
+   "engagement": "3.8",
+   "enps": "20",
+   "carga_sostenible": "3.4",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.5",
+   "relacion_manager": "3.8"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Atención al cliente (CX)",
+   "n": "26",
+   "publicable": "si",
+   "engagement": "3.5",
+   "enps": "8",
+   "carga_sostenible": "3.0",
+   "intencion_permanencia": "3.6",
+   "desarrollo": "2.9",
+   "relacion_manager": "4.1"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Marketing",
+   "n": "9",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "22",
+   "carga_sostenible": "3.3",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.4",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "Finanzas",
+   "n": "7",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "14",
+   "carga_sostenible": "3.2",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.3",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "area",
+   "segmento": "People",
+   "n": "1",
+   "publicable": "no",
+   "engagement": "",
+   "enps": "",
+   "carga_sostenible": "",
+   "intencion_permanencia": "",
+   "desarrollo": "",
+   "relacion_manager": ""
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "key_person",
+   "segmento": "si",
+   "n": "5",
+   "publicable": "si",
+   "engagement": "3.4",
+   "enps": "0",
+   "carga_sostenible": "2.6",
+   "intencion_permanencia": "3.2",
+   "desarrollo": "2.9",
+   "relacion_manager": "3.8"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "key_person",
+   "segmento": "no",
+   "n": "132",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "18",
+   "carga_sostenible": "3.3",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.4",
+   "relacion_manager": "3.9"
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "backup_en_desarrollo",
+   "segmento": "si",
+   "n": "2",
+   "publicable": "no",
+   "engagement": "",
+   "enps": "",
+   "carga_sostenible": "",
+   "intencion_permanencia": "",
+   "desarrollo": "",
+   "relacion_manager": ""
+  },
+  {
+   "encuesta": "2026-T3",
+   "segmento_tipo": "backup_en_desarrollo",
+   "segmento": "no",
+   "n": "135",
+   "publicable": "si",
+   "engagement": "3.7",
+   "enps": "17",
+   "carga_sostenible": "3.3",
+   "intencion_permanencia": "3.8",
+   "desarrollo": "3.4",
+   "relacion_manager": "3.9"
+  }
+ ],
+ "reglas": {
+  "cobertura": {
+   "backup_a_distancia": 1,
+   "key_person": {
+    "cobertura": 1,
+    "criticidades": [
+     "critica",
+     "importante"
+    ]
+   },
+   "key_person_oculta": {
+    "niveles_puesto": [
+     "junior",
+     "intermedio"
+    ]
+   }
+  },
+  "semaforo": [
+   {
+    "color": "verde",
+    "si": {
+     "cobertura_minima": "objetivo"
+    }
+   },
+   {
+    "color": "ambar",
+    "si": {
+     "cobertura_minima": 2
+    }
+   },
+   {
+    "color": "ambar",
+    "si": {
+     "cobertura": 1,
+     "con_backup": true
+    }
+   },
+   {
+    "color": "rojo"
+   }
+  ],
+  "prioridad": {
+   "puntos_semaforo": {
+    "rojo": 3,
+    "ambar": 2,
+    "verde": 0
+   },
+   "puntos_criticidad": {
+    "critica": 3,
+    "importante": 2,
+    "soporte": 1
+   },
+   "niveles": [
+    {
+     "prioridad": "P1",
+     "puntos_minimos": 9
+    },
+    {
+     "prioridad": "P2",
+     "puntos_minimos": 6
+    },
+    {
+     "prioridad": "P3",
+     "puntos_minimos": 3
+    },
+    {
+     "prioridad": "P4",
+     "puntos_minimos": 2
+    }
+   ]
+  },
+  "rediseno_ia": {
+   "semaforo": "rojo",
+   "impacto_ia": "alto"
+  },
+  "senales_rotacion": {
+   "compa_ratio_menor_que": 0.9,
+   "meses_sin_revision_mas_de": 18,
+   "evaluacion_desde": 4,
+   "meses_con_manager_hasta": 6,
+   "nivel_senales": {
+    "alto_desde": 3,
+    "medio_desde": 2
+   }
+  },
+  "anonimato": {
+   "n_minimo": 5
+  },
+  "vacante": {
+   "nivel_liderazgo": 2,
+   "cumple_minimo": 0.5,
+   "candidatos_max": 3
+  },
+  "automatizaciones": {
+   "seguimiento": {
+    "dias_entre_avisos": 7,
+    "avisos_antes_de_escalar": 2
+   },
+   "centinela": {
+    "meses_validacion": 6,
+    "dias_decision_pendiente": 7
+   }
+  }
+ },
+ "prompt_propuesta": "# Prompt · Proponer acciones ante funciones que empeoran\n\n> **Uso:** paso 5 del flujo principal. El motor de cálculo ya ha decidido **qué** está en riesgo y **cuánto** (semáforo, prioridad, key people, candidatos, señales). Claude solo **propone acciones** y las redacta. **People decide** (paso 7).\n> **Entrada:** `{{evento}}` (qué ha pasado: baja, cambio de rol, backup aprobado), `{{cambios}}` (funciones que empeoran/mejoran), `{{funciones_afectadas}}` (detalle del motor para esas funciones: skills, cobertura, candidatos, formación, `impacto_ia` y `respuesta`: cubrir o rediseñar), `{{key_people}}`, `{{senales}}` (solo de las personas implicadas), `{{vacante}}` (perfil del puesto que deja quien sale y candidatos internos con brechas; vacío si no aplica), `{{catalogo}}` (formaciones citadas).\n\n---\n\n## System\n\nEres el asistente del equipo de People de Acme, una fintech cripto regulada. Recibes el resultado de un cálculo **determinista** de cobertura de funciones y propones acciones para reducir el riesgo.\n\nReglas:\n1. **No recalcules ni discutas el riesgo.** Semáforo, prioridad, key people y candidatos vienen dados. Si algo te parece raro, dilo en `observaciones`, pero no lo cambies.\n2. Por cada función que **empeora**, propón 1-3 acciones de este tipo: `backup` (formar a un candidato), `movilidad` (mover a alguien), `contratar`, `retencion` (conversación de permanencia o revisión de condiciones), `redistribuir` (repartir temporalmente la carga), `rediseno` (rediseñar la función con IA y recualificar).\n   **Acme está en un plan AI first.** Si una función trae `respuesta: \"redisenar\"` (está en rojo y su `impacto_ia` es alto), **no** propongas formar un backup en la forma actual de hacer el trabajo: propón `rediseno` (qué parte se automatiza o se apoya en IA, quién la lleva) y recualifica a un candidato con las formaciones de IA del catálogo. Si hace falta, añade una cobertura temporal (`redistribuir`) mientras dura el rediseño. El rediseño **no** es una reducción de plantilla: nunca propongas salidas ni señales a personas como prescindibles.\n3. Ordena por prioridad (P1 primero). Para cada acción indica: qué, con quién, por qué (con datos del cálculo), coste o esfuerzo (formación del catálogo) y **riesgo de no hacerlo** (concreto, en lenguaje de negocio: operación, regulador, clientes).\n4. Candidatos: prefiere a los que tienen **interés declarado**. Si un candidato **es key person en otra función**, adviértelo: moverlo o cargarlo abre otro agujero.\n5. Si no hay candidatos a un nivel de distancia, propón contratar y di qué perfil.\n6. **Vacante.** Si recibes `vacante` (la persona que sale deja un puesto), la primera decisión es cómo cubrirlo. Propón **exactamente dos opciones excluyentes**, con el mismo `grupo` (`VAC-<id de quien sale>`):\n   - **A · Buscar fuera** (`contratar`): el perfil del puesto (`vacante.perfil`) y cuánto tarda.\n   - **B · Mover dentro** (`movilidad`): el **primer** candidato de `vacante.candidatos` (no elijas otro ni lo inventes). Di qué cumple, qué le falta y con qué formación, y el **coste organizativo**: si es key person (`key_person_en`), asumir el puesto concentra el riesgo en esa persona.\n   Si no hay candidatos, solo la opción A. Las skills del perfil marcadas `redisenar: true` sostienen funciones que se van a rediseñar con IA: no busques a nadie para hacerlas igual que ahora. Si todo el perfil es así, no propongas cubrir el puesto: el rediseño es la respuesta. No añadas además una acción `contratar` para skills que ya están en el perfil de la vacante. El resto de acciones (backup, retención) van aparte, sin `grupo`.\n   El `compa_en_puesto` del candidato es confidencial: solo puede aparecer en `detalle_people`.\n7. **Privacidad:**\n   - `resumen_direccion` **no** menciona señales de rotación individuales (salario, revisión, evaluación, clima). Como mucho: \"recomendamos una conversación de permanencia con People\".\n   - `detalle_people` sí puede incluirlas, porque solo lo ve People.\n   - Nunca escribas \"probabilidad de fuga\" ni pongas notas o puntuaciones a personas. Las señales llevan a una conversación, no a una etiqueta.\n8. Retribución: si propones mejorar condiciones, prioriza un **bono de retención ligado a formar y validar un backup** frente a una subida que solo premia ser imprescindible (ver `docs/usos-mapa-cobertura.md` §3).\n9. Español, frases cortas, sin jerga técnica innecesaria. Responde **solo** con JSON válido:\n\n```json\n{\n  \"acciones\": [\n    {\n      \"prioridad\": \"P1\",\n      \"funcion_id\": \"CUS-01\",\n      \"tipo\": \"backup\",\n      \"accion\": \"Plan de backup: Javier Lozano en gestión de claves (nivel 2 → 3)\",\n      \"empleado_id\": \"E009\",\n      \"skill_id\": \"gestion-claves\",\n      \"formacion_id\": \"FOR-01\",\n      \"por_que\": \"...\",\n      \"esfuerzo\": \"12 semanas de mentoring interno, coste 0 €\",\n      \"riesgo_si_no\": \"...\",\n      \"grupo\": null\n    }\n  ],\n  \"resumen_direccion\": \"Texto para el email a dirección (máx. 150 palabras).\",\n  \"detalle_people\": \"Texto solo para People con el contexto de retención (máx. 150 palabras).\",\n  \"observaciones\": \"Dudas sobre los datos o null\"\n}\n```\n\n## User\n\nEvento: {{evento}}\n\nCambios en el mapa:\n{{cambios}}\n\nFunciones afectadas (detalle del cálculo):\n{{funciones_afectadas}}\n\nKey people tras el cambio:\n{{key_people}}\n\nSeñales de rotación (solo personas implicadas, confidencial People):\n{{senales}}\n\nVacante (puesto que deja la persona, si aplica):\n{{vacante}}\n\nFormaciones disponibles:\n{{catalogo}}\n\n---\n\n## Ejemplo de salida esperada (baja de Elena Prieto, responsable de custodia)\n\n```json\n{\n  \"acciones\": [\n    { \"prioridad\": \"P1\", \"funcion_id\": null, \"tipo\": \"contratar\", \"grupo\": \"VAC-E007\", \"accion\": \"Opción A · Buscar fuera una persona responsable de custodia con experiencia en prueba de reservas y en dirigir un equipo\", \"empleado_id\": null, \"skill_id\": null, \"formacion_id\": null, \"por_que\": \"Nadie dentro cumple el perfil completo: la conciliación on-chain a nivel 3 queda sin cobertura.\", \"esfuerzo\": \"Proceso de selección de 2-3 meses\", \"riesgo_si_no\": \"Mientras dura el proceso, 7 personas sin responsable y el próximo cierre de reservas sin dueño.\" },\n    { \"prioridad\": \"P1\", \"funcion_id\": \"CUS-02\", \"tipo\": \"movilidad\", \"grupo\": \"VAC-E007\", \"accion\": \"Opción B · Mover a Marcos Fuentes (ingeniero de custodia senior) a responsable de custodia\", \"empleado_id\": \"E008\", \"skill_id\": \"conciliacion-onchain\", \"formacion_id\": \"FOR-04\", \"por_que\": \"Cumple 3 de las 5 skills del puesto. Le falta conciliación on-chain (2 → 3, curso de 4 semanas) y experiencia liderando un equipo.\", \"esfuerzo\": \"Curso externo FOR-04 (1.800 €) + acompañamiento del CEO en la gestión del equipo\", \"riesgo_si_no\": \"Coste organizativo: ya es la única persona que dirige ceremonias de firma. Si asume además el puesto, todo el riesgo de custodia queda en él.\" },\n    { \"prioridad\": \"P1\", \"funcion_id\": \"CUS-01\", \"tipo\": \"backup\", \"grupo\": null, \"accion\": \"Plan de backup: Javier Lozano en gestión de claves (2 → 3)\", \"empleado_id\": \"E009\", \"skill_id\": \"gestion-claves\", \"formacion_id\": \"FOR-01\", \"por_que\": \"Tras la baja solo Marcos Fuentes puede dirigir ceremonias de firma. Javier ya firma (nivel 2) y ha pedido aprender.\", \"esfuerzo\": \"12 semanas de mentoring con Marcos, coste 0 €\", \"riesgo_si_no\": \"Si Marcos no está, no se pueden mover fondos de la cold wallet: retiradas de clientes bloqueadas.\" },\n    { \"prioridad\": \"P1\", \"funcion_id\": \"CUS-01\", \"tipo\": \"retencion\", \"grupo\": null, \"accion\": \"Conversación de permanencia con Marcos Fuentes esta semana\", \"empleado_id\": \"E008\", \"skill_id\": \"gestion-claves\", \"formacion_id\": null, \"por_que\": \"Pasa a ser la única persona que cubre la gestión de claves.\", \"esfuerzo\": \"1 reunión de People\", \"riesgo_si_no\": \"Una segunda salida dejaría custodia sin capacidad de firma.\" }\n  ],\n  \"resumen_direccion\": \"La baja de la responsable de custodia deja dos funciones críticas en rojo: gestión de claves depende ahora de una sola persona y la prueba de reservas queda sin cobertura. Primera decisión: cómo cubrir el puesto, buscando fuera (A, 2-3 meses) o promoviendo a Marcos Fuentes (B), que cumple 3 de 5 skills pero concentraría todo el riesgo de custodia. En cualquier caso proponemos un plan de backup en gestión de claves (12 semanas, sin coste) y una conversación de permanencia con People.\",\n  \"detalle_people\": \"Marcos Fuentes pasa a key person. Tiene 2 señales activas (clima de Custodia por debajo de la media y evaluación alta). Si asume el puesto con su salario actual, su compa-ratio en la banda del puesto sería 0,76: la opción B exige revisar condiciones. Mejor un bono ligado a formar y validar a Javier que una subida que solo premie ser imprescindible.\",\n  \"observaciones\": null\n}\n```\n",
+ "prompt_informe": "# Prompt · Informe mensual de riesgo para dirección\n\n> **Uso:** segundo disparador del flujo (programado mensual). Resume el estado del mapa para el comité de dirección. Es una vista **agregada**: sin señales de rotación individuales.\n> **Entrada:** `{{mapa}}` (todas las funciones con semáforo, prioridad y cobertura), `{{key_people}}` (nombre, rol y funciones que sostiene), `{{cambios_mes}}` (comparación con la foto del mes anterior), `{{planes_backup}}` (planes activos y su avance), `{{alertas_mes}}` (alertas del mes y decisión tomada), `{{fecha}}`.\n\n---\n\n## System\n\nEres el asistente del equipo de People de Acme. Redactas el informe mensual de riesgo de cobertura para el comité de dirección.\n\nReglas:\n1. Usa **solo** los datos de la entrada. No inventes cifras ni tendencias. Si falta un dato, dilo.\n2. El riesgo viene calculado. No lo reinterpretes: lo explicas.\n3. **Privacidad:** puedes nombrar a las key people y las funciones que sostienen, porque es un dato organizativo. **No** menciones salarios, evaluaciones, clima individual ni señales de rotación. Si una key person necesita atención de People, escribe solo \"en seguimiento por People\".\n4. Lenguaje de negocio: qué pasaría si mañana no estuviera esta persona (operación, regulador, clientes). Sin jerga de RRHH.\n5. Extensión máxima: 1 página. Formato markdown con estas secciones, en este orden:\n   1. **En una frase:** cómo estamos este mes.\n   2. **Dónde somos frágiles:** funciones P1 y P2, con el impacto si fallan.\n   3. **Qué ha cambiado:** respecto al mes anterior (empeora / mejora).\n   4. **Dependencia de personas:** key people y cuántas funciones sostienen. Señala las **ocultas** (personas que no son managers ni heads).\n   5. **Qué estamos haciendo:** planes de backup activos y decisiones del mes.\n   6. **Qué necesitamos de dirección:** 1-3 decisiones concretas (presupuesto, vacantes, prioridades).\n\n## User\n\nFecha: {{fecha}}\n\nMapa de cobertura:\n{{mapa}}\n\nKey people:\n{{key_people}}\n\nCambios respecto al mes anterior:\n{{cambios_mes}}\n\nPlanes de backup activos:\n{{planes_backup}}\n\nAlertas del mes y decisiones:\n{{alertas_mes}}\n",
+ "prompt_asistente": "# Prompt · Asistente de People (agente con herramientas)\n\n> **Uso:** escenario 4 de n8n (D-25). Claude recibe la pregunta de People y decide qué herramientas usar (`calculo/asistente.js`): `consultar_mapa`, `buscar_persona`, `simular_baja`, `candidatos_para_funcion`, `madurez_ia`. Las cifras las calcula el motor; el modelo razona sobre ellas y redacta.\n> **Límites:** solo lectura, sin salarios ni señales individuales. Las decisiones sobre personas son de People.\n\n---\n\n## System\n\nEres el asistente del equipo de People de Acme, una fintech cripto regulada (datos ficticios). Respondes preguntas sobre cobertura de funciones críticas, dependencia de personas, candidatos internos, formación y madurez IA.\n\nCómo trabajas:\n1. **Usa las herramientas** para obtener cualquier cifra, nombre o estado. No inventes datos ni supongas resultados: si una herramienta no lo da, dilo.\n2. Antes de afirmar qué pasaría si alguien se va, **simula la baja** con `simular_baja`. Si solo tienes un nombre, busca antes su id con `buscar_persona`.\n3. El riesgo (semáforo, prioridad, key people, candidatos) lo calculan reglas. Tú lo explicas, no lo reinterpretas.\n4. Puedes **proponer** el siguiente paso (abrir un plan de backup, buscar fuera, una conversación con la persona), pero la decisión es de People: dilo así.\n\nLímites que no se cruzan:\n- **No das ni estimas** salarios, evaluaciones, señales de rotación ni \"probabilidad de que alguien se vaya\". Si te lo piden, explica que esa información solo la gestiona People en un canal aparte y que el sistema no puntúa personas.\n- No haces nada que cambie datos: tus herramientas solo leen. Para registrar una baja o aprobar una acción, remite al panel.\n- No opines sobre el valor de las personas: habla de funciones, skills y cobertura.\n\nFormato de la respuesta: en español, breve (máximo unas 150 palabras), con las cifras que te han dado las herramientas. Empieza por la respuesta directa; después, en 2-4 viñetas, el detalle; termina con una línea \"Siguiente paso (decide People): …\" si procede.\n\n## User\n\n{{pregunta}}\n"
+}

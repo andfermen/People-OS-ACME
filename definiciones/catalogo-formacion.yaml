@@ -1,0 +1,29 @@
+# Catálogo de formación (ficticio)
+# Cada acción sube una skill de un nivel a otro. La propuesta de acciones busca aquí por skill y nivel.
+# tipo: mentoring-interno | curso-externo | certificacion | rotacion
+# Los proveedores son genéricos; no se refieren a empresas reales.
+
+formaciones:
+  - { id: FOR-01, skill: gestion-claves,        de: 2, a: 3, tipo: mentoring-interno, nombre: "Mentoring en ceremonias de firma con la persona de referencia", semanas: 12, coste_eur: 0 }
+  - { id: FOR-02, skill: gestion-claves,        de: 2, a: 3, tipo: curso-externo,     nombre: "Custodia de activos digitales: MPC y HSM",                       semanas: 6,  coste_eur: 2400 }
+  - { id: FOR-03, skill: conciliacion-onchain,  de: 2, a: 3, tipo: mentoring-interno, nombre: "Acompañar el cierre mensual de prueba de reservas (3 cierres)",  semanas: 12, coste_eur: 0 }
+  - { id: FOR-04, skill: conciliacion-onchain,  de: 2, a: 3, tipo: curso-externo,     nombre: "Prueba de reservas y auditoría on-chain",                        semanas: 4,  coste_eur: 1800 }
+  - { id: FOR-05, skill: normativa-pbc,         de: 2, a: 3, tipo: certificacion,     nombre: "Certificación en prevención de blanqueo de capitales",           semanas: 16, coste_eur: 1500 }
+  - { id: FOR-06, skill: normativa-pbc,         de: 2, a: 3, tipo: mentoring-interno, nombre: "Coanálisis de expedientes de operaciones sospechosas",           semanas: 12, coste_eur: 0 }
+  - { id: FOR-07, skill: sql-analitica,         de: 2, a: 3, tipo: curso-externo,     nombre: "SQL avanzado y modelado de datos",                               semanas: 6,  coste_eur: 900 }
+  - { id: FOR-08, skill: sql-analitica,         de: 2, a: 3, tipo: mentoring-interno, nombre: "Pair-working en el reporting regulatorio con Datos",             semanas: 8,  coste_eur: 0 }
+  - { id: FOR-09, skill: contabilidad-cripto,   de: 2, a: 3, tipo: curso-externo,     nombre: "Contabilidad y fiscalidad de criptoactivos",                     semanas: 8,  coste_eur: 1200 }
+  - { id: FOR-10, skill: seguridad-aplicaciones, de: 2, a: 3, tipo: certificacion,    nombre: "Certificación en pentesting de aplicaciones web",                semanas: 12, coste_eur: 1600 }
+  - { id: FOR-11, skill: respuesta-incidentes,  de: 2, a: 3, tipo: curso-externo,     nombre: "Gestión de incidentes y análisis forense",                       semanas: 6,  coste_eur: 2000 }
+  - { id: FOR-12, skill: respuesta-incidentes,  de: 2, a: 3, tipo: rotacion,          nombre: "Entrar en la rotación de guardias con un senior como sombra",    semanas: 8,  coste_eur: 0 }
+  - { id: FOR-13, skill: gestion-personas,      de: 2, a: 3, tipo: curso-externo,     nombre: "Gestión de personas para managers",                              semanas: 6,  coste_eur: 800 }
+  - { id: FOR-14, skill: nodos-blockchain,      de: 2, a: 3, tipo: mentoring-interno, nombre: "Integrar una red nueva con el equipo blockchain",                semanas: 10, coste_eur: 0 }
+  - { id: FOR-15, skill: gestion-riesgo-mercado, de: 2, a: 3, tipo: curso-externo,    nombre: "Riesgo de mercado en activos digitales",                         semanas: 6,  coste_eur: 1500 }
+  - { id: FOR-16, skill: atencion-cliente-tecnica, de: 2, a: 3, tipo: rotacion,       nombre: "Rotación en soporte de segundo nivel",                           semanas: 6,  coste_eur: 0 }
+  - { id: FOR-17, skill: regulacion-mica,       de: 2, a: 3, tipo: curso-externo,     nombre: "MiCA en la práctica: obligaciones del proveedor",                semanas: 4,  coste_eur: 1100 }
+  - { id: FOR-18, skill: comunicacion-regulada, de: 1, a: 2, tipo: mentoring-interno, nombre: "Revisión conjunta de campañas con Legal",                        semanas: 6,  coste_eur: 0 }
+  # --- IA (plan AI first): recualificación cuando una función se rediseña
+  - { id: FOR-19, skill: ia-uso-diario,         de: 1, a: 2, tipo: curso-externo,     nombre: "IA en el día a día: herramientas aprobadas y buenas prácticas",  semanas: 3,  coste_eur: 300 }
+  - { id: FOR-20, skill: ia-automatizacion,     de: 1, a: 2, tipo: curso-externo,     nombre: "Automatizar procesos con IA sin programar",                      semanas: 6,  coste_eur: 900 }
+  - { id: FOR-21, skill: ia-automatizacion,     de: 2, a: 3, tipo: mentoring-interno, nombre: "Diseñar un flujo con agentes junto a Ingeniería",                semanas: 8,  coste_eur: 0 }
+  - { id: FOR-22, skill: ia-criterio,           de: 1, a: 2, tipo: curso-externo,     nombre: "Verificar resultados de IA: errores, sesgos y AI Act",           semanas: 3,  coste_eur: 400 }

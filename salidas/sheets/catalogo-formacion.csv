@@ -1,0 +1,23 @@
+formacion_id,skill_id,de_nivel,a_nivel,tipo,nombre,semanas,coste_eur
+FOR-01,gestion-claves,2,3,mentoring-interno,Mentoring en ceremonias de firma con la persona de referencia,12,0
+FOR-02,gestion-claves,2,3,curso-externo,Custodia de activos digitales: MPC y HSM,6,2400
+FOR-03,conciliacion-onchain,2,3,mentoring-interno,Acompañar el cierre mensual de prueba de reservas (3 cierres),12,0
+FOR-04,conciliacion-onchain,2,3,curso-externo,Prueba de reservas y auditoría on-chain,4,1800
+FOR-05,normativa-pbc,2,3,certificacion,Certificación en prevención de blanqueo de capitales,16,1500
+FOR-06,normativa-pbc,2,3,mentoring-interno,Coanálisis de expedientes de operaciones sospechosas,12,0
+FOR-07,sql-analitica,2,3,curso-externo,SQL avanzado y modelado de datos,6,900
+FOR-08,sql-analitica,2,3,mentoring-interno,Pair-working en el reporting regulatorio con Datos,8,0
+FOR-09,contabilidad-cripto,2,3,curso-externo,Contabilidad y fiscalidad de criptoactivos,8,1200
+FOR-10,seguridad-aplicaciones,2,3,certificacion,Certificación en pentesting de aplicaciones web,12,1600
+FOR-11,respuesta-incidentes,2,3,curso-externo,Gestión de incidentes y análisis forense,6,2000
+FOR-12,respuesta-incidentes,2,3,rotacion,Entrar en la rotación de guardias con un senior como sombra,8,0
+FOR-13,gestion-personas,2,3,curso-externo,Gestión de personas para managers,6,800
+FOR-14,nodos-blockchain,2,3,mentoring-interno,Integrar una red nueva con el equipo blockchain,10,0
+FOR-15,gestion-riesgo-mercado,2,3,curso-externo,Riesgo de mercado en activos digitales,6,1500
+FOR-16,atencion-cliente-tecnica,2,3,rotacion,Rotación en soporte de segundo nivel,6,0
+FOR-17,regulacion-mica,2,3,curso-externo,MiCA en la práctica: obligaciones del proveedor,4,1100
+FOR-18,comunicacion-regulada,1,2,mentoring-interno,Revisión conjunta de campañas con Legal,6,0
+FOR-19,ia-uso-diario,1,2,curso-externo,IA en el día a día: herramientas aprobadas y buenas prácticas,3,300
+FOR-20,ia-automatizacion,1,2,curso-externo,Automatizar procesos con IA sin programar,6,900
+FOR-21,ia-automatizacion,2,3,mentoring-interno,Diseñar un flujo con agentes junto a Ingeniería,8,0
+FOR-22,ia-criterio,1,2,curso-externo,"Verificar resultados de IA: errores, sesgos y AI Act",3,400

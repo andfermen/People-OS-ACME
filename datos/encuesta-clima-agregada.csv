@@ -1,0 +1,22 @@
+encuesta,segmento_tipo,segmento,n,publicable,engagement,enps,carga_sostenible,intencion_permanencia,desarrollo,relacion_manager
+2026-T3,compania,Acme,137,si,3.7,17,3.3,3.8,3.4,3.9
+2026-T3,division,Mercados,17,si,3.3,-6,2.9,3.4,3.2,3.7
+2026-T3,division,Riesgo y cumplimiento,30,si,3.8,21,3.2,3.9,3.5,4.0
+2026-T3,division,Tecnología y producto,46,si,3.9,26,3.5,3.9,3.6,3.9
+2026-T3,division,Cliente y negocio,35,si,3.6,12,3.1,3.7,3.1,4.0
+2026-T3,division,Corporativo,9,si,3.7,15,3.2,3.8,3.3,3.9
+2026-T3,area,Exchange y trading,10,si,3.4,0,3.0,3.5,3.4,3.8
+2026-T3,area,Custodia,7,si,3.2,-14,2.7,3.2,2.9,3.6
+2026-T3,area,Compliance AML/KYC,17,si,3.8,20,3.1,3.9,3.5,4.0
+2026-T3,area,Legal y regulatorio,6,si,3.7,17,3.3,3.9,3.4,4.1
+2026-T3,area,Seguridad,7,si,3.8,29,3.2,3.9,3.6,3.9
+2026-T3,area,Ingeniería,36,si,3.9,28,3.6,4.0,3.6,3.9
+2026-T3,area,Producto,10,si,3.8,20,3.4,3.8,3.5,3.8
+2026-T3,area,Atención al cliente (CX),26,si,3.5,8,3.0,3.6,2.9,4.1
+2026-T3,area,Marketing,9,si,3.7,22,3.3,3.8,3.4,3.9
+2026-T3,area,Finanzas,7,si,3.7,14,3.2,3.8,3.3,3.9
+2026-T3,area,People,1,no,,,,,,
+2026-T3,key_person,si,5,si,3.4,0,2.6,3.2,2.9,3.8
+2026-T3,key_person,no,132,si,3.7,18,3.3,3.8,3.4,3.9
+2026-T3,backup_en_desarrollo,si,2,no,,,,,,
+2026-T3,backup_en_desarrollo,no,135,si,3.7,17,3.3,3.8,3.4,3.9

@@ -1,0 +1,8 @@
+empleado_id,nombre,compa_ratio,nivel_senales,senales
+E007,Elena Prieto Marín,0.86,alto,S1 compa-ratio 0.86; S2 22 meses sin revisión; S3 clima Custodia 3.2 < 3.7; S4 evaluación 5
+E011,Carmen Vega Herrera,0.99,bajo,S4 evaluación 4
+E022,Lucía Benítez Mora,1.02,medio,S4 evaluación 5; S5 4 meses con su manager
+E033,Fernando Aguilar Cortés,1.03,bajo,S4 evaluación 4
+E042,Inés Robles Gómez,1.04,bajo,S4 evaluación 4
+E034,Eva Ruiz Montero,0.97,bajo,S4 evaluación 4
+E046,Noelia Santos Bravo,0.96,bajo,S4 evaluación 4

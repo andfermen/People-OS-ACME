@@ -1,0 +1,14 @@
+# Área → división (para agregar encuestas cuando un área tiene n < 5). Ver empresa.md.
+areas:
+  Exchange y trading: Mercados
+  Custodia: Mercados
+  Compliance AML/KYC: Riesgo y cumplimiento
+  Legal y regulatorio: Riesgo y cumplimiento
+  Seguridad: Riesgo y cumplimiento
+  Ingeniería: Tecnología y producto
+  Producto: Tecnología y producto
+  Atención al cliente (CX): Cliente y negocio
+  Marketing: Cliente y negocio
+  Finanzas: Corporativo
+  People: Corporativo
+  Dirección: Corporativo

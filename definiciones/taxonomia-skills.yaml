@@ -1,0 +1,57 @@
+# Taxonomía de skills de Acme (ficticia)
+# Editable: añadir una skill = añadir una entrada. Los id se usan en funciones.yaml y en datos/skills-empleados.csv.
+
+niveles:
+  1: { nombre: Básico,    descripcion: "Conoce los conceptos. Ejecuta con supervisión." }
+  2: { nombre: Autónomo,  descripcion: "Hace las tareas habituales sin supervisión." }
+  3: { nombre: Avanzado,  descripcion: "Resuelve casos complejos o no habituales. Puede sostener la función solo." }
+  4: { nombre: Referente, descripcion: "Define cómo se hace, forma a otros y es referencia dentro y fuera." }
+
+skills:
+  # --- Hard · Mercados
+  - { id: trading-mercados,       tipo: hard, nombre: "Operativa de mercados cripto",          descripcion: "Ejecución de órdenes, libro de órdenes, incidencias de mercado." }
+  - { id: market-making,          tipo: hard, nombre: "Gestión de liquidez y market making",   descripcion: "Provisión de liquidez, spreads, proveedores de liquidez." }
+  - { id: gestion-riesgo-mercado, tipo: hard, nombre: "Riesgo de mercado y límites",           descripcion: "Exposición, límites, stress tests de posiciones propias." }
+  # --- Hard · Custodia
+  - { id: gestion-claves,         tipo: hard, nombre: "Gestión de claves criptográficas",      descripcion: "MPC/multifirma, HSM, ceremonias de firma, recuperación de claves." }
+  - { id: operativa-wallets,      tipo: hard, nombre: "Operativa de wallets hot/cold",         descripcion: "Movimientos entre wallets, umbrales, retiradas de clientes." }
+  - { id: conciliacion-onchain,   tipo: hard, nombre: "Conciliación on-chain y prueba de reservas", descripcion: "Cuadrar saldos on-chain con el registro interno y demostrar reservas." }
+  - { id: analisis-blockchain,    tipo: hard, nombre: "Análisis on-chain",                     descripcion: "Trazar transacciones y usar herramientas de análisis de blockchain." }
+  # --- Hard · Cumplimiento y legal
+  - { id: normativa-pbc,          tipo: hard, nombre: "Prevención de blanqueo (PBC/FT)",       descripcion: "Normativa, análisis de casos y comunicación de operaciones sospechosas." }
+  - { id: kyc-onboarding,         tipo: hard, nombre: "Verificación KYC/KYB",                  descripcion: "Alta y verificación de clientes particulares y empresas." }
+  - { id: monitorizacion-transacciones, tipo: hard, nombre: "Monitorización de transacciones", descripcion: "Reglas de alerta, revisión de alertas, escalado." }
+  - { id: regulacion-mica,        tipo: hard, nombre: "Regulación MiCA",                       descripcion: "Requisitos de la licencia de servicios de criptoactivos y relación con el supervisor." }
+  - { id: proteccion-datos,       tipo: hard, nombre: "Protección de datos (RGPD)",            descripcion: "Bases legales, registro de actividades, derechos de los interesados." }
+  - { id: contratos-mercantil,    tipo: hard, nombre: "Contratos y derecho mercantil",         descripcion: "Redacción y negociación de contratos con clientes y proveedores." }
+  # --- Hard · Tecnología y producto
+  - { id: desarrollo-backend,     tipo: hard, nombre: "Desarrollo backend",                    descripcion: "Servicios, APIs y bases de datos de la plataforma." }
+  - { id: desarrollo-frontend,    tipo: hard, nombre: "Desarrollo frontend",                   descripcion: "Web y app de clientes." }
+  - { id: infraestructura-cloud,  tipo: hard, nombre: "Infraestructura cloud y SRE",           descripcion: "Despliegue, disponibilidad, observabilidad." }
+  - { id: nodos-blockchain,       tipo: hard, nombre: "Nodos e integración de redes blockchain", descripcion: "Operar nodos, integrar nuevas redes y tokens." }
+  - { id: ciberseguridad-defensiva, tipo: hard, nombre: "Ciberseguridad defensiva",            descripcion: "Monitorización de seguridad, detección de amenazas." }
+  - { id: respuesta-incidentes,   tipo: hard, nombre: "Respuesta a incidentes de seguridad",   descripcion: "Contención, investigación y comunicación de incidentes." }
+  - { id: seguridad-aplicaciones, tipo: hard, nombre: "Seguridad de aplicaciones",             descripcion: "Código seguro, pentesting, gestión de vulnerabilidades." }
+  - { id: sql-analitica,          tipo: hard, nombre: "Análisis de datos y SQL",               descripcion: "Consultas, modelos de datos e informes a partir de las bases de datos." }
+  - { id: gestion-producto,       tipo: hard, nombre: "Gestión de producto",                   descripcion: "Descubrimiento, priorización y roadmap." }
+  - { id: diseno-ux,              tipo: hard, nombre: "Diseño UX/UI",                          descripcion: "Investigación de usuarios, prototipos, sistema de diseño." }
+  # --- Hard · Cliente, negocio y corporativo
+  - { id: atencion-cliente,       tipo: hard, nombre: "Atención al cliente",                   descripcion: "Consultas de primer nivel por chat y email." }
+  - { id: atencion-cliente-tecnica, tipo: hard, nombre: "Soporte técnico de segundo nivel",    descripcion: "Incidencias de depósitos y retiradas, transacciones atascadas." }
+  - { id: contabilidad-cripto,    tipo: hard, nombre: "Contabilidad y fiscalidad de criptoactivos", descripcion: "Registro contable, valoración y fiscalidad de activos digitales." }
+  - { id: tesoreria,              tipo: hard, nombre: "Tesorería y salvaguarda de fondos",     descripcion: "Liquidez en euros, segregación de fondos de clientes, bancos." }
+  - { id: reporting-financiero,   tipo: hard, nombre: "Reporting financiero",                  descripcion: "Cierres, cuentas anuales, informes a dirección." }
+  - { id: marketing-digital,      tipo: hard, nombre: "Marketing digital",                     descripcion: "Captación, campañas, métricas de adquisición." }
+  - { id: comunicacion-regulada,  tipo: hard, nombre: "Comunicación comercial regulada",       descripcion: "Publicidad de criptoactivos conforme a la normativa (avisos de riesgo, mensajes permitidos)." }
+  - { id: gestion-personas,       tipo: hard, nombre: "Gestión de personas",                   descripcion: "Selección, onboarding, desempeño, relaciones laborales." }
+  - { id: compensacion,           tipo: hard, nombre: "Compensación y beneficios",             descripcion: "Bandas, revisión salarial, igualdad retributiva." }
+  # --- Soft
+  - { id: liderazgo,              tipo: soft, nombre: "Liderazgo de equipos",                  descripcion: "Dirigir, desarrollar y dar feedback a un equipo." }
+  - { id: comunicacion,           tipo: soft, nombre: "Comunicación",                          descripcion: "Explicar con claridad, por escrito y oralmente." }
+  - { id: gestion-stakeholders,   tipo: soft, nombre: "Gestión de stakeholders",               descripcion: "Relación con el supervisor, socios y dirección; negociación." }
+  - { id: resolucion-problemas,   tipo: soft, nombre: "Resolución de problemas",               descripcion: "Analizar causas y decidir con información incompleta." }
+  # --- IA (transversales, plan AI first). Las tiene medidas toda la plantilla: miden la madurez IA por área.
+  #     No son requisito de ninguna función todavía: no cambian el semáforo.
+  - { id: ia-uso-diario,      tipo: ia, nombre: "Uso de IA en el trabajo diario",          descripcion: "1 la prueba de vez en cuando · 2 la usa a diario en sus tareas · 3 rediseña su forma de trabajar con IA · 4 enseña a otros y define buenas prácticas." }
+  - { id: ia-automatizacion,  tipo: ia, nombre: "Automatización y agentes",                descripcion: "1 entiende qué se puede automatizar · 2 monta automatizaciones simples con herramientas aprobadas · 3 diseña flujos con agentes e integra sistemas · 4 referente de la compañía." }
+  - { id: ia-criterio,        tipo: ia, nombre: "Criterio y verificación de resultados de IA", descripcion: "1 sabe que la IA se equivoca · 2 revisa y contrasta lo que produce · 3 diseña controles y sabe cuándo no usarla · 4 define el gobierno de uso (datos, privacidad, AI Act)." }

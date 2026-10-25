@@ -1,0 +1,165 @@
+# Funciones de Acme (ficticias)
+# Editable: criticidad, cobertura_objetivo y skills requeridas se cambian aquí; el cálculo se actualiza solo.
+# criticidad: critica | importante | soporte
+# cobertura_objetivo: nº de personas que deberían poder sostener cada skill (si no se indica, el valor por defecto)
+# impacto_ia: alto | medio | bajo · cuánto va a transformar la IA la función (plan AI first). Solo lo ven dirección y People.
+#   Regla: función en rojo con impacto alto → la respuesta es rediseñar con IA y recualificar, no formar un backup (reglas-semaforo.md §7).
+# skills_requeridas: skill (id de taxonomia-skills.yaml) + nivel mínimo (1-4)
+
+defaults:
+  cobertura_objetivo: 2
+
+funciones:
+  # --- Mercados
+  - id: TRD-01
+    nombre: Ejecución y operativa de mercados
+    area: Exchange y trading
+    criticidad: critica
+    impacto_ia: medio
+    skills_requeridas: [{ skill: trading-mercados, nivel: 3 }, { skill: gestion-riesgo-mercado, nivel: 2 }]
+  - id: TRD-02
+    nombre: Gestión de liquidez y market making
+    area: Exchange y trading
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: market-making, nivel: 3 }, { skill: sql-analitica, nivel: 2 }]
+  - id: TRD-03
+    nombre: Riesgo de mercado y límites
+    area: Exchange y trading
+    criticidad: critica
+    impacto_ia: medio
+    skills_requeridas: [{ skill: gestion-riesgo-mercado, nivel: 3 }]
+  - id: CUS-01
+    nombre: Gestión de claves y ceremonias de firma
+    area: Custodia
+    criticidad: critica
+    impacto_ia: bajo
+    skills_requeridas: [{ skill: gestion-claves, nivel: 3 }, { skill: operativa-wallets, nivel: 2 }]
+  - id: CUS-02
+    nombre: Prueba de reservas y conciliación on-chain
+    area: Custodia
+    criticidad: critica
+    impacto_ia: medio
+    skills_requeridas: [{ skill: conciliacion-onchain, nivel: 3 }, { skill: analisis-blockchain, nivel: 2 }]
+  - id: CUS-03
+    nombre: Operativa diaria de wallets
+    area: Custodia
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: operativa-wallets, nivel: 2 }]
+  # --- Riesgo y cumplimiento
+  - id: CMP-01
+    nombre: Alta y verificación de clientes (KYC/KYB)
+    area: Compliance AML/KYC
+    criticidad: critica
+    impacto_ia: alto
+    cobertura_objetivo: 3   # volumen alto de altas: con 2 no se cubren vacaciones
+    skills_requeridas: [{ skill: kyc-onboarding, nivel: 2 }, { skill: normativa-pbc, nivel: 2 }]
+  - id: CMP-02
+    nombre: Monitorización de transacciones
+    area: Compliance AML/KYC
+    criticidad: critica
+    impacto_ia: medio
+    skills_requeridas: [{ skill: monitorizacion-transacciones, nivel: 3 }, { skill: analisis-blockchain, nivel: 2 }]
+  - id: CMP-03
+    nombre: Comunicación de operaciones sospechosas
+    area: Compliance AML/KYC
+    criticidad: critica
+    impacto_ia: bajo
+    skills_requeridas: [{ skill: normativa-pbc, nivel: 3 }]
+  - id: CMP-04
+    nombre: Reporting regulatorio AML
+    area: Compliance AML/KYC
+    criticidad: importante
+    impacto_ia: alto
+    skills_requeridas: [{ skill: sql-analitica, nivel: 3 }, { skill: normativa-pbc, nivel: 2 }]
+  - id: LEG-01
+    nombre: Licencia MiCA y relación con el supervisor
+    area: Legal y regulatorio
+    criticidad: critica
+    impacto_ia: bajo
+    skills_requeridas: [{ skill: regulacion-mica, nivel: 3 }, { skill: gestion-stakeholders, nivel: 3 }]
+  - id: LEG-02
+    nombre: Contratos y protección de datos
+    area: Legal y regulatorio
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: contratos-mercantil, nivel: 3 }, { skill: proteccion-datos, nivel: 2 }]
+  - id: SEG-01
+    nombre: Detección y respuesta a incidentes
+    area: Seguridad
+    criticidad: critica
+    impacto_ia: medio
+    cobertura_objetivo: 3   # guardias 24x7
+    skills_requeridas: [{ skill: respuesta-incidentes, nivel: 3 }, { skill: ciberseguridad-defensiva, nivel: 2 }]
+  - id: SEG-02
+    nombre: Seguridad de aplicaciones
+    area: Seguridad
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: seguridad-aplicaciones, nivel: 3 }]
+  # --- Tecnología y producto
+  - id: ING-01
+    nombre: Desarrollo de plataforma
+    area: Ingeniería
+    criticidad: importante
+    impacto_ia: alto
+    cobertura_objetivo: 3
+    skills_requeridas: [{ skill: desarrollo-backend, nivel: 3 }, { skill: desarrollo-frontend, nivel: 2 }]
+  - id: ING-02
+    nombre: Infraestructura y disponibilidad
+    area: Ingeniería
+    criticidad: critica
+    impacto_ia: medio
+    skills_requeridas: [{ skill: infraestructura-cloud, nivel: 3 }]
+  - id: ING-03
+    nombre: Integración de redes blockchain y nodos
+    area: Ingeniería
+    criticidad: critica
+    impacto_ia: bajo
+    skills_requeridas: [{ skill: nodos-blockchain, nivel: 3 }, { skill: desarrollo-backend, nivel: 2 }]
+  - id: PRD-01
+    nombre: Gestión de producto
+    area: Producto
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: gestion-producto, nivel: 3 }, { skill: diseno-ux, nivel: 2 }]
+  # --- Cliente y negocio
+  - id: CX-01
+    nombre: Atención al cliente
+    area: Atención al cliente (CX)
+    criticidad: soporte
+    impacto_ia: alto
+    cobertura_objetivo: 3
+    skills_requeridas: [{ skill: atencion-cliente, nivel: 2 }]
+  - id: CX-02
+    nombre: Soporte técnico de segundo nivel
+    area: Atención al cliente (CX)
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: atencion-cliente-tecnica, nivel: 3 }]
+  - id: MKT-01
+    nombre: Marketing y comunicación comercial regulada
+    area: Marketing
+    criticidad: soporte
+    impacto_ia: alto
+    skills_requeridas: [{ skill: marketing-digital, nivel: 3 }, { skill: comunicacion-regulada, nivel: 2 }]
+  # --- Corporativo
+  - id: FIN-01
+    nombre: Contabilidad y fiscalidad de criptoactivos
+    area: Finanzas
+    criticidad: importante
+    impacto_ia: medio
+    skills_requeridas: [{ skill: contabilidad-cripto, nivel: 3 }]
+  - id: FIN-02
+    nombre: Tesorería y salvaguarda de fondos de clientes
+    area: Finanzas
+    criticidad: critica
+    impacto_ia: bajo
+    skills_requeridas: [{ skill: tesoreria, nivel: 3 }, { skill: conciliacion-onchain, nivel: 2 }]
+  - id: PEO-01
+    nombre: Gestión de personas
+    area: People
+    criticidad: soporte
+    impacto_ia: alto
+    skills_requeridas: [{ skill: gestion-personas, nivel: 3 }]

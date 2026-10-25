@@ -1,0 +1,5 @@
+node_modules/
+salidas/demo/
+.n8n-demo.json
+video/.herramientas/
+video/salida/

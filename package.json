@@ -1,0 +1,21 @@
+{
+  "name": "people-os-acme",
+  "private": true,
+  "description": "Motor de cálculo de cobertura (referencia y verificación de la demo)",
+  "scripts": {
+    "cobertura": "node calculo/cobertura.js",
+    "verificar": "node calculo/verificar-casos.js",
+    "sheets": "node calculo/exportar-sheets.js",
+    "demo": "node calculo/demo.js",
+    "plantilla": "node calculo/generar-plantilla.js",
+    "n8n": "node calculo/exportar-n8n.js",
+    "probar-n8n": "node flujos/n8n/src/probar.js",
+    "cifras": "node calculo/cifras.js",
+    "video": "node calculo/exportar-video.js",
+    "desplegar": "node calculo/desplegar-n8n.js",
+    "ensayar": "node calculo/ensayar-n8n.js"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}
